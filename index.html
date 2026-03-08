@@ -2651,6 +2651,20 @@ body.mobile-lightbox-open #mobileNavToggle{
   }
 }
 
+
+/* === Hide mobile lightbox scrollbar while keeping swipe/scroll === */
+@media (max-width: 900px){
+  .lightbox-track{
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
+  .lightbox-track::-webkit-scrollbar{
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+}
+
 </style>
 </head>
 <body>

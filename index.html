@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/x-icon" href="./favicon.ico">\n<link rel="shortcut icon" href="./favicon.ico">\n<title>Ishmail De Niro — Demo</title>
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+<link rel="shortcut icon" href="./favicon.ico"><title>Ishmail De Niro</title>
 <style>
 body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 .stage{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;background:#ffffff;overflow:hidden;}
@@ -2590,10 +2591,22 @@ body.mobile-lightbox-open #mobileNavToggle{
 }
 
 
+/* === Mobile footer clipping fix === */
+@media (max-width: 900px){
+  .card.work-card .work-footer{
+    padding-bottom: 8px !important;
+    line-height: 1.45 !important;
+  }
+}
+
+
 /* === Mobile lightbox spacing refinement (film strip feel) === */
 @media (max-width: 900px){
+  .lightbox-media{
+    padding: 0 !important;
+  }
   .lightbox-slide{
-    padding: 0px !important;
+    padding: 0 !important;
   }
   .lightbox-track{
     gap: 0 !important;

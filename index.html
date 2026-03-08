@@ -1,0 +1,5018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="./database/favicon.ico">
+<link rel="shortcut icon" href="./database/favicon.ico">
+<link rel="alternate icon" href="./favicon.ico">
+<title>Ishmail De Niro</title>
+<style>
+body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
+.stage{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;background:#ffffff;overflow:hidden;}
+.card{width:720px;height:480px;background:rgb(230,231,232);border-radius:16px;padding:30px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-sizing:border-box;}
+.work-slug{
+  font-family: 'Atkinson Hyperlegible', sans-serif;
+  font-weight:400;
+  font-size: inherit;
+}
+.work-meta { font-style:italic; margin-bottom:12px; }
+.work-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; height:calc(100% - 112px); }
+.work-text { overflow:auto; text-align:justify; padding-right:8px; box-sizing:border-box; }
+.work-footer { font-size:14px; }
+.work-footer a{ color:#000; text-decoration:none; }
+.work-footer a:hover{ background:#DEFF00; transition:0.18s; }
+.artwork-title { font-style:italic; margin-bottom:10px; }
+.media-box{ background:#ccc; height:220px; border-radius:12px; }
+
+
+/* Footer fixed to bottom of card */
+.card.work-card{
+  padding-bottom: 56px; /* reserve space for footer */
+}
+.card.work-card .work-footer{
+  position:absolute;
+  left:30px;
+  right:30px;
+  bottom:24px;
+}
+
+.artwork-title{
+  text-align:center;
+  display:block;
+  width:100%;
+  margin-bottom:12px;
+}
+
+
+/* === No-text layout modes === */
+.card.work-card.no-text .work-text{ display:none; }
+.card.work-card.no-text .work-grid{
+  display:flex;
+  justify-content:center;
+}
+.card.work-card.no-text .media-column{
+  width:min(440px, 100%);
+}
+/* B) Center horizontally only (top-aligned) */
+.card.work-card.no-text .work-grid{
+  align-items:flex-start;
+  padding-top: 0;
+  height: calc(100% - 112px);
+}
+
+.card.work-card.no-text 
+
+
+.card.work-card.no-text .media-column{
+  width:min(520px, 90%);
+}
+
+.card.work-card.no-text .media-box{
+  width:100%;
+}
+
+
+.card.work-card.no-text .media-box{
+  height:300px;
+}
+
+
+/* Refined no-text vertical balance */
+.card.work-card.no-text{
+  padding-bottom: 80px; /* extra space to protect footer */
+}
+
+.card.work-card.no-text .media-box{
+  height:260px; /* slightly shorter */
+}
+
+.card.work-card.no-text .media-column{
+  margin-bottom:20px; /* prevents meta collision with footer */
+}
+
+
+/* Vertically center columns when text exists */
+.card.work-card.has-text .work-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  align-items:center;
+  height: calc(100% - 112px);
+}
+
+/* Fix work-text scrolling with vertical-centered grid */
+.work-text{
+  display:flex;
+  align-items:center; /* center short text */
+  min-height:0;
+}
+.work-text .work-text-inner{
+  width:100%;
+  max-height:100%;
+  overflow:auto;
+  text-align:justify;
+  padding-right:8px;
+  box-sizing:border-box;
+}
+
+/* === Robust scroll containment for long work text === */
+.card.work-card{
+  position: relative;
+  padding-bottom: 56px; /* reserve footer space */
+  box-sizing: border-box;
+}
+
+.card.work-card .work-footer{
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  bottom: 24px;
+  margin: 0;
+}
+
+/* Let grid define a fixed vertical space that excludes header/meta + footer reserve */
+.card.work-card.has-text .work-grid{
+  height: calc(100% - 112px - 56px);
+  align-items: stretch;  /* IMPORTANT: allow children to fill height */
+}
+
+/* Work text cell must NOT grow beyond its grid area */
+.work-text{
+  display: flex;
+  align-items: center; /* centers short text */
+  min-height: 0;       /* critical */
+  overflow: hidden;    /* critical: prevents spilling over card */
+}
+
+.work-text .work-text-inner{
+  width: 100%;
+  max-height: 100%;
+  overflow: auto;      /* scrolls long text */
+  text-align: justify;
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+
+/* Media column also constrained */
+.media-column{
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertical center for the media stack */
+}
+
+/* === Preserve original grid height while keeping scroll containment === */
+.card.work-card{
+  display:flex;
+  flex-direction:column;
+}
+
+/* Header/meta area stays natural height; grid fills remaining space; footer pins to bottom */
+.card.work-card .work-grid{
+  flex:1 1 auto;
+  min-height:0;
+  height:auto;              /* overrides any calc() height */
+}
+
+/* Restore vertical centering feel without shrinking: stretch cells, center their inner stacks */
+.card.work-card.has-text .work-grid{
+  align-items:stretch;      /* children take full height */
+}
+
+/* Work text scroll containment */
+.work-text{
+  min-height:0;
+  overflow:hidden;
+  display:flex;
+  align-items:center;       /* centers short text */
+}
+.work-text .work-text-inner{
+  max-height:100%;
+  overflow:auto;
+}
+
+/* Media column fills height; stack centered */
+.media-column{
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+/* Footer in flow, pinned to bottom via flex */
+
+
+/* === Footer restored to fixed bottom without shrinking grid === */
+.card.work-card{
+  position:relative;
+}
+
+.card.work-card .work-footer{
+  position:absolute;
+  left:30px;
+  right:30px;
+  bottom:24px;
+  margin:0;
+}
+
+/* Reserve space for fixed footer so grid content never overlaps */
+.card.work-card .work-grid{
+  box-sizing:border-box;
+}
+
+/* === Work-text bottom fade (fixed, non-scrolling) === */
+.work-text{
+  position: relative;
+}
+
+.work-text .scroll-fade{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 44px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  background: linear-gradient(to bottom, rgba(230,231,232,0), rgba(230,231,232,1));
+}
+
+.work-text.has-overflow .scroll-fade{
+  opacity: 1;
+}
+
+.work-text.at-bottom .scroll-fade{
+  opacity: 0;
+}
+
+
+/* no-media => text-only card; center the text block */
+.card.work-card.no-media .work-grid{ grid-template-columns: 1fr; }
+.card.work-card.no-media .work-text{ display:flex; align-items:center; justify-content:center; }
+.card.work-card.no-media .work-text-inner{ max-width: 520px; }
+
+
+/* === Lightbox === */
+.lightbox-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 9999;
+}
+.lightbox-overlay.active{
+  opacity: 1;
+  pointer-events: auto;
+}
+.lightbox-inner{
+  width: 80%;
+  max-width: 1100px;
+  height: 80%;
+  max-height: 80vh;
+  background: #e5e7e8;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-media{
+  width: 90%;
+  height: calc(100% - 96px); /* reserves space for slug/close + footer */
+  border-radius: 0;
+  overflow: hidden;
+  background: transparent;
+  padding: 14px;           /* inset content (and scrollbar) away from rounded outer corners */
+  box-sizing: border-box;
+}
+.lightbox-close{
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.media-box{
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+
+.lightbox-slug{
+  position:absolute;
+  top:16px;
+  left:20px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+
+.lightbox-footer{
+  position:absolute;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:12px;
+  text-align:center;
+}
+.lightbox-footer a{
+  text-decoration:none;
+  color:inherit;
+}
+
+
+.lightbox-media{
+  border-radius:16px;
+  overflow:hidden;
+  background: transparent;
+}
+.lightbox-track{
+  width:100%;
+  height:100%;
+  display:flex;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.lightbox-slide{
+  flex: 0 0 100%;
+  height: 100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 24px;
+  box-sizing: border-box;
+  scroll-snap-align:center;
+}
+.lightbox-slide img{
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  border-radius:16px;
+  display:block;
+}
+
+/* =========================
+   GLOBAL SCROLLBAR SYSTEM (Rounded)
+   Thin black → 204 255 0 on hover/active
+========================= */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #000000 transparent;
+}
+
+/* WebKit (Chrome, Safari, Edge) */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #DEFF00;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: #DEFF00;
+}
+
+
+/* === Work Text Top Scroll Fade === */
+.work-text {
+  position: relative;
+}
+
+.work-text::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgb(229, 231, 232) 0%, rgba(229, 231, 232, 0) 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.work-text.has-top-fade::before {
+  opacity: 1;
+}
+
+
+
+/* =========================
+   GLOBAL CLICKABLE LINK STYLE
+   Black → 204 255 0 on hover/active (fade)
+========================= */
+
+a,
+button.linklike,
+button.work-link,
+button.sidebar-link,
+#returnHome,
+.lightbox-close {
+  color: #000000;
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* Ensure no underlines ever */
+a:hover,
+a:active,
+a:focus {
+  text-decoration: none;
+}
+
+/* Hover + active highlight */
+a:hover,
+a:focus-visible,
+button.linklike:hover,
+button.work-link:hover,
+button.sidebar-link:hover,
+#returnHome:hover,
+.lightbox-close:hover,
+button.linklike:focus-visible,
+button.work-link:focus-visible,
+button.sidebar-link:focus-visible,
+#returnHome:focus-visible,
+.lightbox-close:focus-visible {
+  color: #DEFF00;
+}
+
+a:active,
+button.linklike:active,
+button.work-link:active,
+button.sidebar-link:active,
+#returnHome:active,
+.lightbox-close:active {
+  color: #DEFF00;
+}
+
+/* Remove default focus outlines but keep accessible hint via color */
+a:focus,
+button.linklike:focus,
+button.work-link:focus,
+button.sidebar-link:focus,
+#returnHome:focus,
+.lightbox-close:focus {
+  outline: none;
+}
+
+
+/* Remove any background highlight boxes on work-card links */
+.work-card a,
+.work-card button,
+.work-card .work-link {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+
+
+/* =========================
+   GLOBAL TEXT SELECTION STYLE
+   White text on black highlight
+========================= */
+
+::selection {
+  background: #000000;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: #000000;
+  color: #ffffff;
+}
+
+
+/* =========================
+   Sync work-slug + work-meta typography (Adjusted Size)
+========================= */
+
+.work-slug,
+.work-meta {
+  font-family: inherit;
+  font-size: 16px;      /* increased from 14px */
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+
+
+/* === Card visibility for stacking === */
+.card.hidden{display:none;}
+.card.visible{display:block;}
+
+/* Info card layout */
+.info-card .columns{display:flex;gap:32px;height:calc(100% - 48px);}
+.info-card .col-left{flex:0 0 45%;display:flex;flex-direction:column;justify-content:space-between;}
+.info-card .col-right{flex:1;overflow:hidden;}
+.info-card .left-top{padding-top:12px;}
+.info-card .section-title{margin:0 0 8px 0;}
+.info-card .subhead{margin:14px 0 6px 0;}
+.info-card .list{list-style:none;padding:0;margin:0;}
+.info-card .work-link{font-style:italic;}
+.info-card .topline{display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+.info-card .topline .left{font-size:16px;line-height:1.45;}
+.info-card .topline .clock{font-size:16px;line-height:1.45;}
+
+/* === Info card typography matches work cards === */
+.info-card {
+  font-family: 'Atkinson Hyperlegible', 'Atkinson', sans-serif;
+  font-weight: 400;
+}
+
+
+
+/* === Sync Info topline with work-slug exactly === */
+.info-card .topline .left,
+.info-card .topline .clock {
+  font-size: 16px;       /* matches work-slug + work-meta */
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+
+
+
+/* === FORCE card centering (final override) === */
+.stage{position:relative !important;}
+.card,
+.work-card{
+  position:absolute !important;
+  top:50% !important;
+  left:50% !important;
+  transform:translate(-50%,-50%) !important;
+}
+
+
+/* === Lock page scroll (cards handle their own internal scrolling) === */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.stage{
+  height: 100vh;
+}
+
+
+/* === Optical vertical centering adjustment === */
+:root{
+  --card-optical-y: -62px; /* lift cards slightly */
+}
+.card,
+.work-card{
+  transform: translate(-50%, calc(-50% + var(--card-optical-y))) !important;
+}
+
+
+/* === Info card fixed size only === */
+.info-card{
+  width:600px !important;
+  height:400px !important;
+  max-width:none !important;
+  max-height:none !important;
+}
+
+
+
+/* =========================
+   WORK CARD GRID HEIGHT FIX
+   Ensure work-grid fills available vertical space between header/meta and footer
+========================= */
+
+/* Make each work-card a vertical layout container */
+.work-card{
+  display:flex;
+  flex-direction:column;
+}
+
+/* Ensure header/meta area doesn't steal space unexpectedly */
+.work-card .work-header{
+  flex: 0 0 auto;
+}
+
+/* Footer already fixed/anchored; keep content area sizing robust */
+.work-card .work-footer{
+  flex: 0 0 auto;
+}
+
+/* The grid should take the remaining height */
+.work-card .work-grid{
+  flex: 1 1 auto;
+  min-height: 0;          /* critical for overflow children */
+  height: auto !important; /* override any old fixed heights */
+}
+
+/* When in two-column mode, keep both columns visually full-height */
+.work-card .work-grid.has-text .work-text,
+.work-card .work-grid.has-text .media-column{
+  height: 100%;
+  min-height: 0;
+}
+
+/* Text-only (no media) mode should still occupy full grid height, then center content inside */
+.work-card .work-grid.no-media .work-text{
+  height: 100%;
+  min-height: 0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+/* No-text (single media) mode should also keep full grid height */
+.work-card .work-grid.no-text .media-column{
+  height: 100%;
+  min-height: 0;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+
+
+/* =========================
+   SCROLL CONTAINMENT FIX
+   Prevent large work-text from expanding card; keep scroll inside work-text-inner
+========================= */
+
+.work-card .work-grid,
+.work-card .work-text,
+.work-card .media-column{
+  min-height: 0; /* allow children to overflow/scroll instead of expanding */
+}
+
+.work-card .work-text{
+  display:flex;
+  flex-direction:column;
+  height: 100%;
+}
+
+.work-card .work-text .work-text-inner{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  max-height: 100%;
+}
+
+/* For no-media (text-only) cards: do NOT force vertical centering that breaks overflow;
+   centering is handled elsewhere when text is short. */
+.work-card .work-grid.no-media .work-text{
+  justify-content: stretch;
+}
+
+/* For no-text cards keep media column stable */
+.work-card .work-grid.no-text .media-column{
+  justify-content: flex-start;
+}
+
+
+/* =========================
+   WORK CARD LAYOUT GRID (FINAL)
+   Rows: header / grid / footer
+   Fixes: work-grid too short + long text overflow
+========================= */
+
+/* Restore work-card to a 3-row grid so the middle area is always constrained */
+.work-card{
+  display:grid !important;
+  grid-template-rows: auto 1fr auto !important;
+  align-content: stretch;
+  overflow:hidden;          /* nothing can escape the card */
+}
+
+/* Footer sits in the bottom row (always visible) */
+.work-card .work-footer{
+  position: static !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  margin-top: 12px;
+}
+
+/* Middle area fills remaining space */
+.work-card .work-grid{
+  min-height:0 !important;
+  height:auto !important;
+  overflow:hidden !important;
+}
+
+/* Columns in the grid must be allowed to shrink for scroll to work */
+.work-card .work-text,
+.work-card .media-column{
+  min-height:0 !important;
+}
+
+/* Scroll lives ONLY here */
+.work-card .work-text .work-text-inner{
+  max-height:100% !important;
+  min-height:0 !important;
+  overflow:auto !important;
+}
+
+/* If a card is text-only, still constrain and allow scrolling */
+.work-card .work-grid.no-media .work-text{
+  min-height:0 !important;
+}
+
+
+/* === Strong hide to prevent peeking behind info === */
+.card.hidden{display:none !important; visibility:hidden !important;}
+.card.visible{display:block !important; visibility:visible !important;}
+
+
+/* =========================
+   RESTORE ORIGINAL WORK-CARD FLOW + FIX LONG TEXT SCROLL
+   (Overrides the temporary grid-row experiment)
+========================= */
+
+.card.work-card{
+  display:block !important;
+  overflow:hidden;
+}
+
+/* Keep footer pinned */
+.card.work-card .work-footer{
+  position:absolute !important;
+  left:30px;
+  right:30px;
+  bottom:24px;
+}
+
+/* Constrain grid between header area and footer reserve */
+.card.work-card .work-grid{
+  height: calc(100% - 112px) !important; /* matches original build */
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Scroll ONLY inside .work-text-inner */
+.card.work-card .work-text{
+  overflow: hidden !important;
+  min-height: 0 !important;
+  display:flex;
+  flex-direction:column;
+}
+
+.card.work-card .work-text .work-text-inner{
+  flex: 1 1 auto;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: auto !important;
+}
+
+/* Media column should not force grid taller */
+.card.work-card .media-column{
+  min-height:0 !important;
+  overflow:hidden;
+}
+
+
+/* =========================
+   WORK-GRID DISPLAY OVERRIDE (fix accidental flex override)
+========================= */
+
+.card.work-card .work-footer{
+  bottom:30px !important;
+}
+
+/* Default: two-column grid */
+.card.work-card .work-grid{
+  display:grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap:20px !important;
+  align-items:stretch !important;
+}
+
+/* No-text (single media) layout can center within the grid area */
+.card.work-card .work-grid.no-text{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:flex-start !important;
+}
+
+/* No-media (text-only) stays single column but still uses grid area height */
+.card.work-card .work-grid.no-media{
+  display:block !important;
+}
+
+
+/* =========================
+   RESTORE SPECIAL LAYOUT RULES
+   - Text-only (no media): center content block, meta centered
+   - No-text (single media): center media block
+========================= */
+
+/* Text-only: center the content block horizontally in the grid area */
+.card.work-card .work-grid.no-media{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:flex-start !important;
+}
+
+/* Keep the text column as a centered block with a sensible max width (matches earlier “B” rule vibe) */
+.card.work-card .work-grid.no-media .work-text{
+  width: 78% !important;
+  max-width: 520px;
+}
+
+/* Center artwork title + media + meta within the text-only card (if present) */
+.card.work-card .work-grid.no-media .artwork-title{
+  text-align:center !important;
+}
+
+.card.work-card .work-grid.no-media 
+
+/* In text-only cards, the scroll box still works; keep fades */
+.card.work-card .work-grid.no-media .work-text .work-text-inner{
+  width:100%;
+}
+
+/* Single-media (no text): center media column within available grid space */
+.card.work-card .work-grid.no-text{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:flex-start !important;
+}
+
+.card.work-card .work-grid.no-text .media-column{
+  width: 78% !important;
+  max-width: 520px;
+}
+
+/* Title above media stays centered */
+.card.work-card .work-grid.no-text .artwork-title{
+  text-align:center !important;
+}
+
+
+/* =========================
+   SPECIAL CARD MODES (PRECISION)
+   no-media (text-only) and no-text (single media)
+   - Center horizontally always
+   - Center vertically only when content fits (JS toggles .is-scrollable)
+========================= */
+
+/* TEXT-ONLY (no media) */
+.card.work-card .work-grid.no-media{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important; /* will be relaxed when scroll needed */
+}
+.card.work-card .work-grid.no-media.is-scrollable{
+  align-items:stretch !important;
+}
+.card.work-card .work-grid.no-media .work-text{
+  width: 78% !important;
+  max-width: 520px;
+  height: 100%;
+  min-height: 0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center; /* will be relaxed when scroll needed */
+}
+.card.work-card .work-grid.no-media.is-scrollable .work-text{
+  justify-content:flex-start;
+}
+.card.work-card .work-grid.no-media .work-text .work-text-inner{
+  max-height: 100%;
+  min-height: 0;
+  overflow:auto;
+}
+
+/* In text-only mode, meta should be centered */
+.card.work-card .work-grid.no-media .artwork-title,
+.card.work-card .work-grid.no-media 
+
+/* SINGLE MEDIA (no text) */
+.card.work-card .work-grid.no-text{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+.card.work-card .work-grid.no-text .media-column{
+  width: 78% !important;
+  max-width: 520px;
+  height: 100%;
+  min-height: 0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.card.work-card .work-grid.no-text .artwork-title{
+  text-align:center !important;
+}
+
+
+/* =========================
+   HARD OVERRIDE: CENTER + SCALE SPECIAL MODES
+   (Fix biography text-only + single-media sizing/alignment)
+========================= */
+
+/* Text-only cards: center a larger text block */
+.card.work-card .work-grid.no-media{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+.card.work-card .work-grid.no-media .work-text{
+  width:min(640px, 92%) !important;
+  max-width:none !important;
+  margin:0 auto !important;
+  height:100% !important;
+  min-height:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  align-items:stretch !important;
+}
+
+/* Scroll area (only when needed) */
+.card.work-card .work-grid.no-media .work-text .work-text-inner{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  overflow:auto !important;
+}
+
+/* Single-media cards: center a larger media block */
+.card.work-card .work-grid.no-text{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+.card.work-card .work-grid.no-text .media-column{
+  width:min(640px, 92%) !important;
+  max-width:none !important;
+  margin:0 auto !important;
+  height:100% !important;
+  min-height:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+/* Let media box actually fill that centered column */
+.card.work-card .work-grid.no-text .media-box{
+  width:100% !important;
+}
+
+/* Center title/meta in these special modes */
+.card.work-card .work-grid.no-media .artwork-title,
+.card.work-card .work-grid.no-media .artwork-meta-plain,
+.card.work-card .work-grid.no-text .artwork-title,
+.card.work-card .work-grid.no-text 
+
+
+/* === Single-media (no-text) mode: remove empty text column so media truly centers === */
+.card.work-card .work-grid.no-text{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+.card.work-card .work-grid.no-text .work-text{
+  display:none !important;
+}
+.card.work-card .work-grid.no-text .media-column{
+  margin:0 auto !important;
+}
+
+
+/* =========================
+   SPECIAL MODES (FINAL, grid-class based)
+========================= */
+
+/* Default two-column */
+.work-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:20px;
+  align-items:stretch;
+}
+
+/* No-text: only media column exists; center it */
+.work-grid.no-text{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.work-grid.no-text .media-column{
+  width:min(640px, 92%);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+.work-grid.no-text .media-box{ width:100%; }
+
+/* No-media: only text exists; center it, but still allow scroll */
+.work-grid.no-media{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.work-grid.no-media .work-text{
+  width:min(640px, 92%);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+.work-grid.no-media .work-text-inner{
+  flex:1 1 auto;
+  min-height:0;
+  overflow:auto;
+}
+
+/* Center title/meta in special modes */
+.work-grid.no-text .artwork-title,
+.work-grid.no-text .artwork-meta-plain,
+.work-grid.no-media .artwork-title,
+.work-grid.no-media 
+
+
+/* =========================
+   WORK-GRID HEIGHT WITHOUT FIXED HEIGHT
+   Use flex column so .work-grid grows naturally.
+========================= */
+
+.card.work-card{
+  display:flex !important;
+  flex-direction:column !important;
+  padding-bottom:78px !important; /* reserve space so footer never overlaps */
+}
+
+/* Ensure grid can grow/shrink and internal scroll stays contained */
+.card.work-card .work-grid{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+  overflow:hidden !important;
+}
+
+/* Keep footer pinned where you like it */
+.card.work-card .work-footer{
+  position:absolute !important;
+  left:30px;
+  right:30px;
+  bottom:30px;
+}
+
+
+/* === Biography (text-only) centering refinement === */
+.card.work-card .work-grid.no-media{
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+.card.work-card .work-grid.no-media .work-text{
+  margin-left:auto !important;
+  margin-right:auto !important;
+  width: 96% !important;
+  max-width:none !important;
+}
+
+/* If the biography text scrolls, keep block centered but start content at top */
+.card.work-card .work-grid.no-media.is-scrollable .work-text{
+  justify-content:flex-start !important;
+}
+
+
+/* === Fix: remove max-width cap on text-only inner === */
+.card.work-card.no-media .work-text-inner{
+  max-width: none !important;
+  width: 100% !important;
+}
+
+
+
+/* =========================
+   TEXT+MEDIA: TRUE VERTICAL CENTERING (NEW APPROACH)
+   Make work-text a full-height box, then center the inner block.
+   If inner becomes scrollable, switch to top-aligned scroll mode.
+========================= */
+
+/* Ensure the work-grid is the flexible middle area */
+.card.work-card{
+  display:flex !important;
+  flex-direction:column !important;
+}
+.card.work-card .work-grid{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+}
+
+/* Default two-column grid */
+.card.work-card .work-grid.has-text{
+  display:grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap:20px !important;
+  align-items:stretch !important;
+}
+
+/* Force both columns to fill the grid height */
+.card.work-card .work-grid.has-text .work-text,
+.card.work-card .work-grid.has-text .media-column{
+  min-height:0 !important;
+  height:100% !important;
+  align-self:stretch !important;
+}
+
+/* Center short text: use grid centering so it is truly centered */
+.card.work-card .work-grid.has-text .work-text{
+  display:grid !important;
+  align-items:center !important; /* vertical */
+}
+
+/* Inner block: centered by default */
+.card.work-card .work-grid.has-text .work-text-inner{
+  max-height:100% !important;
+  overflow:hidden !important; /* becomes scroll when .scrollable */
+}
+
+/* When scrollable, revert to scroll layout (top aligned) */
+.card.work-card .work-grid.has-text .work-text.scrollable{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-start !important;
+}
+.card.work-card .work-grid.has-text .work-text.scrollable .work-text-inner{
+  overflow:auto !important;
+}
+
+
+/* =========================
+   BIOGRAPHY CARD (TEXT-ONLY) CENTERING
+========================= */
+.card.work-card.is-biography .work-grid.no-media{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+.card.work-card.is-biography .work-text{
+  width: 96% !important;
+  height: 100% !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+.card.work-card.is-biography .bio-text{
+  width: min(720px, 96%);
+}
+.card.work-card.is-biography .bio-text .work-text-inner{
+  width:100% !important;
+  max-width:none !important;
+  overflow: visible !important;
+}
+
+
+/* =========================
+   BIOGRAPHY SCROLL + TOP/BOTTOM FADES
+========================= */
+.card.work-card.is-biography .bio-text{
+  position:relative;
+  height:100%;
+  min-height:0;
+}
+
+.card.work-card.is-biography .bio-text .work-text-inner{
+  height:100%;
+  min-height:0;
+  overflow:auto !important;
+  /* match general text styling; keep selection rules global */
+}
+
+/* fades */
+.card.work-card.is-biography .bio-fade{
+  position:absolute;
+  left:0;
+  right:0;
+  height:28px;
+  pointer-events:none;
+  opacity:0;
+  transition: opacity 160ms ease;
+}
+
+.card.work-card.is-biography .bio-fade-top{
+  top:0;
+  background: linear-gradient(to bottom, rgba(229,231,232,1), rgba(229,231,232,0));
+}
+
+.card.work-card.is-biography .bio-fade-bottom{
+  bottom:0;
+  background: linear-gradient(to top, rgba(229,231,232,1), rgba(229,231,232,0));
+}
+
+/* toggled by JS */
+.card.work-card.is-biography .bio-fade.show{
+  opacity:1;
+}
+
+
+/* =========================
+   BIO TEXT TRUE CENTER (H + V)
+========================= */
+
+.card.work-card.is-biography .work-grid.no-media{
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+.card.work-card.is-biography .work-text{
+  width:100% !important;
+  height:100% !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+.card.work-card.is-biography .bio-text{
+  width:min(720px, 92%);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+}
+
+.card.work-card.is-biography .bio-text .work-text-inner{
+  width:100%;
+  text-align:left;
+  max-height:70%;
+  overflow:auto !important;
+}
+
+
+/* === BIOGRAPHY: keep centered container BUT restore justified text === */
+.card.work-card.is-biography .bio-text .work-text-inner{
+  text-align: justify !important;
+  text-justify: inter-word !important;
+  hyphens: auto !important;
+  -webkit-hyphens: auto !important;
+  -ms-hyphens: auto !important;
+}
+
+
+/* =========================
+   BIOGRAPHY ISOLATED MODE
+   (no shared work-grid rules)
+========================= */
+
+.card.work-card.bio-isolated .work-grid{
+  display:none !important;
+}
+
+/* create a dedicated centered stage area inside the card */
+.card.work-card.bio-isolated .bio-iso{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding: 0; /* card padding already set */
+}
+
+/* centered block */
+.card.work-card.bio-isolated .bio-iso .bio-iso-box{
+  width: min(720px, 96%);
+  max-height: 100%;
+  position:relative;
+}
+
+/* scroll area */
+.card.work-card.bio-isolated .bio-iso .bio-iso-scroll{
+  max-height: 360px; /* safe default; JS will fit to available space */
+  overflow:auto;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens:auto;
+  -webkit-hyphens:auto;
+  -ms-hyphens:auto;
+}
+
+/* top/bottom fades */
+.card.work-card.bio-isolated .bio-iso .bio-fade{
+  position:absolute;
+  left:0; right:0;
+  height:28px;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 160ms ease;
+}
+.card.work-card.bio-isolated .bio-iso .bio-fade-top{
+  top:0;
+  background: linear-gradient(to bottom, rgba(229,231,232,1), rgba(229,231,232,0));
+}
+.card.work-card.bio-isolated .bio-iso .bio-fade-bottom{
+  bottom:0;
+  background: linear-gradient(to top, rgba(229,231,232,1), rgba(229,231,232,0));
+}
+.card.work-card.bio-isolated .bio-iso .bio-fade.show{ opacity:1; }
+
+
+/* === Bio iso viewport pins fades to scroll area === */
+.card.work-card.bio-isolated .bio-iso-viewport{
+  position:relative;
+  width:100%;
+}
+
+/* Ensure scroll area defines the viewport height */
+.card.work-card.bio-isolated .bio-iso-scroll{
+  display:block;
+  width:100%;
+}
+
+/* Fades pinned to viewport edges */
+.card.work-card.bio-isolated .bio-iso-viewport .bio-fade-top{ top:0; }
+.card.work-card.bio-isolated .bio-iso-viewport .bio-fade-bottom{ bottom:0; }
+
+
+/* === Artwork text-only uses isolated layout but keeps meta/footer === */
+.card.work-card.artwork-text-only .work-meta{
+  display:block;
+}
+
+/* === Info Card Right Column Alignment === */
+.card.info-card .col-right{
+  text-align: right !important;
+  align-items: flex-end !important;
+}
+
+
+/* === Biography card fixed size (matches info card 600x400) === */
+.card.work-card.is-biography{
+  width:600px !important;
+  height:400px !important;
+  max-width:600px !important;
+  max-height:400px !important;
+}
+
+
+/* === Ensure Biography isolated layout is vertically centered in 600x400 === */
+.card.work-card.is-biography{
+  display:flex !important;
+  flex-direction:column !important;
+}
+
+.card.work-card.is-biography .bio-iso{
+  flex:1 1 auto !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+
+/* === Fine optical vertical centering for Biography (match artwork text-only behaviour) === */
+.card.work-card.is-biography .bio-iso{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+.card.work-card.is-biography .bio-iso-box{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  height:100% !important;
+}
+
+.card.work-card.is-biography .bio-iso-viewport{
+  width:100% !important;
+  max-height:100% !important;
+}
+
+
+/* === Optical nudge: lower Biography content slightly === */
+.card.work-card.is-biography .bio-iso-box{
+  transform: translateY(24px); /* subtle downward shift */
+}
+
+
+/* === Raise entire card stack slightly (optical adjustment) === */
+.stage{
+  transform: translateY(-20px);
+}
+
+
+/* === Raise SELECTED WORKS block inside info card === */
+.card.info-card .col-right{
+  transform: translateY(-12px);
+}
+
+
+/* === Tighten clock under ISHMAIL DE NIRO === */
+.card.info-card .topline{
+  align-items: flex-start;
+}
+
+.card.info-card .clock{
+  margin-top: -6px;
+}
+
+
+/* === Lower Biography / Contact / Download CV slightly === */
+.card.info-card .col-left .left-top{
+  transform: translateY(10px);
+}
+
+
+/* Preserve Excel paragraph breaks / spacing in work text */
+.work-text-inner{
+  white-space: pre-wrap;   /* keep newlines and wrap lines */
+}
+
+
+.press-release-link{
+  text-align:center;
+  margin: 0 0 14px 0;
+}
+.press-release-link a{
+  color:#000;
+  text-decoration:none;
+  transition: color 220ms ease;
+}
+.press-release-link a:hover,
+.press-release-link a:focus-visible{
+  color: #DEFF00;
+  outline: none;
+  text-decoration:none;
+}
+
+
+/* === Press Release Under Media === */
+.press-release-under-media{
+  margin-top:14px;
+  text-align:center;
+  flex-shrink:0;
+}
+.press-release-under-media a{
+  color:#000;
+  text-decoration:none;
+  transition: color 220ms ease;
+}
+.press-release-under-media a:hover,
+.press-release-under-media a:focus-visible{
+  color: #DEFF00;
+  outline:none;
+  text-decoration:none;
+}
+
+
+/* === Global Header (appears when leaving Info) === */
+.global-header{
+  position:fixed;
+  top:18px;
+  left:50%;
+  transform:translate(-50%, -14px);
+  opacity:0;
+  pointer-events:none;
+  z-index:9999;
+  margin:0;
+  padding:0;
+  font-weight:400;
+  font-size:inherit;
+  line-height:1;
+  color:#000;
+  transition: opacity 240ms ease, transform 240ms ease, color 220ms ease;
+  user-select:none;
+  cursor:pointer;
+}
+.global-header.visible{
+  opacity:1;
+  transform:translate(-50%, 0);
+  pointer-events:auto;
+}
+
+
+/* === Sidebar positioned beside centered work card === */
+.sidebar-nav{
+  position: fixed;
+  width: 240px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+  z-index: 9998;
+  font-family: "Atkinson Hyperlegible", "Atkinson", sans-serif;
+}
+
+.sidebar-nav.visible{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+.sidebar-inner{
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.sidebar-divider {
+    height: 1px;
+    margin: 0;
+    background: transparent;
+}
+
+
+
+.sidebar-list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-list li{
+  margin: 0 0 6px 0;
+}
+
+.sidebar-link{
+  display: inline-block;
+  text-align: left;
+}
+
+/* Shift work cards right when sidebar is on (so it sits "left of the cards") */
+
+.global-header:hover,
+.global-header:focus-visible{
+  color: #DEFF00;
+  outline:none;
+}
+
+
+/* === Global Header Typography Update (v4.0_STABLE) === */
+#globalHeader{
+  font-family: "Atkinson Hyperlegible", "Atkinson", sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0;
+}
+
+
+/* === Lightbox Slug Size Sync (v4.0 stable) === */
+.lightbox-close,
+.lightbox-slug {
+  font-family: "Atkinson Hyperlegible", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+
+/* === Force entire sidebar right-aligned === */
+.sidebar-inner{
+  text-align: right;
+}
+
+
+
+.sidebar-list{
+  padding: 0;
+}
+
+.sidebar-list li{
+  text-align: right;
+}
+
+.sidebar-link{
+  display: block;
+  width: 100%;
+  text-align: right;
+}
+
+
+.sidebar-list li.active .sidebar-link::after{
+  content: " —";
+  opacity: 0.6;
+}
+
+
+/* === Active Work Highlight (204 255 0, no bold) === */
+.sidebar-list li.active .sidebar-link{
+  font-family: "Atkinson Hyperlegible", "Atkinson", sans-serif;
+  font-weight: 400;
+  color: #DEFF00;
+}
+
+
+/* === Sidebar Subcategory Refinement === */
+.sidebar-subhead{
+  font-family: "Atkinson Hyperlegible", "Atkinson", sans-serif;
+  font-weight: 400;
+  font-size: 16px;          /* match rest of list */
+  text-transform: none;     /* remove caps */
+  letter-spacing: 0;
+  color: #000000;           /* black */
+  margin: 18px 0 6px 0;
+  text-align: right;
+}
+
+
+/* === Sidebar Subhead Colon === */
+.sidebar-subhead::after{
+  content: ":";
+}
+
+
+
+/* === Sidebar Works Italic (force) === */
+#sidebarNav .sidebar-link{
+  font-style: italic !important;
+}
+
+/* Ensure subheads stay non-italic */
+#sidebarNav .sidebar-subhead{
+  font-style: normal !important;
+}
+
+
+/* === Sidebar Info + Biography Regular (not italic) === */
+#sidebarNav .rail-top .rail-link,
+#sidebarNav .sidebar-inner > .sidebar-link[data-nav="info"],
+#sidebarNav .sidebar-inner > .sidebar-link[data-open-work="biography"]{
+  font-style: normal !important;
+}
+
+
+/* === Sidebar Fixed Height 440px === */
+.sidebar-nav{
+  height: 440px !important;
+}
+
+
+
+/* === Active highlight for Biography/Info buttons (same as works) === */
+#sidebarNav .sidebar-link.active-link{
+  color: #DEFF00;
+  font-style: normal !important;
+  font-weight: 400;
+}
+
+
+.sidebar-inner{
+  height: 100% !important;
+  overflow-y: scroll !important; /* force scrollbar visibility */
+  overflow-x: hidden !important;
+}
+
+
+/* === Sidebar Scroll (hidden scrollbar, still scrollable) === */
+.sidebar-nav{
+  height: 440px !important;
+  overflow: hidden !important;
+}
+
+.sidebar-inner{
+  height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  /* Firefox */
+  scrollbar-width: none;
+
+  /* IE/Edge */
+  -ms-overflow-style: none;
+}
+
+/* Chrome / Safari / WebKit */
+.sidebar-inner::-webkit-scrollbar{
+  width: 0px;
+  height: 0px;
+}
+
+
+
+:root { --card-optical-y: -62px; }
+
+
+/* === Meta visibility restore === */
+.work-meta, .artwork-meta{
+  display: block;
+  margin-top: 8px;
+}
+
+
+/* === Artwork meta matches footer size === */
+.work-footer,
+.artwork-meta{
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+
+/* === Remove bottom padding ONLY for work-cards with no text === */
+.card.work-card.no-text {
+  padding-bottom: 0 !important;
+}
+
+
+/* === No-text cards: remove any reserved spacing that shrinks media box === */
+.card.work-card.no-text .artwork-title{
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+
+/* === No-text grids: nuke the inherited 78px padding that shrinks media box === */
+.work-grid.no-text .artwork-title,
+.work-grid.no-text .artwork-meta,
+.work-grid.no-text .press-release-under-media{
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* If any rule is applying padding-bottom to the media column itself */
+.work-grid.no-text .media-column{
+  padding-bottom: 0 !important;
+}
+
+
+/* === Remove 8px top margin from meta blocks === */
+.work-meta,
+.artwork-meta{
+  margin-top: 0 !important;
+}
+
+
+/* =====================================================
+   FULLSCREEN LIGHTBOX (v4.4 visual adjustment)
+   ===================================================== */
+
+.lightbox{
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(255,255,255,0.98) !important;
+  z-index: 9999 !important;
+}
+
+.lightbox-inner{
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.lightbox-media{
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  max-width: 96vw !important;
+  max-height: 96vh !important;
+}
+
+.lightbox-slug{
+  position: fixed !important;
+  top: 32px !important;
+  left: 32px !important;
+  z-index: 10000 !important;
+}
+
+.lightbox-close{
+  position: fixed !important;
+  top: 32px !important;
+  right: 32px !important;
+  z-index: 10000 !important;
+}
+
+
+/* === Lightbox: maximize media (strong override) === */
+.lightbox-media{
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.lightbox-media img,
+.lightbox-media video{
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+
+/* === Lightbox footer neon color === */
+.lightbox-footer{
+  color: #DEFF00 !important;
+}
+
+
+/* === Global header above lightbox === */
+#globalHeader, .global-header, header#globalHeader{
+  position: relative;
+  z-index: 10050 !important; /* above lightbox (9999) */
+}
+
+
+/* === Center global header === */
+#globalHeader, .global-header, header#globalHeader{
+  position: fixed !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  text-align: center !important;
+}
+
+
+/* === Lightbox: fixed-size media (no shrink on narrow windows) === */
+:root{
+  --lb-media-w: 1200px;
+  --lb-media-h: 800px;
+}
+
+/* allow scrolling when viewport is smaller than the fixed media size */
+.lightbox,
+.lightbox-overlay{
+  overflow: auto !important;
+}
+
+.lightbox-media{
+  width: var(--lb-media-w) !important;
+  height: var(--lb-media-h) !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.lightbox-media img,
+.lightbox-media video{
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain !important;
+}
+
+
+/* === Work-grid no-text media-box height === */
+.work-grid.no-text .media-box{
+  height: 260px !important;
+}
+
+
+/* === Press release size matches footer === */
+.press-release-under-media{
+  font-size:14px !important;
+}
+
+
+
+/* === Lightbox HEAVY blur + slower fade === */
+.lightbox-overlay{
+  transition: opacity 520ms ease, filter 520ms ease, transform 520ms ease !important;
+  filter: blur(38px);
+  transform: scale(1.02);
+  will-change: opacity, filter, transform;
+}
+
+.lightbox-overlay.active{
+  filter: blur(0px);
+  transform: scale(1);
+}
+
+
+/* Optional: keep the media crisp during transition by blurring the overlay rather than the image itself.
+   If you still see the image blurring too much, we can move blur to a background layer instead. */
+
+
+/* === Remove blue focus outline from media-box after lightbox close === */
+.media-box:focus{ outline:none !important; }
+.media-box:focus-visible{ outline:none !important; }
+
+
+/* Info ghost mode (white on white when not active) */
+.info-card.info-ghost{
+  background:#ffffff !important;
+  color:#ffffff !important;
+}
+.info-card.info-ghost *{
+  color:#ffffff !important;
+  border-color:#ffffff !important;
+}
+
+
+/* Force remove card background */
+.card,
+.card.work-card,
+.card.info-card,
+.card.biography-card{
+  background: transparent !important;
+}
+
+
+/* === Info card: slow fade-in on initial load (targets actual .card.info-card) === */
+.card.info-card{
+  opacity: 0;
+  animation: infoCardFadeIn 1800ms ease forwards;
+}
+
+@keyframes infoCardFadeIn{
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+/* === White scroll fades (override only, keep original geometry) === */
+:root{
+  --fade-rgb: 255,255,255;
+}
+
+/* Bottom fade overlay (keep existing positioning; just recolour) */
+.work-text .scroll-fade{
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--fade-rgb),0),
+    rgba(var(--fade-rgb),1)
+  ) !important;
+}
+
+/* Top fade overlay (pseudo element) */
+.work-text::before{
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--fade-rgb),1) 0%,
+    rgba(var(--fade-rgb),0) 100%
+  ) !important;
+}
+
+
+/* === Card transitions (smooth, no flash) === */
+.card.card-exit{
+  opacity: 0 !important;
+  transition: opacity 320ms ease !important;
+}
+
+@keyframes cardFadeIn{
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.card.card-enter{
+  opacity: 0;
+  animation: cardFadeIn 420ms ease forwards;
+  will-change: opacity;
+}
+
+/* While transitioning, keep any newly-visible card hidden until we attach .card-enter */
+body.card-transitioning .card.work-card.visible{
+  opacity: 0 !important;
+}
+
+
+/* === Artwork meta italic (forced) === */
+.card .artwork-meta,
+.artwork-meta{
+  font-style: italic !important;
+}
+
+
+/* === Floating SVG sigil === */
+#float-sigil{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 162px;   /* 50% larger again */
+  height: 162px;
+  z-index: 9999;
+  pointer-events: none; /* don't block clicks */
+  user-select: none;
+  transform: translate3d(0,0,0);
+  will-change: transform;
+  opacity: 0.95;
+}
+#float-sigil svg{
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+
+/* =====================================================
+   MOBILE LAYER (NO OBSERVERS / NO DESKTOP SIDE EFFECTS)
+===================================================== */
+#mobileNavToggle,
+#mobileNavOverlay{
+  display:none;
+}
+
+@media (max-width: 900px){
+  html, body{
+    width:100%;
+    height:100%;
+    overflow:hidden !important;
+  }
+
+  .stage{
+    min-height:100svh !important;
+    height:100svh !important;
+    padding:0 !important;
+    transform:none !important;
+  }
+
+  :root{
+    --card-optical-y: 0px !important;
+  }
+
+  .card,
+  .work-card,
+  .info-card,
+  .card.work-card.is-biography{
+    width:100vw !important;
+    max-width:100vw !important;
+    height:100svh !important;
+    max-height:100svh !important;
+    top:50% !important;
+    left:50% !important;
+    transform:translate(-50%, -50%) !important;
+    border-radius:0 !important;
+    padding:18px 16px 16px 16px !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+
+  .card.work-card{
+    display:flex !important;
+    flex-direction:column !important;
+  }
+
+  .card.work-card .work-grid,
+  .work-grid,
+  .card.work-card .work-grid.has-text{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:14px !important;
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    height:auto !important;
+    overflow:hidden !important;
+    align-items:start !important;
+  }
+
+  .card.work-card .work-text,
+  .work-text{
+    min-height:0 !important;
+    overflow:hidden !important;
+    display:block !important;
+  }
+
+  .card.work-card .work-text .work-text-inner,
+  .work-text .work-text-inner{
+    max-height:min(28svh, 280px) !important;
+    overflow:auto !important;
+    padding-right:6px !important;
+  }
+
+  .media-column{
+    min-height:0 !important;
+    overflow:hidden !important;
+    justify-content:flex-start !important;
+  }
+
+  .media-box,
+  .card.work-card.no-text .media-box,
+  .work-grid.no-text .media-box{
+    height:min(32svh, 280px) !important;
+  }
+
+  .card.work-card .work-footer{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    margin-top:12px !important;
+  }
+
+  .card.work-card .work-grid.no-text,
+  .work-grid.no-text,
+  .card.work-card .work-grid.no-media,
+  .work-grid.no-media{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    justify-content:stretch !important;
+    align-items:start !important;
+  }
+
+  .card.work-card .work-grid.no-text .media-column,
+  .card.work-card .work-grid.no-media .work-text,
+  .work-grid.no-text .media-column,
+  .work-grid.no-media .work-text{
+    width:100% !important;
+    max-width:none !important;
+    margin:0 !important;
+  }
+
+  .info-card .columns{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:14px !important;
+    height:calc(100% - 16px) !important;
+    overflow:hidden !important;
+  }
+
+  .info-card .col-left,
+  .info-card .col-right{
+    width:100% !important;
+    flex:none !important;
+  }
+
+  .info-card .col-left{
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:space-between !important;
+  }
+
+  .info-card .col-right{
+    display:none !important;
+  }
+
+  .card.info-card .topline .left,
+  .card.info-card .topline .clock,
+  .work-slug,
+  .work-meta{
+    font-size:14px !important;
+    line-height:1.35 !important;
+  }
+
+  .artwork-title,
+  .artwork-meta,
+  .work-footer,
+  .press-release-under-media{
+    font-size:13px !important;
+    line-height:1.35 !important;
+  }
+
+  .global-header{
+    top:10px !important;
+    font-size:14px !important;
+    z-index:10020 !important;
+  }
+
+  .sidebar-nav{
+    display:none !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+
+  #mobileNavToggle{
+    display:block !important;
+    position:fixed;
+    top:10px;
+    right:12px;
+    z-index:10021;
+    appearance:none;
+    border:1px solid rgba(0,0,0,0.14);
+    background:rgba(255,255,255,0.88);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    color:#000;
+    padding:8px 10px;
+    border-radius:999px;
+    font:inherit;
+    line-height:1;
+    transition:opacity 220ms ease, color 180ms ease, border-color 180ms ease;
+  }
+
+  #mobileNavToggle:hover,
+  #mobileNavToggle:focus-visible,
+  #mobileNavToggle.is-open{
+    color:#DEFF00;
+    border-color:rgba(222,255,0,0.7);
+    outline:none;
+  }
+
+  body.mobile-lightbox-open #mobileNavToggle{
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+
+  #mobileNavOverlay{
+    display:flex !important;
+    position:fixed;
+    inset:0;
+    z-index:10030;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 220ms ease;
+    flex-direction:column;
+    padding:52px 18px 20px 18px;
+    box-sizing:border-box;
+  }
+
+  #mobileNavOverlay.open{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  #mobileNavOverlay .mobile-nav-close{
+    position:absolute;
+    top:10px;
+    right:12px;
+    appearance:none;
+    border:1px solid rgba(0,0,0,0.14);
+    background:rgba(255,255,255,0.88);
+    color:#000;
+    padding:8px 10px;
+    border-radius:999px;
+    font:inherit;
+    line-height:1;
+  }
+
+  #mobileNavOverlay .mobile-nav-close:hover,
+  #mobileNavOverlay .mobile-nav-close:focus-visible{
+    color:#DEFF00;
+    outline:none;
+    border-color:rgba(222,255,0,0.7);
+  }
+
+  #mobileNavOverlay .mobile-nav-scroll{
+    flex:1 1 auto;
+    min-height:0;
+    overflow:auto;
+    text-align:center;
+  }
+
+  #mobileNavOverlay .sidebar-link{
+    display:block !important;
+    width:100% !important;
+    text-align:center !important;
+    margin:0 0 8px 0 !important;
+    font-size:15px !important;
+  }
+
+  #mobileNavOverlay .sidebar-subhead{
+    text-align:center !important;
+    margin:14px 0 6px 0 !important;
+    font-size:15px !important;
+  }
+
+  #mobileNavOverlay .sidebar-list{
+    padding:0 !important;
+    margin:0 !important;
+    list-style:none !important;
+  }
+
+  #mobileNavOverlay .sidebar-inner{
+    all:unset;
+  }
+
+  #float-sigil{
+    width:88px !important;
+    height:88px !important;
+  }
+}
+
+
+
+/* === Mobile nav handoff mask: hold overlay briefly while underlying card transition starts === */
+@media (max-width: 900px){
+  #mobileNavOverlay.handoff{
+    opacity: 1 !important;
+    pointer-events: none !important;
+  }
+}
+
+
+/* === Prevent instant-visible card before mobile handoff fade === */
+@media (max-width: 900px){
+  body.mobile-nav-transitioning .card.work-card.visible{
+    opacity: 0 !important;
+  }
+}
+
+
+/* === Strong mobile nav handoff gate === */
+@media (max-width: 900px){
+  body.mobile-nav-transitioning .card.visible{
+    opacity: 0 !important;
+  }
+}
+
+
+/* === Mobile: show global header whenever the mobile menu is open === */
+@media (max-width: 900px){
+  body.mobile-menu-open #globalHeader,
+  #mobileNavOverlay.open ~ #globalHeader{
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+
+/* Hide mobile menu button when lightbox is open */
+.lightbox-overlay.active ~ #mobileNavToggle,
+body.mobile-lightbox-open #mobileNavToggle{
+  display:none !important;
+}
+
+
+/* === Force-hide mobileNavToggle when lightbox is open on mobile === */
+@media (max-width: 900px){
+  body.mobile-lightbox-open #mobileNavToggle,
+  .lightbox-overlay.active ~ #mobileNavToggle,
+  .lightbox.active ~ #mobileNavToggle{
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+  }
+}
+
+
+/* === Freeze fix: mobile state classes must not affect desktop === */
+@media (min-width: 901px){
+  body.mobile-lightbox-open #mobileNavToggle,
+  body.mobile-menu-open #globalHeader{
+    opacity: inherit !important;
+    visibility: inherit !important;
+    pointer-events: auto !important;
+  }
+}
+
+
+/* === Mobile card vertical breathing space === */
+@media (max-width: 900px){
+  .card{
+    margin-top: 24px;
+    margin-bottom: 24px;
+  }
+}
+
+
+/* === Mobile cards: shorter max-height while staying centred === */
+@media (max-width: 900px){
+  .card,
+  .work-card,
+  .info-card,
+  .card.work-card.is-biography{
+    height: calc(100svh - 48px) !important;
+    max-height: calc(100svh - 48px) !important;
+  }
+}
+
+
+/* === Raise SOCIAL section on mobile media view === */
+@media (max-width: 900px){
+  .info-card .left-bottom{
+    margin-bottom: 40px;
+  }
+}
+
+
+/* === Mobile nav toggle: remove hairline border === */
+#mobileNavToggle{
+  border-color: transparent !important;
+  border: 1px solid transparent !important;
+}
+
+
+/* === Mobile nav close button: remove hairline border === */
+.mobile-nav-close{
+  border-color: transparent !important;
+  border: 1px solid transparent !important;
+}
+
+
+/* === Mobile menu button hard restore when not in lightbox === */
+@media (max-width: 900px){
+  body:not(.mobile-lightbox-open) #mobileNavToggle{
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+}
+
+
+/* === Mobile info card: show global header only while mobile menu is open === */
+@media (max-width: 900px){
+  body.mobile-menu-open .card.info-card.visible ~ #globalHeader,
+  body.mobile-menu-open #globalHeader{
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  body:not(.mobile-menu-open) .card.info-card.visible ~ #globalHeader,
+  body:not(.mobile-menu-open) .card.info-card.visible + #globalHeader{
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+
+/* === Desktop restore: mobile state must not suppress desktop header === */
+@media (min-width: 901px){
+  #globalHeader{
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+}
+
+
+
+
+
+
+
+/* === Lightbox background behaviour === */
+/* Desktop: 50% transparent */
+.lightbox-overlay,
+.lightbox-overlay.active{
+  background: rgba(255,255,255,0.5) !important;
+}
+
+/* Mobile: solid white */
+@media (max-width: 900px){
+  .lightbox-overlay,
+  .lightbox-overlay.active{
+    background:#ffffff !important;
+  }
+}
+
+/* === Lightbox images: preserve desktop behaviour, fit screen on mobile only === */
+@media (max-width: 900px){
+  .lightbox-slide img{
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+}
+
+
+/* === Mobile: raise SOCIAL block higher on Info card === */
+@media (max-width: 900px){
+  .info-card .left-bottom{
+    transform: translateY(-140px) !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+
+/* Ensure Research in top sidebar is NOT italic */
+#sidebarResearchTop,
+.sidebar-link[data-open-work="research"]{
+  font-style: normal !important;
+}
+
+
+/* === Hard fix: Research top link must stay regular === */
+#sidebarNav #sidebarResearchTop,
+#sidebarNav .research-top-link,
+#sidebarNav .sidebar-link#sidebarResearchTop,
+#sidebarNav .sidebar-link.research-top-link,
+#mobileNavContent .sidebar-link[data-open-work="research"]{
+  font-style: normal !important;
+}
+
+
+/* === Mobile nav typography: works italic, Info/Biography/Research regular === */
+@media (max-width: 900px){
+  #mobileNavContent .sidebar-link{
+    font-style: italic !important;
+  }
+  #mobileNavContent .sidebar-subhead{
+    font-style: normal !important;
+  }
+  #mobileNavContent .sidebar-link[data-nav="info"],
+  #mobileNavContent .sidebar-link[data-open-work="biography"],
+  #mobileNavContent .sidebar-link[data-open-work="research"]{
+    font-style: normal !important;
+  }
+}
+
+
+/* Sidebar divider margin removed */
+.sidebar-divider{
+  margin:0 !important;
+}
+
+
+/* === Sidebar scroll fades (match work-text behaviour) === */
+.sidebar-nav{
+  position: fixed;
+}
+
+.sidebar-nav::before,
+.sidebar-nav::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 36px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 3;
+}
+
+.sidebar-nav::before{
+  top: 0;
+  background: linear-gradient(to bottom, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.sidebar-nav::after{
+  bottom: 0;
+  background: linear-gradient(to top, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.sidebar-nav.has-top-fade::before{
+  opacity: 1;
+}
+
+.sidebar-nav.has-overflow::after{
+  opacity: 1;
+}
+
+.sidebar-nav.at-bottom::after{
+  opacity: 0;
+}
+
+
+/* Mobile nav accessibility fix */
+#mobileNavOverlay[inert]{
+  pointer-events:none !important;
+}
+
+
+/* === Hide scrollbar in work-text (match sidebar behaviour) === */
+.work-text-inner{
+  -ms-overflow-style: none;      /* IE / Edge */
+  scrollbar-width: none;         /* Firefox */
+}
+
+.work-text-inner::-webkit-scrollbar{
+  display: none;                 /* Chrome / Safari */
+}
+
+</style>
+</head>
+<body>
+
+<!-- Floating SVG (random start, bounces off window + cursor) -->
+<div id="float-sigil" aria-hidden="true">
+<svg version="1.1" id="Artwork" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 184.25 179.73" style="enable-background:new 0 0 184.25 179.73;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#DEFF00;}
+</style>
+<path class="st0" d="M183.04,113.21L122.3,88.33c-0.59-0.24-0.76-0.99-0.33-1.46l43.92-48.78c0.64-0.71,0.67-1.78,0.08-2.53
+	c-0.6-0.75-1.65-0.95-2.49-0.48l-57.59,32.54c-0.56,0.31-1.26-0.02-1.36-0.65L94.06,1.64c0-0.01-0.01-0.02-0.01-0.02
+	c-0.04-0.21-0.11-0.4-0.21-0.58c-0.01-0.03-0.03-0.06-0.04-0.09c-0.1-0.17-0.23-0.32-0.37-0.45c-0.02-0.02-0.05-0.04-0.07-0.07
+	c-0.16-0.12-0.33-0.23-0.51-0.3c-0.02-0.01-0.05-0.01-0.07-0.02C92.56,0.04,92.35,0,92.13,0c-0.23,0-0.44,0.04-0.64,0.11
+	c-0.02,0.01-0.05,0.01-0.07,0.02c-0.19,0.07-0.36,0.18-0.51,0.3c-0.03,0.02-0.05,0.04-0.08,0.07c-0.15,0.13-0.27,0.28-0.37,0.45
+	c-0.02,0.03-0.03,0.05-0.04,0.09c-0.1,0.18-0.17,0.37-0.21,0.58c0,0.01-0.01,0.02-0.01,0.02l-10.47,65.3
+	c-0.1,0.63-0.8,0.97-1.36,0.65L20.78,35.07c-0.84-0.47-1.89-0.26-2.49,0.49c-0.6,0.75-0.56,1.83,0.08,2.54L62.9,87
+	c0.43,0.47,0.26,1.23-0.34,1.47L1.22,113.21c-0.89,0.35-1.39,1.31-1.17,2.24c0.22,0.94,1.08,1.6,2.04,1.52l66-4.33
+	c0.64-0.04,1.12,0.57,0.94,1.18l-18.9,63.38c-0.27,0.92,0.16,1.9,1.03,2.32c0.87,0.42,1.91,0.14,2.45-0.65l37.77-54.29
+	c0.37-0.53,1.14-0.53,1.51,0l37.77,54.28c0.38,0.54,0.98,0.84,1.61,0.84c0.28,0,0.57-0.06,0.85-0.19c0.86-0.42,1.3-1.4,1.03-2.32
+	l-18.9-63.38c-0.18-0.61,0.3-1.22,0.94-1.18l66,4.32c0.96,0.07,1.82-0.57,2.03-1.51C184.42,114.53,183.92,113.58,183.04,113.21z"/>
+</svg>
+</div>
+
+<h2 id="globalHeader" class="global-header" role="button" tabindex="0" aria-label="Return to Info">ISHMAIL DE NIRO</h2>
+
+<button id="mobileNavToggle" type="button" aria-expanded="false" aria-controls="mobileNavOverlay">Menu</button>
+<div id="mobileNavOverlay" aria-hidden="true">
+  <button class="mobile-nav-close" type="button" aria-label="Close navigation">Close</button>
+  <div class="mobile-nav-scroll">
+    <div id="mobileNavContent"></div>
+  </div>
+</div>
+
+
+<nav id="sidebarNav" class="sidebar-nav" aria-label="Works navigation">
+  <div class="sidebar-inner">
+    <button type="button" class="sidebar-link" data-nav="info">Info</button>
+    <button type="button" class="sidebar-link" data-open-work="biography">Biography</button>
+    <button type="button" class="sidebar-link research-top-link" id="sidebarResearchTop" data-open-work="research" style="font-style: normal !important;">Research</button>
+    <div class="sidebar-divider" aria-hidden="true"></div>
+    <div id="sidebarWorks"></div>
+  </div>
+</nav>
+<div class="stage" id="stage"></div>
+<script>
+
+
+/* === Robust Year Formatter (TOP) === */
+function formatYear(val){
+  if(val === undefined || val === null || val === "") return "";
+  const num = Number(val);
+  if(Number.isFinite(num)) return String(Math.round(num));
+  return String(val);
+}
+
+/* === Clean Excel ".0" artifacts (TOP) === */
+function cleanDecimalArtifacts(str){
+  if(str === undefined || str === null) return "";
+  return String(str).replace(/\b(-?\d+)\.0\b/g, "$1");
+}
+
+/* Ensure globals even if scope changes */
+window.formatYear = formatYear;
+window.cleanDecimalArtifacts = cleanDecimalArtifacts;
+
+const WORKS_DATA = (() => {
+  const candidates = [
+    "./database/database.json",
+    "database/database.json",
+    "./database.json",
+    "database.json"
+  ];
+  for (const url of candidates) {
+    try {
+      const req = new XMLHttpRequest();
+      req.open("GET", url, false);
+      req.send(null);
+      if ((req.status >= 200 && req.status < 300) || req.status === 0) {
+        return JSON.parse(req.responseText);
+      }
+    } catch (e) {}
+  }
+  throw new Error("Could not load database JSON from any expected path");
+})();
+
+function shortCat(cat){
+  const c = String(cat||"").trim();
+  // Normalise common spreadsheet values (singular/plural)
+  if(/^solo exhibition(s)?$/i.test(c)) return "Solo";
+  if(/^group exhibition(s)?$/i.test(c)) return "Group";
+  if(/^artist-?curation$/i.test(c)) return "Artist-Curation";
+  if(/^artwork$/i.test(c)) return "Artwork";
+  if(/^biography$/i.test(c)) return "Biography";
+  if(/^info$/i.test(c)) return "Info";
+  // Fallback: capitalise first letter, and remove trailing "Exhibition(s)"
+  const cleaned = c.replace(/\s*exhibition(s)?$/i, "").trim();
+  if(!cleaned) return "Work";
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function renderInfoSelectedWorks(container){
+  if(!container) return;
+
+  const selected = WORKS_DATA.filter(w=>{
+    const sel = String(w.selected_on_info||"").trim().toLowerCase()==="yes";
+    const vis = String(w.site_visible||"yes").trim().toLowerCase()!=="no";
+    return sel && vis;
+  });
+
+  const groupsOrder = ["Artwork","Artist-Curation","Solo Exhibition","Group Exhibition"];
+
+
+  const groups = {};
+  selected.forEach(w=>{
+    const g = (w.subcategory||w.category_group||"").trim() || "Other";
+    (groups[g] ||= []).push(w);
+  });
+
+  function labelFor(w){
+    return (w.display_title || w.title || w.slug || "").trim();
+  }
+
+  function sortItems(items){
+    if(!Array.isArray(items)) return;
+    items.sort((a,b)=>{
+      const oA = (a.info_sort_override===0 || a.info_sort_override) ? Number(a.info_sort_override) : null;
+      const oB = (b.info_sort_override===0 || b.info_sort_override) ? Number(b.info_sort_override) : null;
+      const hasA = oA !== null && !Number.isNaN(oA);
+      const hasB = oB !== null && !Number.isNaN(oB);
+
+      if(hasA || hasB){
+        if(hasA && hasB && oA !== oB) return oA - oB;   // 1,2,3...
+        if(hasA && !hasB) return -1;
+        if(!hasA && hasB) return 1;
+      }
+
+      const yA = Number(a.sort_year || 0);
+      const yB = Number(b.sort_year || 0);
+      if(yB !== yA) return yB - yA;                     // newest first
+
+      const tA = labelFor(a).toLowerCase();
+      const tB = labelFor(b).toLowerCase();
+      return tA.localeCompare(tB);
+    });
+  }
+
+  // Header
+  let out = '<div class="section-title">SELECTED WORKS</div>';
+
+  groupsOrder.forEach(g=>{
+    const items = groups[g];
+    if(!items || !items.length) return;
+    sortItems(items);
+    out += '<div class="subhead">'+escapeHtml(g)+':</div><ul class="list">';
+    items.forEach(w=>{
+      out += '<li><button type="button" class="work-link" data-open-work="'+escapeHtml(w.slug)+'">'+escapeHtml(labelFor(w))+'</button></li>';
+    });
+    out += '</ul>';
+  });
+
+  // Any remaining groups
+  Object.keys(groups).sort().forEach(g=>{
+    if(groupsOrder.includes(g)) return;
+    const items = groups[g];
+    if(!items || !items.length) return;
+    sortItems(items);
+    out += '<div class="subhead">'+escapeHtml(g)+':</div><ul class="list">';
+    items.forEach(w=>{
+      out += '<li><button type="button" class="work-link" data-open-work="'+escapeHtml(w.slug)+'">'+escapeHtml(labelFor(w))+'</button></li>';
+    });
+    out += '</ul>';
+  });
+
+  container.innerHTML = out;
+}
+
+
+
+function buildMeta(w){
+  const parts = [];
+  if(w.curated_by) parts.push("Curated by " + w.curated_by);
+  if(w.location) parts.push(cleanDecimalArtifacts(w.location));
+  if(w.year !== undefined && w.year !== null && String(w.year).trim() !== "") parts.push(formatYear(w.year));
+  // Clean any lingering Excel artifacts in the full line
+  return cleanDecimalArtifacts(parts.join(", "));
+}
+
+function parseLinksOptionA(raw){
+  const out=[];
+  if(!raw) return out;
+  raw.split("|").map(s=>s.trim()).filter(Boolean).forEach(part=>{
+    if(part.includes("—")){
+      const idx = part.indexOf("—");
+      const label = part.slice(0, idx).trim();
+      const url = part.slice(idx+1).trim();
+      if(label) out.push({label, url: url || ""});
+    }else{
+      const label = part.trim();
+      if(label) out.push({label, url:""});
+    }
+  });
+  return out;
+}
+
+function renderLinksComma(raw){
+  const links = parseLinksOptionA(raw);
+
+  // Deduplicate by label+url (case-insensitive), preserving order
+  const seen = new Set();
+  const uniq = [];
+  for(const l of links){
+    const label = (l.label || "").trim();
+    const url = (l.url || "").trim();
+    const key = (label.toLowerCase() + "||" + url.toLowerCase());
+    if(seen.has(key)) continue;
+    seen.add(key);
+    uniq.push({label, url});
+  }
+
+  if(!uniq.length) return "—";
+  return uniq.map(l=>{
+    if(l.url){
+      return '<a href="'+l.url+'" target="_blank" rel="noopener">'+escapeHtml(l.label)+'</a>';
+    }
+    return '<span>'+escapeHtml(l.label)+'</span>';
+  }).join(", ");
+}
+
+function updateWorkTextFade(workTextEl){
+  const inner = workTextEl.querySelector(".work-text-inner");
+  if(!inner) return;
+
+  // Determine overflow
+  const hasOverflow = inner.scrollHeight > inner.clientHeight + 1;
+  workTextEl.classList.toggle("has-overflow", hasOverflow);
+
+  // Determine if at bottom (within 1px)
+  const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
+  workTextEl.classList.toggle("at-bottom", atBottom);
+
+  // If no overflow, ensure fade hidden
+  if(!hasOverflow) workTextEl.classList.add("at-bottom");
+}
+
+function bindWorkTextFade(cardEl){
+  const workTextEl = cardEl.querySelector(".work-text");
+  const inner = workTextEl ? workTextEl.querySelector(".work-text-inner") : null;
+  if(!workTextEl || !inner) return;
+
+  // Initial + on resize (measure after layout is ready)
+  const run = ()=>updateWorkTextFade(workTextEl);
+  run();
+  requestAnimationFrame(run);
+  setTimeout(run, 60);
+  setTimeout(run, 160);
+inner.addEventListener("scroll", run, {passive:true});
+  window.addEventListener("resize", run);
+}
+function createWorkCard(w){
+  const card = document.createElement("div");
+  card.className = "card work-card";
+  card.dataset.workSlug = w.slug || "";
+
+  const hasText = !!(w.text && String(w.text).trim());
+  const noMedia = (String(w.cover_image || "").trim().toUpperCase() === "NO");
+  const layoutMode = String(w.layout_mode||"").toLowerCase();
+  const slugLower = String(w.slug||"").toLowerCase();
+  
+  // --- Footer links builder (mapped to current spreadsheet) ---
+  function buildLinksRaw(){
+    // Prefer links_optionA (pipe-delimited: Label — URL|Label — URL)
+    const opt = (w.links_optiona || "").toString().trim();
+    if(opt) return opt;
+
+    // Fallback to link_label_n / link_url_n columns
+    const parts = [];
+    for(let i=1;i<=6;i++){
+      const label = (w["link_label_"+i] || "").toString().trim();
+      const url   = (w["link_url_"+i]   || "").toString().trim();
+      if(label && url) parts.push(label + " — " + url);
+      else if(label) parts.push(label); // allow label-only
+    }
+    return parts.join("|");
+  }
+// --- Meta builders (mapped to current spreadsheet) ---
+  // Works sheet headers: meta_display_override, curated_by, location, year_display, year_range_display_clean/year_range_display
+  const metaOverride = (w.meta_display_override || "").trim();
+
+  function buildWorkMetaLine(){
+    if(metaOverride) return metaOverride;
+
+    const parts = [];
+
+    const curated = (w.curated_by || "").trim();
+    const loc = (w.location || "").trim();
+
+    // Prefer clean range display if provided, else year_display, else year_range_display
+    const yr = (w.year_range_display_clean ?? w.year_display ?? w.year_range_display ?? "").toString().trim();
+    const yrClean = cleanDecimalArtifacts(yr);
+
+    if(curated) parts.push("Curated by " + curated);
+    if(loc) parts.push(loc);
+    if(yrClean) parts.push(yrClean);
+
+    return parts.join(", ");
+  }
+
+  const workMetaText = buildWorkMetaLine();
+
+  // Artwork meta from headers: Artwork title, Artwork materials, Dimensions (normalized -> artwork_title, artwork_materials, dimensions)
+  function buildArtworkMetaLine(){
+    const parts = [];
+    const m = (w.artwork_materials || "").toString().trim();
+    const d = (w.dimensions || "").toString().trim();
+
+    if(m) parts.push(m);
+    if(d) parts.push(d);
+
+    return parts.join(", ");
+  }
+
+  const artworkMetaText = buildArtworkMetaLine();
+
+  const workMetaHtml = workMetaText
+    ? '<div class="work-meta">' + escapeHtml(cleanDecimalArtifacts(workMetaText)) + '</div>'
+    : '<div class="work-meta"></div>';
+
+  const artworkMetaHtml = artworkMetaText
+    ? '<div class="artwork-meta">' + escapeHtml(cleanDecimalArtifacts(artworkMetaText)) + '</div>'
+    : '<div class="artwork-meta"></div>';
+
+  const displaySlugLower = String(w.display_slug||"").trim().toLowerCase();
+
+  // Biography: support both explicit layout_mode and legacy detection (slug/display_slug)
+  const isBio = (layoutMode === "bio_isolated") || (slugLower === "biography") || (displaySlugLower === "biography");
+
+  // Artwork text-only: explicit mode only (set via spreadsheet), but we also accept legacy cover_image === "NO" for artwork category
+  const isArtworkTextOnly = (layoutMode === "artwork_text_only") || ((String(w.subcategory||"").trim().toLowerCase()==="artwork") && (String(w.cover_image||"").trim().toUpperCase()==="NO"));
+
+  // Card mode classes (kept for styling/debug)
+  card.classList.add(hasText ? "has-text" : "no-text");
+  if(noMedia) card.classList.add("no-media");
+
+  
+  if(isBio){ card.classList.add("is-biography"); card.classList.add("bio-isolated"); }
+  if(isArtworkTextOnly){ card.classList.add("bio-isolated"); card.classList.add("artwork-text-only"); }
+const leftMeta = [];
+  
+  const pressReleaseLink =
+    (w.press_release_pdf && String(w.press_release_pdf).trim())
+      ? '<div class="press-release-under-media"><a href="' + String(w.press_release_pdf).trim() + '" target="_blank" rel="noopener">Download Press Release</a></div>'
+      : '';
+if(w.materials) leftMeta.push(w.materials);
+  if(w.dimensions) leftMeta.push(w.dimensions);
+
+  // Media column (only when media exists)
+  let mediaColumn = "";
+  if(!noMedia){
+    mediaColumn =
+      '<div class="media-column">' +
+        (w.artwork_title ? '<div class="artwork-title">'+escapeHtml(w.artwork_title)+'</div>' : '') +
+        '<div class="media-box" role="button" tabindex="0" aria-label="Open media"></div>' + artworkMetaHtml + pressReleaseLink +
+      '</div>';
+  }
+
+  const isInfo = (String(w.category || "").trim().toLowerCase() === "info");
+  const footerHtml = isInfo ? '' : ('<div class="work-footer">For more information, see '+renderLinksComma(buildLinksRaw())+'</div>');
+
+  const catForSlug = (w.subcategory || w.category_group || w.category || "").toString().trim();
+  const slugTitle = (w.display_title || w.work_title || w.title || "").toString().trim();
+  const slugDisplay = (w.display_slug && String(w.display_slug).trim())
+    ? ('/ ' + String(w.display_slug).trim())
+    : ('/ ' + shortCat(catForSlug) + ': ' + (slugTitle || ''));
+// Work meta (curated by etc)
+  const metaHtml = workMetaHtml;
+
+  // Work grid classes (this is what CSS targets)
+  let gridClass = "work-grid";
+  const isNoTextGrid = gridClass.indexOf("no-text") !== -1;
+  if(isNoTextGrid) card.classList.add("no-text");
+  else card.classList.remove("no-text");
+
+  if(noMedia) gridClass += " no-media";
+  if(!hasText) gridClass += " no-text";
+  if(hasText) gridClass += " has-text";
+
+  // Text column (only when text exists)
+  let textColumn = "";
+if(hasText && !isBio){
+    textColumn =
+      '<div class="work-text">' +        '<div class="work-text-inner">'+(w.text || '')+'</div>' +
+        '<div class="scroll-fade" aria-hidden="true"></div>' +
+      '</div>';
+  }
+
+  // Compose grid in order: text (if any) then media (if any)
+  const bioIsoHtml = (isBio || isArtworkTextOnly) ? (
+  '<div class="bio-iso">' +
+    '<div class="bio-iso-box">' +
+      '<div class="bio-iso-viewport">' +
+        '<div class="bio-fade bio-fade-top" aria-hidden="true"></div>' +
+        '<div class="bio-iso-scroll">'+(w.text || '')+'</div>' +
+        '<div class="bio-fade bio-fade-bottom" aria-hidden="true"></div>' +
+      '</div>' +
+    '</div>' +
+  '</div>'
+) : '';
+
+card.innerHTML =
+  '<div class="work-slug">'+escapeHtml(slugDisplay)+'</div>' +
+  metaHtml +
+  bioIsoHtml +
+  '<div class="'+gridClass+'">' +
+    textColumn +
+    mediaColumn +
+  '</div>' +
+  footerHtml;
+
+  // Apply cover image to media-box + store gallery for lightbox
+  const mb = card.querySelector('.media-box');
+  if(mb && !noMedia){
+    const cover = String(w.cover_image || "").trim();
+    if(cover && cover.toUpperCase() !== "NO"){
+      mb.style.backgroundImage = 'url("' + cover + '")';
+      mb.style.backgroundSize = 'cover';
+      mb.style.backgroundPosition = 'center';
+      mb.style.backgroundRepeat = 'no-repeat';
+    }
+    mb.dataset.workSlug = w.slug || '';
+    mb.dataset.gallery = (w.gallery_images || '').trim();
+  }
+
+  // Scroll fades only when a scrollable text column exists
+  if(hasText && !isBio){
+    bindWorkTextFade(card);
+  }
+
+  return card;
+}
+
+const stage = document.getElementById("stage");
+
+/* === Simple card stack controller === */
+let Z_TOP = 2;
+const CARD_BY_SLUG = new Map();
+
+
+const globalHeader = document.getElementById("globalHeader");
+function setGlobalHeaderVisible(on){
+  if(!globalHeader) return;
+  globalHeader.classList.toggle("visible", !!on);
+}
+
+
+const sidebarNav = document.getElementById("sidebarNav");
+function setSidebarVisible(on){
+  if(!sidebarNav) return;
+  sidebarNav.classList.toggle("visible", !!on);
+  document.body.classList.toggle("sidebar-on", !!on);
+}
+
+function renderSidebarWorks(container){
+  if(!container) return;
+
+  const researchItem = WORKS_DATA.find(w => String(w.slug||"").trim().toLowerCase() === "research");
+  const researchVisible = !!(researchItem && String(researchItem.site_visible||"yes").trim().toLowerCase() === "yes");
+  const researchTopBtn = document.getElementById("sidebarResearchTop");
+  if(researchTopBtn){
+    researchTopBtn.style.display = researchVisible ? "" : "none"; researchTopBtn.style.fontStyle = "normal"; researchTopBtn.style.setProperty("font-style","normal","important"); researchTopBtn.style.fontStyle = "normal"; researchTopBtn.style.setProperty("font-style","normal","important");
+  }
+
+  const visible = WORKS_DATA.filter(w=>{
+    const slug = String(w.slug||"").trim().toLowerCase();
+    const isInfoCategory = String(w.category||"").trim().toLowerCase() === "info";
+    const vis = String(w.site_visible||"yes").trim().toLowerCase() === "yes";
+    const excludeManualTopLinks = slug === "biography" || slug === "research";
+    return !isInfoCategory && vis && w.slug && !excludeManualTopLinks;
+  });
+
+  const groupsOrder = ["Artwork","Artist-Curation","Solo Exhibition","Group Exhibition"];
+  const groups = {};
+  visible.forEach(w=>{
+    const g = (w.subcategory||w.category_group||"").trim() || "Other";
+    (groups[g] ||= []).push(w);
+  });
+
+  function labelFor(w){
+    return (w.display_title || w.title || w.slug || "").trim();
+  }
+
+  function sortItems(items){
+    if(!Array.isArray(items)) return;
+    items.sort((a,b)=>{
+      const oA = (a.info_sort_override===0 || a.info_sort_override) ? Number(a.info_sort_override) : null;
+      const oB = (b.info_sort_override===0 || b.info_sort_override) ? Number(b.info_sort_override) : null;
+      const hasA = oA !== null && !Number.isNaN(oA);
+      const hasB = oB !== null && !Number.isNaN(oB);
+
+      if(hasA || hasB){
+        if(hasA && hasB && oA !== oB) return oA - oB;
+        if(hasA && !hasB) return -1;
+        if(!hasA && hasB) return 1;
+      }
+
+      const yA = Number(a.sort_year || 0);
+      const yB = Number(b.sort_year || 0);
+      if(yB !== yA) return yB - yA;
+
+      const tA = labelFor(a).toLowerCase();
+      const tB = labelFor(b).toLowerCase();
+      return tA.localeCompare(tB);
+    });
+  }
+
+  let out = "";
+
+  groupsOrder.forEach(g=>{
+    const items = groups[g];
+    if(!items || !items.length) return;
+    sortItems(items);
+    out += '<div class="sidebar-subhead">'+escapeHtml(g)+'</div><ul class="sidebar-list">';
+    items.forEach(w=>{
+      out += '<li><button type="button" class="sidebar-link" data-open-work="'+escapeHtml(w.slug)+'">'+escapeHtml(labelFor(w))+'</button></li>';
+    });
+    out += '</ul>';
+  });
+
+  Object.keys(groups).sort().forEach(g=>{
+    if(groupsOrder.includes(g)) return;
+    const items = groups[g];
+    if(!items || !items.length) return;
+    sortItems(items);
+    out += '<div class="sidebar-subhead">'+escapeHtml(g)+'</div><ul class="sidebar-list">';
+    items.forEach(w=>{
+      out += '<li><button type="button" class="sidebar-link" data-open-work="'+escapeHtml(w.slug)+'">'+escapeHtml(labelFor(w))+'</button></li>';
+    });
+    out += '</ul>';
+  });
+
+  container.innerHTML = out;
+}
+
+/* Sidebar: Info button */
+document.addEventListener("click", function(e){
+  const navBtn = e.target.closest && e.target.closest('[data-nav="info"]');
+  if(!navBtn) return;
+  e.preventDefault();
+  goHome();
+});
+function goHome(){
+  const info = document.querySelector(".card.info-card");
+  if(!info) return;
+
+  document.querySelectorAll(".card").forEach(function(c){
+    if(c !== info){
+      c.classList.remove("visible");
+      c.classList.add("hidden");
+      c.style.display = "none";
+      c.style.visibility = "hidden";
+    }
+  });
+
+  showCard(info);
+}
+
+if(globalHeader){
+  globalHeader.addEventListener("click", goHome);
+  globalHeader.addEventListener("keydown", function(e){
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      goHome();
+    }
+  });
+}
+
+
+function showCard(card){
+  if(!card) return;
+  card.classList.remove("hidden");
+  card.classList.add("visible");
+  card.style.display = "block";
+  card.style.visibility = "visible";
+  card.style.zIndex = String(++Z_TOP);
+  const wt = card.querySelector && card.querySelector('.work-text');
+  if(wt){ requestAnimationFrame(()=>updateWorkTextFade(wt)); setTimeout(()=>updateWorkTextFade(wt), 80); }
+  const isInfo = card.classList && card.classList.contains('info-card');
+  setGlobalHeaderVisible(!isInfo);
+  setSidebarVisible(!isInfo);
+}
+
+function createInfoCard(){
+  const card = document.createElement("div");
+  card.className = "card info-card visible";
+  card.setAttribute("role","article");
+  card.setAttribute("aria-label","Info card");
+  card.style.zIndex = "2";
+
+  card.innerHTML = `<div class="topline">
+      <div class="left">ISHMAIL DE NIRO / Info</div>
+      <div class="clock" id="clock">00:00:00</div>
+    </div>
+
+    <div class="columns">
+      <div class="col-left">
+        <div class="left-top">
+          <button class="section-title linklike" id="openBiography" type="button">Biography</button>
+          <div class="section-title"><a href="mailto:ishmaildeniro@gmail.com">Contact</a></div>
+          <div class="section-title"><a href="file:///Users/ishmaildeniro/Desktop/Studio/Website/Database/CV.pdf" download="" target="_blank" rel="noopener">Download CV</a></div>
+          <button class="section-title linklike" id="openResearch" type="button">Research</button>
+        </div>
+
+        <div class="left-bottom">
+          <div class="section-title">SOCIAL:</div>
+          <ul class="list">
+            <li><a href="https://www.instagram.com/ishmaildeniro/" target="_blank" rel="noopener">@ishmaildeniro</a></li>
+            <li><a href="https://www.instagram.com/prayer.room.gallery/" target="_blank" rel="noopener">@prayer.room.gallery</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-right" id="infoSelectedWorks"></div>
+  </div>`;
+
+  renderInfoSelectedWorks(card.querySelector('#infoSelectedWorks'));
+  // Clock (Info card only)
+  const clockEl = card.querySelector("#clock");
+  function tick(){
+    const d = new Date();
+    const h = d.getHours();
+    const hh = ((h + 11) % 12) + 1;
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    const ss = String(d.getSeconds()).padStart(2,"0");
+    const ampm = h >= 12 ? "PM" : "AM";
+    clockEl.textContent = `${String(hh).padStart(2,"0")}:${mm}:${ss} ${ampm}`;
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // Biography shortcut
+  card.querySelector("#openBiography").addEventListener("click", function(){
+    showCard(CARD_BY_SLUG.get("biography"));
+  });
+
+  
+
+  // Research shortcut (controlled by site_visible)
+  const researchBtn = card.querySelector("#openResearch");
+  const researchMeta = WORKS_DATA.find(w => String(w.slug || "").trim().toLowerCase() === "research");
+  const researchVisible = researchMeta && String(researchMeta.site_visible || "yes").trim().toLowerCase() === "yes";
+  if(researchBtn){
+    if(!researchVisible){
+      researchBtn.remove();
+    } else {
+      researchBtn.textContent = String((researchMeta && researchMeta.display_title) || "Research");
+      researchBtn.addEventListener("click", function(){
+        const researchCard = CARD_BY_SLUG.get("research");
+        if(researchCard) showCard(researchCard);
+      });
+    }
+  }
+stage.appendChild(card);
+  return card;
+}
+
+/* Build info card first (only visible on load) */
+createInfoCard();
+
+/* Build works cards (hidden by default) */
+WORKS_DATA.forEach((w)=>{
+  const c = createWorkCard(w);
+  c.classList.add("hidden");
+  c.classList.remove("visible");
+  c.style.display = "none";
+  c.style.visibility = "hidden";
+  c.style.zIndex = "1";
+  CARD_BY_SLUG.set(w.slug, c);
+  stage.appendChild(c);
+});
+
+// Build sidebar list from site_visible === YES
+renderSidebarWorks(document.getElementById("sidebarWorks"));
+
+/* Open work cards from info card links */
+document.addEventListener("click", function(e){
+  const btn = e.target.closest && e.target.closest("[data-open-work]");
+  if(!btn) return;
+  const slug = btn.getAttribute("data-open-work");
+  showCard(CARD_BY_SLUG.get(slug));
+});
+
+/* === Top Fade Scroll Logic === */
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".work-text .work-text-inner").forEach(function(inner){
+    const container = inner.closest(".work-text");
+
+    function updateFade(){
+      if(inner.scrollTop > 2){
+        container.classList.add("has-top-fade");
+      } else {
+        container.classList.remove("has-top-fade");
+      }
+    }
+
+    inner.addEventListener("scroll", updateFade);
+    updateFade();
+  });
+});
+
+
+
+
+
+
+/* === Biography Hard Close Patch === */
+(function(){
+
+  const originalShowCard = window.showCard;
+
+  if(typeof originalShowCard === "function"){
+    window.showCard = function(card){
+
+      // If opening biography, force-close all other work cards
+      const slug = card && card.dataset ? card.dataset.workSlug : null;
+
+      if(slug === "biography"){
+        document.querySelectorAll(".card.work-card").forEach(c=>{
+          if(c !== card){
+            c.classList.remove("visible");
+            c.classList.add("hidden");
+            c.style.display = "none";
+          }
+        });
+      }
+
+      originalShowCard(card);
+    };
+  }
+
+})();
+
+
+
+/* === Ensure no element keeps focus when lightbox closes === */
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape"){
+    setTimeout(function(){
+      if(document.activeElement){ document.activeElement.blur(); }
+    },10);
+  }
+});
+
+</script>
+
+<script>
+/* === Lightbox Behaviour (rebuild) === */
+(function(){
+  const overlay = document.createElement("div");
+  overlay.className = "lightbox-overlay";
+  overlay.setAttribute("role","dialog");
+  overlay.setAttribute("aria-modal","true");
+
+  const inner = document.createElement("div");
+  inner.className = "lightbox-inner";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "lightbox-close";
+  closeBtn.type = "button";
+  closeBtn.setAttribute("aria-label","Close lightbox");
+  closeBtn.textContent = "Close";
+
+  const slugEl = document.createElement("div");
+  slugEl.className = "lightbox-slug";
+
+  const media = document.createElement("div");
+  media.className = "lightbox-media";
+  media.setAttribute("aria-label","Media area");
+
+  const track = document.createElement("div");
+  track.className = "lightbox-track";
+  media.appendChild(track);
+
+  const footerEl = document.createElement("div");
+  footerEl.className = "lightbox-footer";
+
+  inner.appendChild(slugEl);
+  inner.appendChild(closeBtn);
+  inner.appendChild(media);
+  inner.appendChild(footerEl);
+  overlay.appendChild(inner);
+  document.body.appendChild(overlay);
+
+  function buildSlides(images){
+    track.innerHTML = "";
+    images.forEach((src)=>{
+      const slide = document.createElement("div");
+      slide.className = "lightbox-slide";
+      const img = document.createElement("img");
+      img.alt = "";
+      img.src = src;
+      slide.appendChild(img);
+      track.appendChild(slide);
+    });
+    track.scrollLeft = 0;
+  }
+
+  function setFooter(workObj){
+    let footerHTML = "";
+    if(workObj){
+      const name = String(workObj.photographed_by||"").trim();
+      const url = String(workObj.photographed_by_url||"").trim();
+      if(name && name.includes("—") && !url){
+        const parts = name.split("—");
+        const n = (parts[0]||"").trim();
+        const u = (parts[1]||"").trim();
+        footerHTML = u ? ('Photography: <a href="' + u + '" target="_blank" rel="noopener">' + n + '</a>') : ('Photography: ' + n);
+      } else if(name && url){
+        footerHTML = 'Photography: <a href="' + url + '" target="_blank" rel="noopener">' + name + '</a>';
+      } else if(name){
+        footerHTML = "Photography: "+name;
+      }
+    }
+    footerEl.innerHTML = footerHTML;
+  }
+
+  function openForMediaBox(box){
+    if(!box) return;
+    const slug = (box.dataset && box.dataset.workSlug) ? box.dataset.workSlug : "";
+    const gallery = (box.dataset && box.dataset.gallery) ? String(box.dataset.gallery).trim() : "";
+    const workObj = (typeof WORKS_DATA !== "undefined") ? WORKS_DATA.find(w => String(w.slug||"") === String(slug)) : null;
+
+    const slugText = (()=>{
+      if(!workObj) return "";
+      const disp = (workObj.display_slug && String(workObj.display_slug).trim())
+        ? ("/ "+String(workObj.display_slug).trim())
+        : ("/ "+shortCat((workObj.subcategory||workObj.category_group||"Work"))+": "+(workObj.display_title||workObj.work_title||workObj.title||""));
+      return disp;
+    })();
+    slugEl.textContent = slugText;
+
+    let images = [];
+    if(gallery){
+      images = gallery.split(",").map(s=>s.trim()).filter(Boolean);
+    } else if(workObj && workObj.cover_image && String(workObj.cover_image).trim().toUpperCase() !== "NO"){
+      images = [String(workObj.cover_image).trim()];
+    }
+    buildSlides(images);
+    setFooter(workObj);
+
+    overlay.classList.add("active");
+  }
+
+  function close(){
+    overlay.classList.remove("active");
+  }
+
+  // Click / tap open
+  document.addEventListener("click", (e)=>{
+    const box = e.target.closest && e.target.closest(".media-box");
+    if(!box) return;
+    e.preventDefault();
+    openForMediaBox(box);
+  });
+
+  // Keyboard open
+  document.addEventListener("keydown", (e)=>{
+    if((e.key === "Enter" || e.key === " ") && document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("media-box")) {
+      e.preventDefault();
+      openForMediaBox(document.activeElement);
+      return;
+    }
+    if(e.key === "Escape") close();
+  });
+
+  closeBtn.addEventListener("click", close);
+  overlay.addEventListener("click", (e)=>{
+    if(e.target === overlay) close();
+  });
+})();
+/* === Text-only scroll detection (toggle vertical centering) === */
+(function(){
+  function updateNoMediaScrollable(card){
+    const grid = card.querySelector(".work-grid.no-media");
+    if(!grid) return;
+    const inner = card.querySelector(".work-text-inner");
+    if(!inner) return;
+    // force measurement after layout
+    const isScrollable = inner.scrollHeight > inner.clientHeight + 2;
+    grid.classList.toggle("is-scrollable", isScrollable);
+  }
+
+  function scan(){
+    document.querySelectorAll(".card.work-card").forEach(updateNoMediaScrollable);
+  }
+
+  // Run after initial paint
+  window.addEventListener("load", function(){ setTimeout(scan, 0); });
+
+  // Re-check when cards are shown (z-stack controller)
+  document.addEventListener("click", function(e){
+    const btn = e.target.closest && e.target.closest("[data-open-work], #openBiography");
+    if(btn) setTimeout(scan, 0);
+  });
+
+  // Re-check on resize
+  window.addEventListener("resize", function(){ setTimeout(scan, 0); });
+})();
+/* === Mark text-only cards as scrollable when needed (for centering behaviour) === */
+(function(){
+  function update(card){
+    const grid = card.querySelector(".work-grid.no-media");
+    if(!grid) return;
+    const inner = card.querySelector(".work-text-inner");
+    if(!inner) return;
+    const scrollable = inner.scrollHeight > inner.clientHeight + 2;
+    grid.classList.toggle("is-scrollable", scrollable);
+  }
+  function scan(){
+    document.querySelectorAll(".card.work-card").forEach(update);
+  }
+  window.addEventListener("load", ()=>setTimeout(scan,0));
+  window.addEventListener("resize", ()=>setTimeout(scan,0));
+  document.addEventListener("click", (e)=>{
+    if(e.target.closest && e.target.closest("[data-open-work], #openBiography")){
+      setTimeout(scan,0);
+    }
+  });
+})();
+</script>
+
+<script>
+/* === Toggle scrollable class for text+media cards (runs after show) === */
+(function(){
+  function update(card){
+    const grid = card.querySelector(".work-grid");
+    if(!grid || !grid.classList.contains("has-text")) return;
+    if(grid.classList.contains("no-media")) return;
+
+    const wt = card.querySelector(".work-text");
+    const inner = card.querySelector(".work-text-inner");
+    if(!wt || !inner) return;
+
+    // Must be visible to measure correctly
+    if(getComputedStyle(card).display === "none") return;
+
+    // Temporarily set overflow hidden for measurement consistency
+    const prev = inner.style.overflow;
+    inner.style.overflow = "hidden";
+    const scrollable = inner.scrollHeight > inner.clientHeight + 2;
+    inner.style.overflow = prev;
+
+    wt.classList.toggle("scrollable", scrollable);
+  }
+
+  function scan(){
+    document.querySelectorAll(".card.work-card").forEach(update);
+  }
+
+  window.addEventListener("load", ()=>setTimeout(scan,0));
+  window.addEventListener("resize", ()=>setTimeout(scan,0));
+
+  // After any navigation opens a card
+  document.addEventListener("click", (e)=>{
+    if(e.target.closest && e.target.closest("[data-open-work], [data-nav], #openBiography")){
+      setTimeout(scan, 80);
+    }
+  });
+
+  // If showCard exists, hook it without rewriting it
+  const _show = window.showCard;
+  if(typeof _show === "function"){
+    window.showCard = function(card){
+      _show(card);
+      setTimeout(scan, 80);
+    };
+  }
+})();
+</script>
+
+<script>
+/* === Biography fades controller === */
+(function(){
+  function bindBio(card){
+    if(!card.classList.contains("is-biography")) return;
+    const inner = card.querySelector(".bio-text .work-text-inner");
+    const topFade = card.querySelector(".bio-fade-top");
+    const botFade = card.querySelector(".bio-fade-bottom");
+    if(!inner || !topFade || !botFade) return;
+
+    function update(){
+      const maxScroll = inner.scrollHeight - inner.clientHeight;
+      const y = inner.scrollTop;
+      topFade.classList.toggle("show", y > 2);
+      botFade.classList.toggle("show", y < maxScroll - 2);
+    }
+    inner.addEventListener("scroll", update, {passive:true});
+    // initial
+    requestAnimationFrame(update);
+    // also on resize
+    window.addEventListener("resize", ()=>requestAnimationFrame(update));
+  }
+
+  function scan(){
+    document.querySelectorAll(".card.work-card.is-biography").forEach(bindBio);
+  }
+
+  window.addEventListener("load", ()=>setTimeout(scan,0));
+  document.addEventListener("click", (e)=>{
+    if(e.target.closest && e.target.closest("[data-open-work], [data-nav], #openBiography")){
+      setTimeout(scan, 80);
+    }
+  });
+})();
+</script>
+
+<script>
+/* === Biography isolated sizing + fades === */
+(function(){
+  function bindBioIso(card){
+    if(!card.classList.contains("bio-isolated")) return;
+    const box = card.querySelector(".bio-iso-box");
+    const viewport = card.querySelector(".bio-iso-viewport");
+    const sc = card.querySelector(".bio-iso-scroll");
+    const topFade = card.querySelector(".bio-fade-top");
+    const botFade = card.querySelector(".bio-fade-bottom");
+    if(!box || !viewport || !sc || !topFade || !botFade) return;
+
+    function fit(){
+      // available vertical space inside card between meta and footer
+      const cardRect = card.getBoundingClientRect();
+      const footer = card.querySelector(".work-footer");
+      const meta = card.querySelector(".work-meta");
+      const metaRect = meta ? meta.getBoundingClientRect() : cardRect;
+      const footerTop = footer ? footer.getBoundingClientRect().top : (cardRect.bottom - 30);
+      const pad = 12; // breathing room
+      const avail = Math.max(120, footerTop - metaRect.bottom - pad*2);
+      sc.style.maxHeight = Math.floor(avail) + "px";
+      // ensure viewport height matches the scroll viewport
+      viewport.style.height = sc.getBoundingClientRect().height + "px";
+      update();
+    }
+
+    function update(){
+      const maxScroll = sc.scrollHeight - sc.clientHeight;
+      const y = sc.scrollTop;
+      topFade.classList.toggle("show", y > 2);
+      botFade.classList.toggle("show", y < maxScroll - 2);
+    }
+
+    sc.addEventListener("scroll", update, {passive:true});
+    window.addEventListener("resize", ()=>requestAnimationFrame(fit));
+    requestAnimationFrame(fit);
+  }
+
+  function scan(){
+    document.querySelectorAll(".card.work-card").forEach(bindBioIso);
+  }
+  window.addEventListener("load", ()=>setTimeout(scan,0));
+  document.addEventListener("click", (e)=>{
+    if(e.target.closest && e.target.closest("[data-open-work], [data-nav], #openBiography")){
+      setTimeout(scan, 80);
+    }
+  });
+})();
+
+/* === Sidebar Active Highlight Logic (workSlug-aware) === */
+(function(){
+
+  function topMostVisibleWorkCard(){
+    const cards = Array.from(document.querySelectorAll(".card.work-card.visible"))
+      .filter(c => (c.style.display !== "none") && (c.style.visibility !== "hidden"));
+    if(!cards.length) return null;
+
+    // pick highest z-index (string -> number)
+    cards.sort((a,b)=>{
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    return cards[0] || null;
+  }
+
+  function updateSidebarActive(){
+    // Clear existing active states (works + top links)
+    document.querySelectorAll(".sidebar-list li.active").forEach(li => li.classList.remove("active"));
+    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(el => el.classList.remove("active-link"));
+
+    // Find the top-most visible work card
+    const cards = Array.from(document.querySelectorAll(".card.work-card.visible"))
+      .filter(c => c.style.display !== "none");
+    if(!cards.length) return;
+
+    cards.sort((a,b)=>{
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    const card = cards[0];
+
+    const slug = (card?.dataset?.workSlug || "").trim();
+    if(!slug) return;
+
+    // Top sidebar links use active-link instead of li.active
+    if(slug.toLowerCase() === "biography" || slug.toLowerCase() === "research"){
+      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+      if(topBtn) topBtn.classList.add("active-link");
+      return;
+    }
+
+    // Otherwise highlight the corresponding work in the grouped list
+    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+    if(!link) return;
+    const li = link.closest("li");
+    if(li) li.classList.add("active");
+  }
+
+  // Hook into showCard (do not break original behavior)
+  const originalShowCard = window.showCard;
+  if(typeof originalShowCard === "function"){
+    window.showCard = function(card){
+      originalShowCard(card);
+      // allow DOM updates/z-index to settle
+      setTimeout(updateSidebarActive, 0);
+      setTimeout(updateSidebarActive, 40);
+    };
+  }
+
+  // Also update when opening via sidebar/info buttons (delegated click)
+  document.addEventListener("click", function(e){
+    const btn = e.target.closest && e.target.closest("[data-open-work], #openBiography, [data-nav='info']");
+    if(btn) {
+      setTimeout(updateSidebarActive, 0);
+      setTimeout(updateSidebarActive, 60);
+    }
+  });
+
+  window.addEventListener("load", function(){
+    setTimeout(updateSidebarActive, 80);
+  });
+
+  // Re-sync highlight after viewport/layout changes (e.g. media view back to full window size)
+  window.addEventListener("resize", function(){
+    setTimeout(updateSidebarActive, 0);
+    setTimeout(updateSidebarActive, 80);
+    setTimeout(updateSidebarActive, 180);
+  });
+
+})();
+
+
+
+
+/* === Sidebar Exact 20 Character Truncation === */
+(function(){
+  const MAX = 20;
+
+  function truncateSidebarTitles(){
+    const links = document.querySelectorAll("#sidebarNav .sidebar-list .sidebar-link");
+
+    links.forEach(link=>{
+      const full = link.getAttribute("data-full-title") || link.textContent.trim();
+
+      // store original full title once
+      if(!link.getAttribute("data-full-title")){
+        link.setAttribute("data-full-title", full);
+      }
+
+      if(full.length > MAX){
+        link.textContent = full.slice(0, MAX) + "…";
+      }else{
+        link.textContent = full;
+      }
+    });
+  }
+
+  window.addEventListener("load", ()=>{
+    setTimeout(truncateSidebarTitles, 50);
+  });
+
+  // Re-run after sidebar rebuild (wrap existing builder if present)
+  const originalShowCard = window.showCard;
+  if(typeof originalShowCard === "function"){
+    window.showCard = function(card){
+      originalShowCard(card);
+      setTimeout(truncateSidebarTitles, 50);
+    };
+  }
+
+})();
+
+
+
+
+
+
+
+
+/* === Sidebar Position (VERTICAL MATCHED + RULES): 
+   - LEFT: Works use actual rect; Biography uses synthetic work-card rect (so it never follows biography geometry)
+   - TOP: Both states use shared synthetic work-frame top (perfect vertical match)
+   - Offscreen OK (no clamping) === */
+(function(){
+  const sidebar = document.getElementById("sidebarNav");
+  if(!sidebar) return;
+
+  const GAP = 20;
+  const Y_OFFSET = 50;   // raised 10px micro-adjust   // lowered 40px for final alignment   // single vertical offset applied to BOTH states
+  const CARD_W = 720;
+  const CARD_H = 480;
+
+  const sidebarWidth = ()=> (sidebar.offsetWidth || 240);
+
+  function topMostVisibleWorkCard(){
+    const cards = Array.from(document.querySelectorAll(".card.work-card.visible"))
+      .filter(c => c.style.display !== "none");
+    if(!cards.length) return null;
+    cards.sort((a,b)=>{
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    return cards[0];
+  }
+
+  function isBiography(card){
+    const slug = card?.dataset?.workSlug || "";
+    return slug.toLowerCase() === "biography";
+  }
+
+  function setCardShift(card, px){
+    if(!card) return;
+    card.style.setProperty("--card-x-shift", (px || 0) + "px");
+  }
+
+  function syntheticWorkRect(shiftPx){
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const oy = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--card-optical-y")) || 0;
+
+    const left = ((vw - CARD_W) / 2) + shiftPx;
+    const top  = ((vh - CARD_H) / 2) + oy;
+
+    return { left, top, width: CARD_W, height: CARD_H };
+  }
+
+  function positionSidebarFrom(leftRect, workFrameTop, sbW){
+    // LEFT derived from leftRect (work or synthetic) to preserve GAP
+    const left = leftRect.left - sbW - GAP;
+    // TOP derived from shared work-frame top so biography + works match perfectly
+    const top  = workFrameTop + Y_OFFSET;
+
+    sidebar.style.left = left + "px";
+    sidebar.style.top  = top + "px";
+  }
+
+  function update(){
+    if(!sidebar.classList.contains("visible")) return;
+
+    const card = topMostVisibleWorkCard();
+    if(!card) return;
+
+    const sbW = sidebarWidth();
+
+    // Keep card at native centered position (no clamp)
+    const shift = 0;
+    setCardShift(card, shift);
+
+    requestAnimationFrame(()=>{
+      const workFrame = syntheticWorkRect(shift); // shared top reference
+
+      if(isBiography(card)){
+        // Biography MUST follow work-card geometry for BOTH axes
+        positionSidebarFrom(workFrame, workFrame.top, sbW);
+      }else{
+        // Works: left from actual card rect; top from shared work-frame top
+        const actualRect = card.getBoundingClientRect();
+        positionSidebarFrom(actualRect, workFrame.top, sbW);
+      }
+    });
+  }
+
+  const originalShowCard = window.showCard;
+  if(typeof originalShowCard === "function"){
+    window.showCard = function(card){
+      originalShowCard(card);
+      setTimeout(update, 0);
+      setTimeout(update, 60);
+    };
+  }
+
+  const originalSetSidebarVisible = window.setSidebarVisible;
+  if(typeof originalSetSidebarVisible === "function"){
+    window.setSidebarVisible = function(on){
+      originalSetSidebarVisible(on);
+      setTimeout(update, 0);
+      setTimeout(update, 60);
+    };
+  }
+
+  window.addEventListener("resize", ()=>setTimeout(update, 0));
+  window.addEventListener("scroll", ()=>setTimeout(update, 0), {passive:true});
+  window.addEventListener("load", ()=>setTimeout(update, 120));
+})();
+
+/* === Header click: close lightbox-overlay + return to Info (no layout/CSS changes) === */
+(function(){
+  const header = document.getElementById("globalHeader") || document.querySelector(".global-header") || document.querySelector("header");
+  if(!header) return;
+
+  function isOverlayOpen(){
+    const overlay = document.querySelector(".lightbox-overlay");
+    return !!(overlay && overlay.classList.contains("active"));
+  }
+
+  function closeOverlay(){
+    const overlay = document.querySelector(".lightbox-overlay");
+    if(overlay) overlay.classList.remove("active");
+  }
+
+  function goInfo(){
+    if(typeof window.showInfo === "function"){
+      window.showInfo();
+      return;
+    }
+    const infoCard = document.getElementById("infoCard") || document.querySelector('.card.work-card[data-work-slug="info"]');
+    if(typeof window.showCard === "function" && infoCard){
+      window.showCard(infoCard);
+      return;
+    }
+    const infoLink = document.querySelector('#sidebarNav .sidebar-link[data-open-work="info"]');
+    if(infoLink) infoLink.click();
+  }
+
+  header.addEventListener("click", function(e){
+    if(!isOverlayOpen()) return;
+    e.preventDefault();
+    e.stopPropagation();
+    closeOverlay();
+    setTimeout(goInfo, 0);
+  }, true);
+})();
+
+/* =====================================================
+   LIGHTBOX KEYBOARD NAVIGATION (FULL SET)
+   → / ←  : next/prev
+   Space  : next
+   ESC    : close
+   Home   : first
+   End    : last
+===================================================== */
+document.addEventListener("keydown", function(e){
+  const overlay = document.querySelector(".lightbox-overlay.active");
+  if(!overlay) return;
+
+  const track = overlay.querySelector(".lightbox-track");
+  if(!track) return;
+
+  // Avoid hijacking typing in inputs (safety)
+  const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
+  if(tag === "input" || tag === "textarea" || e.target.isContentEditable) return;
+
+  const slideWidth = track.clientWidth || 0;
+  if(!slideWidth) return;
+
+  const maxScroll = Math.max(0, track.scrollWidth - slideWidth);
+
+  // → NEXT (also Space)
+  if(e.key === "ArrowRight" || e.key === " "){
+    e.preventDefault();
+    track.scrollBy({ left: slideWidth, behavior: "smooth" });
+    return;
+  }
+
+  // ← PREVIOUS
+  if(e.key === "ArrowLeft"){
+    e.preventDefault();
+    track.scrollBy({ left: -slideWidth, behavior: "smooth" });
+    return;
+  }
+
+  // HOME → FIRST
+  if(e.key === "Home"){
+    e.preventDefault();
+    track.scrollTo({ left: 0, behavior: "smooth" });
+    return;
+  }
+
+  // END → LAST
+  if(e.key === "End"){
+    e.preventDefault();
+    track.scrollTo({ left: maxScroll, behavior: "smooth" });
+    return;
+  }
+
+  // ESC → CLOSE
+  if(e.key === "Escape"){
+    const closeBtn = overlay.querySelector(".lightbox-close");
+    if(closeBtn){
+      closeBtn.click();
+    } else {
+      // fallback: remove active class if close button not found
+      overlay.classList.remove("active");
+    }
+  }
+});
+
+</script>
+
+<script>
+(function(){
+  function getInfo(){
+    return document.querySelector(".info-card");
+  }
+  function isInfo(card){
+    return card && card.classList && card.classList.contains("info-card");
+  }
+  function setGhost(on){
+    const info=getInfo();
+    if(!info) return;
+    if(on) info.classList.add("info-ghost");
+    else info.classList.remove("info-ghost");
+  }
+
+  window.addEventListener("load",function(){
+    const info=getInfo();
+    if(info && !info.classList.contains("visible")){
+      setGhost(true);
+    }
+  },{once:true});
+
+  const orig=window.showCard;
+  if(typeof orig==="function"){
+    window.showCard=function(card){
+      if(isInfo(card)) setGhost(false);
+      else setGhost(true);
+      return orig(card);
+    }
+  }
+})();
+</script>
+
+
+<!-- === Structural fix: opening any card closes all others (prevents stacking behind transparency) === -->
+<script>
+(function(){
+  function closeAllCardsExcept(keep){
+    const cards = Array.from(document.querySelectorAll(".card"));
+    cards.forEach(c=>{
+      if(c === keep) return;
+      c.classList.remove("visible");
+      c.classList.add("hidden");
+      c.style.display = "none";
+    });
+  }
+
+  function ensureVisible(card){
+    if(!card) return;
+    card.classList.remove("hidden");
+    card.classList.add("visible");
+    card.style.display = "";
+  }
+
+  const originalShowCard = window.showCard;
+  if(typeof originalShowCard === "function"){
+    window.showCard = function(card){
+      closeAllCardsExcept(card);
+      const res = originalShowCard(card);
+      ensureVisible(card);
+      return res;
+    };
+  }
+})();
+</script>
+
+
+<!-- === Fade between cards (smooth match to v4.4.22) === -->
+<script>
+(function(){
+  function topMostVisibleCard(){
+    const visibles = Array.from(document.querySelectorAll(".card.work-card.visible"))
+      .filter(c => c && c.style.display !== "none");
+    if(!visibles.length) return null;
+    visibles.sort((a,b)=>{
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    return visibles[0];
+  }
+
+  function animateIn(card){
+    if(!card || !card.classList) return;
+    card.classList.remove("card-enter");
+    void card.offsetWidth;
+    card.classList.add("card-enter");
+    setTimeout(()=>{ try{ card.classList.remove("card-enter"); }catch(e){} }, 520);
+  }
+
+  const originalShowCard = window.showCard;
+  if(typeof originalShowCard !== "function") return;
+  if(window.__CARD_TRANSITIONS_SMOOTH_INSTALLED) return;
+  window.__CARD_TRANSITIONS_SMOOTH_INSTALLED = true;
+
+  let inFlight = false;
+
+  window.showCard = function(target){
+    if(inFlight) return originalShowCard(target);
+
+    const current = topMostVisibleCard();
+
+    // If nothing is open yet, just open and animate in
+    if(!current){
+      const res0 = originalShowCard(target);
+      requestAnimationFrame(()=>{
+        const next0 = topMostVisibleCard();
+        if(next0) animateIn(next0);
+      });
+      return res0;
+    }
+
+    inFlight = true;
+    current.classList.add("card-exit");
+
+    const OUT_MS = 320;
+
+    setTimeout(function(){
+      try{ current.classList.remove("card-exit"); }catch(e){}
+
+      // Gate visibility to prevent flash
+      document.body.classList.add("card-transitioning");
+
+      const res = originalShowCard(target);
+
+      // Next frame: attach enter animation BEFORE un-gating
+      requestAnimationFrame(function(){
+        const next = topMostVisibleCard();
+        if(next){
+          // Ensure it starts hidden (still gated), then animate in
+          animateIn(next);
+        }
+        // Now allow opacity to be driven by animation
+        document.body.classList.remove("card-transitioning");
+        inFlight = false;
+      });
+
+      return res;
+    }, OUT_MS);
+  };
+})();
+</script>
+
+
+
+<script>
+(function(){
+  const el = document.getElementById("float-sigil");
+  if(!el) return;
+
+  function rand(min, max){ return Math.random() * (max - min) + min; }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+  // Read size
+  let w = el.offsetWidth  || 72;
+  let h = el.offsetHeight || 72;
+
+  // Random start
+  let x = rand(16, Math.max(16, window.innerWidth  - w - 16));
+  let y = rand(16, Math.max(16, window.innerHeight - h - 16));
+
+  // Velocity px/s
+  let vx = (Math.random() < 0.5 ? -1 : 1) * rand(70, 140);
+  let vy = (Math.random() < 0.5 ? -1 : 1) * rand(70, 140);
+
+  // Rotation physics
+  let angle = rand(0, 360); // degrees
+  let omega = (Math.random() < 0.5 ? -1 : 1) * rand(90, 220); // deg/s
+  const spinDamp = 0.22; // per second
+
+  // Cursor bumper
+  let mouseX = -9999, mouseY = -9999;
+  const cursorRadius = 44;
+  const sigilRadius  = 81; // for 72px
+
+  window.addEventListener("mousemove", (e)=>{
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  }, {passive:true});
+
+  function updateSize(){
+    w = el.offsetWidth  || 72;
+    h = el.offsetHeight || 72;
+  }
+  window.addEventListener("resize", ()=>{
+    updateSize();
+    x = clamp(x, 0, Math.max(0, window.innerWidth - w));
+    y = clamp(y, 0, Math.max(0, window.innerHeight - h));
+  }, {passive:true});
+
+  function kickSpin(impulse){
+    omega = clamp(omega + impulse, -280, 280);
+  }
+
+  let last = performance.now();
+
+  function step(now){
+    const dt = Math.min(0.033, (now - last) / 1000);
+    last = now;
+
+    // Integrate position
+    x += vx * dt;
+    y += vy * dt;
+
+    // Wall bounce
+    const maxX = window.innerWidth  - w;
+    const maxY = window.innerHeight - h;
+
+    let hit = false;
+
+    if(x <= 0){ x = 0; vx = Math.abs(vx); hit = true; kickSpin( +(Math.abs(vx)+Math.abs(vy))*0.04 ); }
+    if(x >= maxX){ x = maxX; vx = -Math.abs(vx); hit = true; kickSpin( -(Math.abs(vx)+Math.abs(vy))*0.04 ); }
+    if(y <= 0){ y = 0; vy = Math.abs(vy); hit = true; kickSpin( -(Math.abs(vx)+Math.abs(vy))*0.035 ); }
+    if(y >= maxY){ y = maxY; vy = -Math.abs(vy); hit = true; kickSpin( +(Math.abs(vx)+Math.abs(vy))*0.035 ); }
+
+    // Cursor bounce (circle)
+    const cx = x + w/2;
+    const cy = y + h/2;
+    const dx = cx - mouseX;
+    const dy = cy - mouseY;
+    const dist = Math.hypot(dx, dy);
+    const minDist = cursorRadius + sigilRadius;
+
+    if(dist > 0 && dist < minDist){
+      const nx = dx / dist;
+      const ny = dy / dist;
+
+      // Push out
+      const push = (minDist - dist) + 0.5;
+      x += nx * push;
+      y += ny * push;
+
+      // Reflect velocity about normal
+      const dot = vx*nx + vy*ny;
+      vx = vx - 2*dot*nx;
+      vy = vy - 2*dot*ny;
+
+      // Spin impulse from tangential component
+      const tx = -ny, ty = nx;
+      const tangential = (vx*tx + vy*ty);
+      kickSpin(tangential * 0.06);
+
+      // tiny jitter to avoid sticking
+      vx += (Math.random()-0.5)*6;
+      vy += (Math.random()-0.5)*6;
+    }
+
+    // Integrate rotation + damping
+    angle += omega * dt;
+    omega *= (1 - spinDamp * dt);
+
+    // Apply
+    el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${angle}deg)`;
+
+    requestAnimationFrame(step);
+  }
+
+  // Start
+  el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${angle}deg)`;
+  requestAnimationFrame(step);
+})();
+</script>
+
+
+
+
+
+
+
+
+<script>
+(function(){
+  const mq = window.matchMedia("(max-width: 900px)");
+  const toggle = document.getElementById("mobileNavToggle");
+  const overlay = document.getElementById("mobileNavOverlay");
+  const content = document.getElementById("mobileNavContent");
+  const closeBtn = overlay ? overlay.querySelector(".mobile-nav-close") : null;
+
+  if(!toggle || !overlay || !content) return;
+
+  const OVERLAY_FADE_MS = 220;
+  const HOLD_AFTER_TRIGGER_MS = 260; // keep gate up long enough for the site's own fade-in to begin
+  let handoffLock = false;
+
+  function closeOverlay(){
+    const active = document.activeElement;
+    if(active && overlay.contains(active) && typeof active.blur === "function"){
+      active.blur();
+    }
+    overlay.classList.remove("open", "handoff");
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.setAttribute("inert", "");
+    toggle.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    if(typeof toggle.focus === "function"){
+      try{ toggle.focus({preventScroll:true}); }catch(e){ toggle.focus(); }
+    }
+  }
+
+  function syncLightboxState(){
+    if(!mq.matches){
+      document.body.classList.remove("mobile-lightbox-open", "mobile-nav-transitioning");
+      closeOverlay();
+      return;
+    }
+    const openLightbox =
+      document.querySelector(".lightbox-overlay.active, .lightbox.active, .lightbox-overlay[aria-hidden='false']");
+    document.body.classList.toggle("mobile-lightbox-open", !!openLightbox);
+  }
+
+  function releaseGateLater(){
+    // Hold through at least one paint + a short delay so subsequent-work transitions don't flash.
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        setTimeout(function(){
+          document.body.classList.remove("mobile-nav-transitioning");
+        }, HOLD_AFTER_TRIGGER_MS);
+      });
+    });
+  }
+
+  function handoffTo(fn){
+    if(!mq.matches || handoffLock) return;
+    handoffLock = true;
+
+    // Cover the whole handoff and suppress visible cards underneath.
+    overlay.classList.add("handoff");
+    document.body.classList.add("mobile-nav-transitioning");
+
+    // Trigger the site's normal navigation underneath the overlay.
+    try{ fn(); }catch(e){}
+
+    // Start overlay fade after one frame so the target card can mount while still hidden.
+    requestAnimationFrame(function(){
+      closeOverlay();
+
+      // Keep cards hidden until the site's own transition is underway.
+      releaseGateLater();
+
+      setTimeout(function(){
+        handoffLock = false;
+      }, OVERLAY_FADE_MS + HOLD_AFTER_TRIGGER_MS + 80);
+    });
+  }
+
+  function copySidebarIntoOverlay(){
+    if(!mq.matches) return;
+    const sidebarWorks = document.getElementById("sidebarWorks");
+    if(!sidebarWorks) return;
+
+    const researchItem = WORKS_DATA.find(w => String(w.slug||"").trim().toLowerCase() === "research");
+    const researchVisible = !!(researchItem && String(researchItem.site_visible||"yes").trim().toLowerCase() === "yes");
+    const htmlTop = [
+      '<button type="button" class="sidebar-link" data-nav="info">Info</button>',
+      '<button type="button" class="sidebar-link" data-open-work="biography">Biography</button>',
+      researchVisible ? '<button type="button" class="sidebar-link" data-open-work="research">Research</button>' : '',
+      '<div class="sidebar-divider" aria-hidden="true"></div>'
+    ].join("");
+
+    content.innerHTML = '<div class="sidebar-inner">' + htmlTop + sidebarWorks.innerHTML + '</div>';
+
+    content.querySelectorAll("[data-nav='info']").forEach(btn=>{
+      btn.addEventListener("click", function(){
+        handoffTo(function(){
+          const header = document.getElementById("globalHeader");
+          if(header) header.click();
+        });
+      });
+    });
+
+    content.querySelectorAll("[data-open-work]").forEach(btn=>{
+      btn.addEventListener("click", function(){
+        const slug = this.getAttribute("data-open-work");
+        handoffTo(function(){
+          const target =
+            document.querySelector('.card.work-card[data-slug="'+slug+'"]') ||
+            document.querySelector('.card.work-card[data-work-slug="'+slug+'"]');
+
+          // Hard-close any currently visible cards first so the next work opens fresh.
+          document.querySelectorAll('.card.visible').forEach(function(card){
+            if(card !== target){
+              card.classList.remove('visible');
+              card.classList.add('hidden');
+              card.style.display = 'none';
+              card.style.visibility = 'hidden';
+            }
+          });
+
+          if(target && typeof window.showCard === "function"){
+            target.classList.remove('hidden');
+            target.style.display = '';
+            target.style.visibility = '';
+            window.showCard(target);
+          } else {
+            const orig = document.querySelector('#sidebarNav [data-open-work="'+slug+'"]');
+            if(orig) orig.click();
+          }
+        });
+      });
+    });
+  }
+
+  function openOverlay(){
+    if(!mq.matches || handoffLock) return;
+    copySidebarIntoOverlay();
+    overlay.classList.add("open");
+    overlay.classList.remove("handoff");
+    overlay.setAttribute("aria-hidden", "false");
+    overlay.removeAttribute("inert");
+    toggle.classList.add("is-open");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  toggle.addEventListener("click", function(){
+    if(!mq.matches || handoffLock) return;
+    if(overlay.classList.contains("open")) closeOverlay();
+    else openOverlay();
+  });
+
+  if(closeBtn){
+    closeBtn.addEventListener("click", function(){
+      if(!mq.matches || handoffLock) return;
+      closeOverlay();
+    });
+  }
+
+  overlay.addEventListener("click", function(e){
+    if(!mq.matches || handoffLock) return;
+    if(e.target === overlay) closeOverlay();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(!mq.matches || handoffLock) return;
+    if(e.key === "Escape" && overlay.classList.contains("open")) closeOverlay();
+  });
+
+  window.addEventListener("load", syncLightboxState, {once:true});
+  window.addEventListener("resize", syncLightboxState);
+})();
+</script>
+
+
+
+
+
+
+
+<script>
+(function(){
+  const mq = window.matchMedia("(max-width: 900px)");
+  const header = document.getElementById("globalHeader");
+  const overlay = document.getElementById("mobileNavOverlay");
+  const toggle = document.getElementById("mobileNavToggle");
+
+  if(!header || !overlay || !toggle) return;
+  if(window.__MOBILE_HEADER_GO_HOME_PATCH) return;
+  window.__MOBILE_HEADER_GO_HOME_PATCH = true;
+
+  function closeMobileNav(){
+    overlay.classList.remove("open", "handoff");
+    overlay.setAttribute("aria-hidden", "true");
+    toggle.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("mobile-menu-open");
+  }
+
+  function isMobileMenuOpen(){
+    return mq.matches && overlay.classList.contains("open");
+  }
+
+  function goInfoFromHeader(e){
+    if(!isMobileMenuOpen()) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    closeMobileNav();
+
+    if(typeof window.goHome === "function"){
+      window.goHome();
+      return;
+    }
+
+    const info =
+      document.querySelector(".card.info-card") ||
+      document.getElementById("infoCard");
+    if(info && typeof window.showCard === "function"){
+      window.showCard(info);
+    }
+  }
+
+  header.addEventListener("click", goInfoFromHeader, true);
+  header.addEventListener("keydown", function(e){
+    if((e.key === "Enter" || e.key === " ") && isMobileMenuOpen()){
+      goInfoFromHeader(e);
+    }
+  }, true);
+})();
+</script>
+
+
+
+<script>
+(function(){
+  const mq = window.matchMedia("(max-width: 900px)");
+  if(window.__LIGHTWEIGHT_MOBILE_STATE_SYNC) return;
+  window.__LIGHTWEIGHT_MOBILE_STATE_SYNC = true;
+
+  const overlay = document.getElementById("mobileNavOverlay");
+
+  function setMenuOpenState(){
+    if(!mq.matches){
+      document.body.classList.remove("mobile-menu-open");
+      return;
+    }
+    const open = !!(overlay && overlay.classList.contains("open"));
+    document.body.classList.toggle("mobile-menu-open", open);
+  }
+
+  function setLightboxState(open){
+    if(!mq.matches){
+      document.body.classList.remove("mobile-lightbox-open");
+      return;
+    }
+    document.body.classList.toggle("mobile-lightbox-open", !!open);
+  }
+
+  // Menu button state: infer from user interactions rather than observing the entire DOM
+  document.addEventListener("click", function(e){
+    const t = e.target;
+    if(!t) return;
+
+    // Opening the mobile menu
+    if(t.closest && t.closest("#mobileNavToggle")){
+      requestAnimationFrame(setMenuOpenState);
+      return;
+    }
+
+    // Closing the mobile menu
+    if(
+      (t.closest && t.closest("#mobileNavOverlay .mobile-nav-close")) ||
+      (t.id === "mobileNavOverlay")
+    ){
+      requestAnimationFrame(setMenuOpenState);
+      return;
+    }
+
+    // Opening lightbox from any media box
+    if(t.closest && t.closest(".media-box")){
+      setLightboxState(true);
+      return;
+    }
+
+    // Closing lightbox from close button
+    if(t.closest && t.closest(".lightbox-close")){
+      setLightboxState(false);
+      return;
+    }
+
+    // Clicking overlay background closes lightbox in many builds
+    if(t.classList && (t.classList.contains("lightbox-overlay") || t.classList.contains("lightbox"))){
+      setLightboxState(false);
+      return;
+    }
+  }, true);
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      setLightboxState(false);
+      requestAnimationFrame(setMenuOpenState);
+    }
+  }, true);
+
+  window.addEventListener("resize", function(){
+    if(!mq.matches){
+      document.body.classList.remove("mobile-lightbox-open", "mobile-menu-open");
+    } else {
+      setMenuOpenState();
+    }
+  });
+
+  window.addEventListener("load", function(){
+    setMenuOpenState();
+    // Initial lightbox state check only once
+    const open = !!document.querySelector(".lightbox-overlay.active, .lightbox.active, .lightbox-overlay[aria-hidden='false']");
+    setLightboxState(open);
+  }, {once:true});
+})();
+</script>
+
+
+<script>
+(function(){
+  const mq = window.matchMedia("(max-width: 900px)");
+  const header = document.getElementById("globalHeader");
+  const menuBtn = document.getElementById("mobileNavToggle");
+  const overlay = document.getElementById("mobileNavOverlay");
+  if(!header || !menuBtn || !overlay) return;
+  if(window.__MOBILE_CHROME_HARD_FIX) return;
+  window.__MOBILE_CHROME_HARD_FIX = true;
+
+  function topMostVisibleCard(){
+    const visibles = Array.from(document.querySelectorAll(".card.visible"))
+      .filter(c => c && c.style.display !== "none" && c.style.visibility !== "hidden");
+    if(!visibles.length) return null;
+    visibles.sort((a,b)=>{
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    return visibles[0];
+  }
+
+  function lightboxOpen(){
+    return !!document.querySelector(".lightbox-overlay.active, .lightbox.active, .lightbox-overlay[aria-hidden='false']");
+  }
+
+  function closeMobileNavRaw(){
+    overlay.classList.remove("open", "handoff");
+    overlay.setAttribute("aria-hidden", "true");
+    menuBtn.classList.remove("is-open");
+    menuBtn.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("mobile-menu-open");
+  }
+
+  function showMenuBtn(){
+    menuBtn.style.display = "";
+    menuBtn.style.opacity = "";
+    menuBtn.style.visibility = "";
+    menuBtn.style.pointerEvents = "";
+  }
+
+  function hideMenuBtn(){
+    menuBtn.style.display = "none";
+    menuBtn.style.opacity = "0";
+    menuBtn.style.visibility = "hidden";
+    menuBtn.style.pointerEvents = "none";
+  }
+
+  function hideHeader(){
+    header.classList.remove("visible");
+    header.style.opacity = "0";
+    header.style.visibility = "hidden";
+    header.style.pointerEvents = "none";
+  }
+
+  function releaseHeader(){
+    header.style.opacity = "";
+    header.style.visibility = "";
+    header.style.pointerEvents = "";
+  }
+
+  function syncMobileChrome(){
+    if(!mq.matches) return;
+
+    const lbOpen = lightboxOpen();
+    const top = topMostVisibleCard();
+    const onInfo = !!(top && top.classList && top.classList.contains("info-card"));
+    const menuOpen = overlay.classList.contains("open");
+
+    if(lbOpen){
+      hideMenuBtn();
+      releaseHeader(); // header may be visible over lightbox by site logic
+      return;
+    }
+
+    showMenuBtn();
+
+    if(onInfo && !menuOpen){
+      hideHeader();
+    } else {
+      releaseHeader();
+    }
+  }
+
+  // Wrap goHome so returning to Info on mobile always restores correct chrome
+  if(typeof window.goHome === "function" && !window.__MOBILE_CHROME_HARD_FIX_GOHOME){
+    const oldGoHome = window.goHome;
+    window.__MOBILE_CHROME_HARD_FIX_GOHOME = true;
+    window.goHome = function(){
+      if(mq.matches){
+        closeMobileNavRaw();
+        document.body.classList.remove("mobile-lightbox-open");
+      }
+      const res = oldGoHome();
+      if(mq.matches){
+        requestAnimationFrame(syncMobileChrome);
+        setTimeout(syncMobileChrome, 220);
+      }
+      return res;
+    };
+  }
+
+  // Header clicks: let site logic run, then reconcile mobile chrome
+  header.addEventListener("click", function(){
+    if(!mq.matches) return;
+    setTimeout(syncMobileChrome, 30);
+    setTimeout(syncMobileChrome, 220);
+  }, true);
+
+  // Lightbox close / escape: reconcile after close
+  document.addEventListener("click", function(e){
+    if(!mq.matches) return;
+    const t = e.target;
+    if(!t) return;
+    if(t.closest && t.closest(".lightbox-close")){
+      setTimeout(syncMobileChrome, 30);
+      setTimeout(syncMobileChrome, 220);
+    }
+  }, true);
+
+  document.addEventListener("keydown", function(e){
+    if(!mq.matches) return;
+    if(e.key === "Escape"){
+      setTimeout(syncMobileChrome, 30);
+      setTimeout(syncMobileChrome, 220);
+    }
+  }, true);
+
+  window.addEventListener("load", syncMobileChrome, {once:true});
+  window.addEventListener("resize", syncMobileChrome);
+
+  // If card navigation happens by other means, reconcile once after it
+  if(typeof window.showCard === "function" && !window.__MOBILE_CHROME_HARD_FIX_SHOWCARD){
+    const oldShowCard = window.showCard;
+    window.__MOBILE_CHROME_HARD_FIX_SHOWCARD = true;
+    window.showCard = function(card){
+      const res = oldShowCard(card);
+      if(mq.matches){
+        requestAnimationFrame(syncMobileChrome);
+        setTimeout(syncMobileChrome, 220);
+      }
+      return res;
+    };
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  const mq = window.matchMedia("(max-width: 900px)");
+  const header = document.getElementById("globalHeader");
+  const menuBtn = document.getElementById("mobileNavToggle");
+  const overlay = document.getElementById("mobileNavOverlay");
+  if(!header || !menuBtn || !overlay) return;
+  if(window.__MOBILE_MENU_RESTORE_AFTER_HEADER_CLICK) return;
+  window.__MOBILE_MENU_RESTORE_AFTER_HEADER_CLICK = true;
+
+  function restoreMenuIfNeeded(){
+    if(!mq.matches) return;
+
+    const lightboxOpen = !!document.querySelector(
+      ".lightbox-overlay.active, .lightbox.active, .lightbox-overlay[aria-hidden='false']"
+    );
+
+    // Always clear stale mobile menu/lightbox state after header-driven navigation.
+    if(!lightboxOpen){
+      document.body.classList.remove("mobile-lightbox-open");
+      menuBtn.style.display = "block";
+      menuBtn.style.opacity = "1";
+      menuBtn.style.visibility = "visible";
+      menuBtn.style.pointerEvents = "auto";
+    }
+  }
+
+  header.addEventListener("click", function(){
+    if(!mq.matches) return;
+    // Let existing header/lightbox/card logic run first, then restore mobile chrome.
+    setTimeout(restoreMenuIfNeeded, 40);
+    setTimeout(restoreMenuIfNeeded, 240);
+  }, true);
+
+  header.addEventListener("keydown", function(e){
+    if(!mq.matches) return;
+    if(e.key === "Enter" || e.key === " "){
+      setTimeout(restoreMenuIfNeeded, 40);
+      setTimeout(restoreMenuIfNeeded, 240);
+    }
+  }, true);
+})();
+</script>
+
+
+<script>
+(function(){
+  const mq = window.matchMedia("(max-width: 900px)");
+  const header = document.getElementById("globalHeader");
+  const menuBtn = document.getElementById("mobileNavToggle");
+  const overlay = document.getElementById("mobileNavOverlay");
+  if(!header || !menuBtn || !overlay) return;
+  if(window.__INFO_MENU_HEADER_VISIBILITY_PATCH) return;
+  window.__INFO_MENU_HEADER_VISIBILITY_PATCH = true;
+
+  function topMostVisibleCard(){
+    const visibles = Array.from(document.querySelectorAll(".card.visible"))
+      .filter(c => c && c.style.display !== "none" && c.style.visibility !== "hidden");
+    if(!visibles.length) return null;
+    visibles.sort((a,b)=>{
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    return visibles[0];
+  }
+
+  function onInfoCard(){
+    const top = topMostVisibleCard();
+    return !!(top && top.classList && top.classList.contains("info-card"));
+  }
+
+  function lightboxOpen(){
+    return !!document.querySelector(".lightbox-overlay.active, .lightbox.active, .lightbox-overlay[aria-hidden='false']");
+  }
+
+  function syncInfoMenuHeader(){
+    if(!mq.matches) return;
+    if(lightboxOpen()) return;
+
+    const menuOpen = overlay.classList.contains("open");
+    const onInfo = onInfoCard();
+
+    if(onInfo){
+      if(menuOpen){
+        document.body.classList.add("mobile-menu-open");
+        header.classList.add("visible");
+        header.style.opacity = "1";
+        header.style.visibility = "visible";
+        header.style.pointerEvents = "auto";
+      } else {
+        document.body.classList.remove("mobile-menu-open");
+        header.classList.remove("visible");
+        header.style.opacity = "0";
+        header.style.visibility = "hidden";
+        header.style.pointerEvents = "none";
+      }
+    }
+  }
+
+  menuBtn.addEventListener("click", function(){
+    if(!mq.matches) return;
+    setTimeout(syncInfoMenuHeader, 30);
+    setTimeout(syncInfoMenuHeader, 240);
+  }, true);
+
+  const closeBtn = overlay.querySelector(".mobile-nav-close");
+  if(closeBtn){
+    closeBtn.addEventListener("click", function(){
+      if(!mq.matches) return;
+      setTimeout(syncInfoMenuHeader, 30);
+      setTimeout(syncInfoMenuHeader, 240);
+    }, true);
+  }
+
+  overlay.addEventListener("click", function(e){
+    if(!mq.matches) return;
+    if(e.target === overlay){
+      setTimeout(syncInfoMenuHeader, 30);
+      setTimeout(syncInfoMenuHeader, 240);
+    }
+  }, true);
+
+  if(typeof window.showCard === "function" && !window.__INFO_MENU_HEADER_VISIBILITY_SHOWCARD_PATCH){
+    const oldShowCard = window.showCard;
+    window.__INFO_MENU_HEADER_VISIBILITY_SHOWCARD_PATCH = true;
+    window.showCard = function(card){
+      const res = oldShowCard(card);
+      if(mq.matches){
+        requestAnimationFrame(syncInfoMenuHeader);
+        setTimeout(syncInfoMenuHeader, 220);
+      }
+      return res;
+    };
+  }
+
+  window.addEventListener("load", syncInfoMenuHeader, {once:true});
+  window.addEventListener("resize", syncInfoMenuHeader);
+})();
+</script>
+
+
+<script>
+(function(){
+  const mq = window.matchMedia("(max-width: 900px)");
+  const header = document.getElementById("globalHeader");
+  const menuBtn = document.getElementById("mobileNavToggle");
+  const overlay = document.getElementById("mobileNavOverlay");
+  if(!header || !menuBtn || !overlay) return;
+  if(window.__DESKTOP_HEADER_RESTORE_AFTER_MOBILE) return;
+  window.__DESKTOP_HEADER_RESTORE_AFTER_MOBILE = true;
+
+  function topMostVisibleCard(){
+    const visibles = Array.from(document.querySelectorAll(".card.visible"))
+      .filter(c => c && c.style.display !== "none" && c.style.visibility !== "hidden");
+    if(!visibles.length) return null;
+    visibles.sort((a,b)=>{
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    return visibles[0];
+  }
+
+  function restoreDesktopHeader(){
+    if(mq.matches) return;
+    document.body.classList.remove("mobile-menu-open","mobile-lightbox-open","mobile-nav-transitioning");
+    overlay.classList.remove("open","handoff");
+    overlay.setAttribute("aria-hidden","true");
+    menuBtn.classList.remove("is-open");
+    menuBtn.setAttribute("aria-expanded","false");
+
+    // Clear any inline styles written by mobile patches
+    header.style.opacity = "";
+    header.style.visibility = "";
+    header.style.pointerEvents = "";
+    menuBtn.style.display = "";
+    menuBtn.style.opacity = "";
+    menuBtn.style.visibility = "";
+    menuBtn.style.pointerEvents = "";
+
+    const top = topMostVisibleCard();
+    const onInfo = !!(top && top.classList && top.classList.contains("info-card"));
+
+    // Mirror site desktop logic explicitly
+    if(onInfo){
+      header.classList.remove("visible");
+    } else {
+      header.classList.add("visible");
+    }
+  }
+
+  window.addEventListener("resize", restoreDesktopHeader);
+  mq.addEventListener("change", restoreDesktopHeader);
+  window.addEventListener("load", restoreDesktopHeader, {once:true});
+
+  if(typeof window.showCard === "function" && !window.__DESKTOP_HEADER_RESTORE_AFTER_MOBILE_SHOWCARD){
+    const oldShowCard = window.showCard;
+    window.__DESKTOP_HEADER_RESTORE_AFTER_MOBILE_SHOWCARD = true;
+    window.showCard = function(card){
+      const res = oldShowCard(card);
+      if(!mq.matches){
+        requestAnimationFrame(restoreDesktopHeader);
+      }
+      return res;
+    };
+  }
+})();
+</script>
+
+
+<script>
+(function(){
+  function updateSidebarFade(){
+    const nav = document.getElementById("sidebarNav");
+    if(!nav) return;
+    const inner = nav.querySelector(".sidebar-inner");
+    if(!inner) return;
+
+    const hasOverflow = inner.scrollHeight > inner.clientHeight + 1;
+    const atTop = inner.scrollTop <= 1;
+    const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
+
+    nav.classList.toggle("has-overflow", hasOverflow);
+    nav.classList.toggle("has-top-fade", hasOverflow && !atTop);
+    nav.classList.toggle("at-bottom", !hasOverflow || atBottom);
+  }
+
+  function bindSidebarFade(){
+    const nav = document.getElementById("sidebarNav");
+    if(!nav || nav.__sidebarFadeBound) return;
+    const inner = nav.querySelector(".sidebar-inner");
+    if(!inner) return;
+    nav.__sidebarFadeBound = true;
+
+    const run = ()=>updateSidebarFade();
+    inner.addEventListener("scroll", run, {passive:true});
+    window.addEventListener("resize", run);
+    document.addEventListener("click", function(e){
+      if(e.target.closest && e.target.closest("[data-open-work], [data-nav], #globalHeader, #mobileNavToggle, .mobile-nav-close")){
+        setTimeout(run, 0);
+        setTimeout(run, 80);
+      }
+    });
+    run();
+    requestAnimationFrame(run);
+    setTimeout(run, 80);
+    setTimeout(run, 180);
+  }
+
+  window.addEventListener("load", bindSidebarFade, {once:true});
+  window.addEventListener("resize", updateSidebarFade);
+
+  if(typeof window.showCard === "function" && !window.__SIDEBAR_FADE_PATCH){
+    const oldShowCard = window.showCard;
+    window.__SIDEBAR_FADE_PATCH = true;
+    window.showCard = function(card){
+      const res = oldShowCard(card);
+      requestAnimationFrame(updateSidebarFade);
+      setTimeout(updateSidebarFade, 80);
+      return res;
+    };
+  }
+})();
+</script>
+
+</body>
+</html>

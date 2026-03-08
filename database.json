@@ -434,7 +434,7 @@
   {
     "slug": "research",
     "display_title": "Research",
-    "site_visible": "NO",
+    "site_visible": "YES",
     "display_slug": "Research",
     "category": "WORKS",
     "subcategory": "Research",

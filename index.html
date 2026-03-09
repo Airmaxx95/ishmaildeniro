@@ -2741,6 +2741,49 @@ html, body{
   }
 }
 
+
+/* === Mobile lightbox: adaptive stacked horizontals + tighter framing === */
+@media (max-width: 900px){
+  .lightbox-track{
+    gap: 8px !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  .lightbox-slide{
+    flex: 0 0 calc(100% - 16px) !important;
+    max-width: calc(100% - 16px) !important;
+    padding: 8px 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .lightbox-slide.lb-stacked{
+    display: grid !important;
+    grid-template-rows: 1fr 1fr !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+    justify-items: stretch !important;
+  }
+
+  .lightbox-slide .lb-cell{
+    min-height: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .lightbox-slide.lb-stacked img,
+  .lightbox-slide .lb-cell img{
+    max-width: 100% !important;
+    max-height: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3537,6 +3580,8 @@ document.addEventListener("keydown", function(e){
   document.body.appendChild(overlay);
 
   const __lightboxPreloadCache = new Set();
+  const __lightboxMetaCache = new Map();
+  let __lightboxBuildToken = 0;
 
   function preloadImages(images){
     (images || []).forEach((src)=>{
@@ -3549,28 +3594,34 @@ document.addEventListener("keydown", function(e){
     });
   }
 
-  function buildSlides(images){
-    track.innerHTML = "";
-    const list = (images || []).map(src => String(src || "").trim()).filter(Boolean);
+  function loadImageMeta(src){
+    const url = String(src || "").trim();
+    if(!url) return Promise.resolve({src:url, width:0, height:0, landscape:false});
+    if(__lightboxMetaCache.has(url)) return Promise.resolve(__lightboxMetaCache.get(url));
 
-    // Kick off preloading immediately so swiping feels instant.
-    preloadImages(list);
-
-    list.forEach((src, index)=>{
-      const slide = document.createElement("div");
-      slide.className = "lightbox-slide";
-
-      const img = document.createElement("img");
-      img.alt = "";
-      img.loading = index < 2 ? "eager" : "lazy";
+    return new Promise((resolve)=>{
+      const img = new Image();
       img.decoding = "async";
-      img.src = src;
-
-      slide.appendChild(img);
-      track.appendChild(slide);
+      img.onload = function(){
+        const meta = {
+          src: url,
+          width: Number(img.naturalWidth || 0),
+          height: Number(img.naturalHeight || 0),
+          landscape: Number(img.naturalWidth || 0) >= Number(img.naturalHeight || 0)
+        };
+        __lightboxMetaCache.set(url, meta);
+        resolve(meta);
+      };
+      img.onerror = function(){
+        const meta = {src:url, width:0, height:0, landscape:false};
+        __lightboxMetaCache.set(url, meta);
+        resolve(meta);
+      };
+      img.src = url;
     });
+  }
 
-    // Hard reset to the first image every time the lightbox is opened.
+  function resetToFirstSlide(){
     track.scrollLeft = 0;
     const firstSlide = track.querySelector(".lightbox-slide");
     if(firstSlide){
@@ -3578,6 +3629,77 @@ document.addEventListener("keydown", function(e){
       setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 40);
       setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 140);
     }
+  }
+
+  function makeImg(src, eager){
+    const img = document.createElement("img");
+    img.alt = "";
+    img.loading = eager ? "eager" : "lazy";
+    img.decoding = "async";
+    img.src = src;
+    return img;
+  }
+
+  function renderSingleSlides(list){
+    track.innerHTML = "";
+    list.forEach((src, index)=>{
+      const slide = document.createElement("div");
+      slide.className = "lightbox-slide";
+      slide.appendChild(makeImg(src, index < 2));
+      track.appendChild(slide);
+    });
+    resetToFirstSlide();
+  }
+
+  function renderAdaptiveMobileSlides(metaList){
+    track.innerHTML = "";
+    for(let i = 0; i < metaList.length; i++){
+      const cur = metaList[i];
+      const next = metaList[i + 1];
+
+      if(cur && cur.landscape && next && next.landscape){
+        const slide = document.createElement("div");
+        slide.className = "lightbox-slide lb-stacked";
+
+        [cur, next].forEach((item, idx)=>{
+          const cell = document.createElement("div");
+          cell.className = "lb-cell";
+          cell.appendChild(makeImg(item.src, i === 0 && idx === 0));
+          slide.appendChild(cell);
+        });
+
+        track.appendChild(slide);
+        i += 1;
+        continue;
+      }
+
+      const slide = document.createElement("div");
+      slide.className = "lightbox-slide";
+      slide.appendChild(makeImg(cur.src, i < 2));
+      track.appendChild(slide);
+    }
+    resetToFirstSlide();
+  }
+
+  function buildSlides(images){
+    track.innerHTML = "";
+    const list = (images || []).map(src => String(src || "").trim()).filter(Boolean);
+    const buildToken = ++__lightboxBuildToken;
+
+    // Kick off preloading immediately so swiping feels instant.
+    preloadImages(list);
+
+    // Desktop / non-mobile: preserve the original one-image-per-slide behaviour.
+    if(!(window.matchMedia && window.matchMedia("(max-width: 900px)").matches)){
+      renderSingleSlides(list);
+      return;
+    }
+
+    // Mobile: adaptive grouping. Only adjacent horizontals are paired.
+    Promise.all(list.map(loadImageMeta)).then((metaList)=>{
+      if(buildToken !== __lightboxBuildToken) return;
+      renderAdaptiveMobileSlides(metaList);
+    });
   }
 
   function setFooter(workObj){

@@ -2359,13 +2359,8 @@ body.card-transitioning .card.work-card.visible{
     scroll-snap-stop: always !important;
   }
 
-  .lightbox-slide{
-    padding: 56px 6px 44px 6px !important;
-    box-sizing: border-box !important;
-  }
-
   .lightbox-slide img{
-    max-width: calc(100vw - 12px) !important;
+    max-width: 100vw !important;
     max-height: calc(100svh - 100px) !important;
     width: auto !important;
     height: auto !important;
@@ -2838,6 +2833,18 @@ html, body{
   }
 }
 
+
+@media (max-width: 900px){
+  .lightbox-track{gap:12px;}
+}
+
+@media (max-width: 900px){
+  .lightbox-slug,
+  .lightbox-close{
+    top: 40px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2848,6 +2855,18 @@ html, body{
 	 viewBox="0 0 184.25 179.73" style="enable-background:new 0 0 184.25 179.73;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#DEFF00;}
+
+@media (max-width: 900px){
+  .lightbox-track{gap:12px;}
+}
+
+@media (max-width: 900px){
+  .lightbox-slug,
+  .lightbox-close{
+    top: 40px !important;
+  }
+}
+
 </style>
 <path class="st0" d="M183.04,113.21L122.3,88.33c-0.59-0.24-0.76-0.99-0.33-1.46l43.92-48.78c0.64-0.71,0.67-1.78,0.08-2.53
 	c-0.6-0.75-1.65-0.95-2.49-0.48l-57.59,32.54c-0.56,0.31-1.26-0.02-1.36-0.65L94.06,1.64c0-0.01-0.01-0.02-0.01-0.02

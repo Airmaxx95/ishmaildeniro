@@ -2839,12 +2839,23 @@ html, body{
 }
 </style>
 
-<style id="mobile-lightbox-ui-lower">
-@media (max-width: 900px){
-  .lightbox-slug,
-  .lightbox-close{
-    top: 56px !important;
-  }
+<style id="mobile-lightbox-ui-adjust">
+@media (max-width: 900px) {
+    .lightbox-slug, .lightbox-close {
+        top: 78px !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .lightbox-footer {
+        bottom: 140px !important;
+        left: 16px !important;
+        right: 16px !important;
+        transform: none !important;
+        width: auto !important;
+        text-align: center !important;
+        z-index: 10001 !important;
+    }
 }
 </style>
 

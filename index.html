@@ -2730,12 +2730,14 @@ html, body{
   backface-visibility: hidden;
 }
 
-/* === Mobile nav Safari masked handoff fix === */
+/* === Mobile nav Safari flash guard v3 (strong visibility gate) === */
 @media (max-width: 900px){
-  #mobileNavOverlay.handoff{
-    opacity: 1 !important;
-    pointer-events: none !important;
-    transition: none !important;
+  body.mobile-nav-transitioning .card.visible,
+  body.mobile-nav-transitioning .card.card-enter,
+  body.mobile-nav-transitioning .card.work-card.visible,
+  body.mobile-nav-transitioning .card.info-card.visible{
+    opacity: 0 !important;
+    visibility: hidden !important;
   }
 }
 
@@ -4356,9 +4358,27 @@ document.addEventListener("keydown", function(e){
           // Ensure it starts hidden (still gated), then animate in
           animateIn(next);
         }
-        // Now allow opacity to be driven by animation
-        document.body.classList.remove("card-transitioning");
-        inFlight = false;
+
+        const releaseGate = function(){
+          document.body.classList.remove("card-transitioning");
+          document.body.classList.remove("mobile-nav-transitioning");
+          if(next){
+            try{ next.style.visibility = ""; }catch(e){}
+          }
+          inFlight = false;
+        };
+
+        // Safari mobile needs extra paint time so the card-enter animation is attached
+        // before the new card becomes visible.
+        if(window.matchMedia && window.matchMedia("(max-width: 900px)").matches){
+          requestAnimationFrame(function(){
+            requestAnimationFrame(function(){
+              setTimeout(releaseGate, 80);
+            });
+          });
+        } else {
+          releaseGate();
+        }
       });
 
       return res;
@@ -4535,41 +4555,32 @@ document.addEventListener("keydown", function(e){
   }
 
   function releaseGateLater(){
-    // Hold through at least one paint + a short delay so subsequent-work transitions don't flash.
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        setTimeout(function(){
-          document.body.classList.remove("mobile-nav-transitioning");
-        }, HOLD_AFTER_TRIGGER_MS);
-      });
-    });
+    // The actual ungating is now handled inside the showCard transition wrapper
+    // so Safari mobile cannot reveal the target card before the enter animation attaches.
   }
 
   function handoffTo(fn){
     if(!mq.matches || handoffLock) return;
     handoffLock = true;
 
-    // Keep the mobile nav overlay as a full mask while the target card mounts underneath.
+    // Cover the whole handoff and suppress visible cards underneath.
     overlay.classList.add("handoff");
     document.body.classList.add("mobile-nav-transitioning");
 
-    // Trigger the site's normal navigation underneath the still-visible overlay.
+    // Trigger the site's normal navigation underneath the overlay.
     try{ fn(); }catch(e){}
 
-    // Safari can paint the target card before the enter fade is visually ready.
-    // Hold the overlay mask a little longer so the user never sees that flash.
-    const MASK_HOLD_MS = 180;
-
-    setTimeout(function(){
+    // Start overlay fade after one frame so the target card can mount while still hidden.
+    requestAnimationFrame(function(){
       closeOverlay();
 
-      // Keep cards hidden until the site's own transition is definitely underway.
+      // Keep cards hidden until the site's own transition is underway.
       releaseGateLater();
 
       setTimeout(function(){
         handoffLock = false;
-      }, OVERLAY_FADE_MS + HOLD_AFTER_TRIGGER_MS + MASK_HOLD_MS + 80);
-    }, MASK_HOLD_MS);
+      }, OVERLAY_FADE_MS + HOLD_AFTER_TRIGGER_MS + 80);
+    });
   }
 
   function copySidebarIntoOverlay(){

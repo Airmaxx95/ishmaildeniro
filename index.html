@@ -2784,6 +2784,15 @@ html, body{
   }
 }
 
+
+/* === Mobile lightbox: keep 8px centre gap, make images 30% smaller === */
+@media (max-width: 900px){
+  .lightbox-slide img{
+    transform: scale(0.7) !important;
+    transform-origin: center center !important;
+  }
+}
+
 </style>
 </head>
 <body>

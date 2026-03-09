@@ -2723,6 +2723,13 @@ html, body{
   pointer-events: auto !important;
 }
 
+
+/* === Blur animation GPU smoothing (Safari/Chrome) === */
+.lightbox-overlay{
+  will-change: opacity, filter, transform;
+  backface-visibility: hidden;
+}
+
 </style>
 </head>
 <body>

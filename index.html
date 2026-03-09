@@ -2785,18 +2785,20 @@ html, body{
 }
 
 
-/* === Fix: prevent images bleeding outside rounded lightbox frame === */
-.media-box,
-.lightbox-frame,
-.lightbox-overlay {
-    overflow: hidden !important;
-}
+/* === iPhone Safari viewport fix for lightbox === */
+@media (max-width: 900px){
 
-/* Ensure images always fully fit within slide */
-.lightbox-slide img{
-    max-width:100% !important;
-    max-height:100% !important;
-    object-fit:contain !important;
+  .lightbox-slide{
+      height: calc(100svh - 120px) !important;
+      max-height: calc(100svh - 120px) !important;
+  }
+
+  .lightbox-slide img{
+      max-height: 100% !important;
+      max-width: 100% !important;
+      object-fit: contain !important;
+  }
+
 }
 
 </style>

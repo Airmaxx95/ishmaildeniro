@@ -2785,11 +2785,45 @@ html, body{
 }
 
 
-/* === Mobile lightbox: keep 8px centre gap, make images 30% smaller === */
+/* === Mobile lightbox: consistent sizing on iPhone Safari === */
 @media (max-width: 900px){
+  .lightbox-track{
+    gap: 8px !important;
+    padding: 0 8px !important;
+  }
+
+  .lightbox-slide{
+    flex: 0 0 calc(100% - 16px) !important;
+    max-width: calc(100% - 16px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
   .lightbox-slide img{
-    transform: scale(0.7) !important;
-    transform-origin: center center !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: 70% !important;
+    max-height: 70svh !important;
+    object-fit: contain !important;
+    transform: none !important;
+  }
+
+  /* Keep stacked mobile slides coherent on iPhone Safari */
+  .lightbox-slide.lb-stacked{
+    align-items: center !important;
+    justify-items: center !important;
+  }
+
+  .lightbox-slide.lb-stacked .lb-cell{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .lightbox-slide.lb-stacked .lb-cell img{
+    max-width: 70% !important;
+    max-height: 100% !important;
   }
 }
 

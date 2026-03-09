@@ -3541,7 +3541,15 @@ document.addEventListener("keydown", function(e){
       slide.appendChild(img);
       track.appendChild(slide);
     });
+
+    // Hard reset to the first image every time the lightbox is opened.
     track.scrollLeft = 0;
+    const firstSlide = track.querySelector(".lightbox-slide");
+    if(firstSlide){
+      requestAnimationFrame(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); });
+      setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 40);
+      setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 140);
+    }
   }
 
   function setFooter(workObj){
@@ -3589,7 +3597,15 @@ document.addEventListener("keydown", function(e){
 
     overlay.style.display = "flex";
     overlay.setAttribute("aria-hidden","false");
-    requestAnimationFrame(()=>{ overlay.classList.add("active"); });
+    requestAnimationFrame(()=>{
+      overlay.classList.add("active");
+      const firstSlide = track.querySelector(".lightbox-slide");
+      if(firstSlide){
+        firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"});
+      }else{
+        track.scrollLeft = 0;
+      }
+    });
   }
 
   function close(){

@@ -3632,6 +3632,7 @@ document.addEventListener("keydown", function(e){
       active.blur();
     }
 
+    // Start fade/blur-out first. Keep overlay rendered until transition finishes.
     overlay.classList.remove("active");
     overlay.setAttribute("aria-hidden","true");
     overlay.setAttribute("inert","");

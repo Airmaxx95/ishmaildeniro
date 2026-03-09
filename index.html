@@ -3632,7 +3632,7 @@ document.addEventListener("keydown", function(e){
       active.blur();
     }
 
-    // Start fade/blur-out first. Keep overlay rendered until transition finishes.
+    // Start the visual fade/blur-out first.
     overlay.classList.remove("active");
     overlay.setAttribute("aria-hidden","true");
     overlay.setAttribute("inert","");
@@ -3658,6 +3658,7 @@ document.addEventListener("keydown", function(e){
       });
     };
 
+    // Match the 520ms overlay blur/fade transition, with a little buffer.
     setTimeout(finishClose, 560);
   }
 
@@ -5354,9 +5355,8 @@ document.addEventListener("keydown", function(e){
     const closeBtn = e.target.closest && e.target.closest('.lightbox-close');
     const overlayBg = e.target && e.target.classList && e.target.classList.contains('lightbox-overlay');
     if(header || closeBtn || overlayBg){
-      setTimeout(repairPostCloseState, 0);
-      setTimeout(repairPostCloseState, 120);
-      setTimeout(repairPostCloseState, 420);
+      // Wait until the blur/fade-out transition has finished before hard-hiding.
+      setTimeout(repairPostCloseState, 560);
     }
   }, true);
 

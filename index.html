@@ -2729,7 +2729,6 @@ html, body{
   will-change: opacity, filter, transform;
   backface-visibility: hidden;
 }
-
 </style>
 </head>
 <body>
@@ -3633,7 +3632,6 @@ document.addEventListener("keydown", function(e){
       active.blur();
     }
 
-    // Let the CSS blur/fade-out play first.
     overlay.classList.remove("active");
     overlay.setAttribute("aria-hidden","true");
     overlay.setAttribute("inert","");
@@ -3659,7 +3657,6 @@ document.addEventListener("keydown", function(e){
       });
     };
 
-    // Match the lightbox blur/fade transition duration.
     setTimeout(finishClose, 560);
   }
 

@@ -2742,7 +2742,7 @@ html, body{
 }
 
 
-/* === Mobile lightbox: adaptive stacked horizontals + tighter framing === */
+/* === Mobile lightbox: single image per slide === */
 @media (max-width: 900px){
   .lightbox-track{
     gap: 8px !important;
@@ -2755,26 +2755,12 @@ html, body{
     max-width: calc(100% - 16px) !important;
     padding: 0 !important;
     box-sizing: border-box !important;
-  }
-
-  .lightbox-slide.lb-stacked{
-    display: grid !important;
-    grid-template-rows: 1fr 1fr !important;
-    gap: 8px !important;
-    align-items: stretch !important;
-    justify-items: stretch !important;
-  }
-
-  .lightbox-slide .lb-cell{
-    min-height: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    overflow: hidden !important;
   }
 
-  .lightbox-slide.lb-stacked img,
-  .lightbox-slide .lb-cell img{
+  .lightbox-slide img{
     max-width: 100% !important;
     max-height: 100% !important;
     width: auto !important;
@@ -3653,31 +3639,13 @@ document.addEventListener("keydown", function(e){
 
   function renderAdaptiveMobileSlides(metaList){
     track.innerHTML = "";
-    for(let i = 0; i < metaList.length; i++){
-      const cur = metaList[i];
-      const next = metaList[i + 1];
-
-      if(cur && cur.landscape && next && next.landscape){
-        const slide = document.createElement("div");
-        slide.className = "lightbox-slide lb-stacked";
-
-        [cur, next].forEach((item, idx)=>{
-          const cell = document.createElement("div");
-          cell.className = "lb-cell";
-          cell.appendChild(makeImg(item.src, i === 0 && idx === 0));
-          slide.appendChild(cell);
-        });
-
-        track.appendChild(slide);
-        i += 1;
-        continue;
-      }
-
+    (metaList || []).forEach((item, index)=>{
+      if(!item || !item.src) return;
       const slide = document.createElement("div");
       slide.className = "lightbox-slide";
-      slide.appendChild(makeImg(cur.src, i < 2));
+      slide.appendChild(makeImg(item.src, index < 2));
       track.appendChild(slide);
-    }
+    });
     resetToFirstSlide();
   }
 

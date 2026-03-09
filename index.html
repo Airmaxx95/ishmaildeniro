@@ -2760,7 +2760,7 @@ html, body{
   .lightbox-slide.lb-stacked{
     display: grid !important;
     grid-template-rows: 1fr 1fr !important;
-    gap: 8px !important;
+    gap: 12px !important;
     align-items: stretch !important;
     justify-items: stretch !important;
   }
@@ -2770,10 +2770,23 @@ html, body{
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    overflow: hidden !important;
+    overflow: visible !important;
   }
 
-  .lightbox-slide.lb-stacked img,
+  /* Horizontals in the double-stack should fit to screen width first,
+     even if that introduces a bit more white space vertically. */
+  .lightbox-slide.lb-stacked img{
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+  }
+
+  /* Single-image slides keep the existing contain behaviour. */
+  .lightbox-slide:not(.lb-stacked) img,
   .lightbox-slide .lb-cell img{
     max-width: 100% !important;
     max-height: 100% !important;

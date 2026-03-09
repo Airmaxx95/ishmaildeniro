@@ -2705,10 +2705,10 @@ html, body{
 }
 
 
-/* === Lightbox close hard hide === */
+/* === Lightbox close behaviour (allow blur-out animation) === */
 .lightbox-overlay[aria-hidden="true"]{
-  pointer-events: none !important;
   opacity: 0 !important;
+  pointer-events: none !important;
 }
 .lightbox-overlay[aria-hidden="false"]{
   display: flex !important;
@@ -3633,6 +3633,7 @@ document.addEventListener("keydown", function(e){
       active.blur();
     }
 
+    // Let the CSS blur/fade-out play first.
     overlay.classList.remove("active");
     overlay.setAttribute("aria-hidden","true");
     overlay.setAttribute("inert","");
@@ -3658,8 +3659,8 @@ document.addEventListener("keydown", function(e){
       });
     };
 
-    setTimeout(finishClose, 360);
-    requestAnimationFrame(finishClose);
+    // Match the lightbox blur/fade transition duration.
+    setTimeout(finishClose, 560);
   }
 
   // Click / tap open

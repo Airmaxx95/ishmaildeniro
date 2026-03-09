@@ -2785,17 +2785,17 @@ html, body{
 }
 
 
-/* === iPhone Safari viewport fix for lightbox === */
+/* === Mobile: single horizontal images match stacked size === */
 @media (max-width: 900px){
 
-  .lightbox-slide{
-      height: calc(100svh - 120px) !important;
-      max-height: calc(100svh - 120px) !important;
-  }
-
-  .lightbox-slide img{
-      max-height: 100% !important;
-      max-width: 100% !important;
+  /* horizontal images that appear alone should NOT go full width */
+  .lightbox-slide:not(.lb-stacked) img{
+      width: 84% !important;
+      max-width: 84% !important;
+      height: auto !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      display: block !important;
       object-fit: contain !important;
   }
 

@@ -2785,23 +2785,27 @@ html, body{
 }
 
 
-/* === Mobile lightbox: horizontals match stacked size and stay centered === */
+/* === Mobile lightbox edge-safe layout === */
 @media (max-width: 900px){
 
+  .lightbox-inner{
+    border-radius:0 !important;
+  }
+
+  .lightbox-media{
+    padding:0 8px !important;
+  }
+
   .lightbox-slide{
-      display:flex !important;
-      justify-content:center !important;
-      align-items:center !important;
+    padding:0 !important;
   }
 
   .lightbox-slide img{
-      width:88% !important;
-      max-width:88% !important;
-      height:auto !important;
-      object-fit:contain !important;
-      margin-left:auto !important;
-      margin-right:auto !important;
-      display:block !important;
+    max-width:calc(100vw - 16px) !important;
+    max-height:calc(100vh - 16px) !important;
+    width:auto !important;
+    height:auto !important;
+    object-fit:contain !important;
   }
 
 }

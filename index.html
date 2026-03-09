@@ -2730,10 +2730,11 @@ html, body{
   backface-visibility: hidden;
 }
 
-/* === Mobile nav Safari pre-enter guard === */
+/* === Mobile nav Safari pre-enter guard v2 === */
 @media (max-width: 900px){
   .card.mobile-pre-enter{
     opacity: 0 !important;
+    visibility: hidden !important;
   }
 }
 
@@ -4309,20 +4310,10 @@ document.addEventListener("keydown", function(e){
     card.classList.remove("card-enter");
     void card.offsetWidth;
     card.classList.add("card-enter");
-
-    // Safari mobile nav handoff fix:
-    // keep the card hidden until the enter class is definitely attached and painting.
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        card.classList.remove("mobile-pre-enter");
-        card.style.opacity = "";
-      });
-    });
-
     setTimeout(()=>{
       try{ card.classList.remove("card-enter"); }catch(e){}
       try{ card.classList.remove("mobile-pre-enter"); }catch(e){}
-      try{ card.style.opacity = ""; }catch(e){}
+      try{ card.style.visibility = ""; }catch(e){}
     }, 520);
   }
 
@@ -4336,6 +4327,17 @@ document.addEventListener("keydown", function(e){
   window.showCard = function(target){
     if(inFlight) return originalShowCard(target);
 
+    const mobileSafariPrep = !!(
+      target &&
+      window.matchMedia &&
+      window.matchMedia("(max-width: 900px)").matches &&
+      document.body.classList.contains("mobile-nav-transitioning")
+    );
+
+    if(mobileSafariPrep && target.classList){
+      target.classList.add("mobile-pre-enter");
+    }
+
     const current = topMostVisibleCard();
 
     // If nothing is open yet, just open and animate in
@@ -4343,7 +4345,15 @@ document.addEventListener("keydown", function(e){
       const res0 = originalShowCard(target);
       requestAnimationFrame(()=>{
         const next0 = topMostVisibleCard();
-        if(next0) animateIn(next0);
+        if(next0){
+          animateIn(next0);
+          requestAnimationFrame(()=>{
+            requestAnimationFrame(()=>{
+              next0.classList.remove("mobile-pre-enter");
+              next0.style.visibility = "";
+            });
+          });
+        }
       });
       return res0;
     }
@@ -4367,6 +4377,12 @@ document.addEventListener("keydown", function(e){
         if(next){
           // Ensure it starts hidden (still gated), then animate in
           animateIn(next);
+          requestAnimationFrame(function(){
+            requestAnimationFrame(function(){
+              next.classList.remove("mobile-pre-enter");
+              next.style.visibility = "";
+            });
+          });
         }
 
         const release = function(){
@@ -4374,10 +4390,10 @@ document.addEventListener("keydown", function(e){
           inFlight = false;
         };
 
-        if(window.matchMedia && window.matchMedia("(max-width: 900px)").matches){
+        if(mobileSafariPrep){
           requestAnimationFrame(function(){
             requestAnimationFrame(function(){
-              setTimeout(release, 50);
+              setTimeout(release, 80);
             });
           });
         } else {
@@ -4637,13 +4653,9 @@ document.addEventListener("keydown", function(e){
           });
 
           if(target && typeof window.showCard === "function"){
-            // Safari can paint the target card for one frame before the enter animation attaches.
-            // Mark it as pre-enter hidden before revealing it.
-            target.classList.add('mobile-pre-enter');
             target.classList.remove('hidden');
             target.style.display = '';
             target.style.visibility = '';
-            target.style.opacity = '0';
             window.showCard(target);
           } else {
             const orig = document.querySelector('#sidebarNav [data-open-work="'+slug+'"]');

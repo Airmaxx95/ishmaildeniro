@@ -3702,6 +3702,32 @@ document.addEventListener("keydown", function(e){
     });
   }
 
+  // Rebuild lightbox slides if the viewport crosses the mobile breakpoint while open.
+  const __lightboxViewportMQ = window.matchMedia("(max-width: 900px)");
+  let __lastLightboxViewportIsMobile = __lightboxViewportMQ.matches;
+
+  function rebuildOpenLightboxForViewportChange(){
+    if(__lightboxViewportMQ.matches === __lastLightboxViewportIsMobile) return;
+    __lastLightboxViewportIsMobile = __lightboxViewportMQ.matches;
+
+    if(!overlay.classList.contains("active")) return;
+
+    const currentImages = Array.from(track.querySelectorAll("img"))
+      .map(img => String(img.getAttribute("src") || img.src || "").trim())
+      .filter(Boolean);
+
+    if(!currentImages.length) return;
+
+    buildSlides(currentImages);
+  }
+
+  try{
+    __lightboxViewportMQ.addEventListener("change", rebuildOpenLightboxForViewportChange);
+  }catch(e){
+    __lightboxViewportMQ.addListener(rebuildOpenLightboxForViewportChange);
+  }
+  window.addEventListener("resize", rebuildOpenLightboxForViewportChange);
+
   function setFooter(workObj){
     let footerHTML = "";
     if(workObj){
@@ -5509,36 +5535,6 @@ document.addEventListener("keydown", function(e){
   window.addEventListener('resize', repairPostCloseState);
 })();
 </script>
-
-
-/* === Rebuild lightbox slides when switching between mobile and desktop === */
-(function(){
-  const mq = window.matchMedia("(max-width: 900px)");
-  let last = mq.matches;
-
-  function rebuildIfNeeded(){
-    const overlay = document.querySelector(".lightbox-overlay.active");
-    if(!overlay) return;
-    if(mq.matches === last) return;
-    last = mq.matches;
-
-    const track = overlay.querySelector(".lightbox-track");
-    if(!track) return;
-
-    const imgs = Array.from(track.querySelectorAll("img")).map(i=>i.src);
-    if(typeof buildSlides === "function"){
-      buildSlides(imgs);
-    }
-  }
-
-  try{
-    mq.addEventListener("change", rebuildIfNeeded);
-  }catch(e){
-    mq.addListener(rebuildIfNeeded);
-  }
-
-  window.addEventListener("resize", rebuildIfNeeded);
-})();
 
 </body>
 </html>

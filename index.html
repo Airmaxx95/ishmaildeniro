@@ -2730,11 +2730,12 @@ html, body{
   backface-visibility: hidden;
 }
 
-/* === Mobile nav Safari pre-enter guard v2 === */
+/* === Mobile nav Safari masked handoff fix === */
 @media (max-width: 900px){
-  .card.mobile-pre-enter{
-    opacity: 0 !important;
-    visibility: hidden !important;
+  #mobileNavOverlay.handoff{
+    opacity: 1 !important;
+    pointer-events: none !important;
+    transition: none !important;
   }
 }
 
@@ -4310,11 +4311,7 @@ document.addEventListener("keydown", function(e){
     card.classList.remove("card-enter");
     void card.offsetWidth;
     card.classList.add("card-enter");
-    setTimeout(()=>{
-      try{ card.classList.remove("card-enter"); }catch(e){}
-      try{ card.classList.remove("mobile-pre-enter"); }catch(e){}
-      try{ card.style.visibility = ""; }catch(e){}
-    }, 520);
+    setTimeout(()=>{ try{ card.classList.remove("card-enter"); }catch(e){} }, 520);
   }
 
   const originalShowCard = window.showCard;
@@ -4327,17 +4324,6 @@ document.addEventListener("keydown", function(e){
   window.showCard = function(target){
     if(inFlight) return originalShowCard(target);
 
-    const mobileSafariPrep = !!(
-      target &&
-      window.matchMedia &&
-      window.matchMedia("(max-width: 900px)").matches &&
-      document.body.classList.contains("mobile-nav-transitioning")
-    );
-
-    if(mobileSafariPrep && target.classList){
-      target.classList.add("mobile-pre-enter");
-    }
-
     const current = topMostVisibleCard();
 
     // If nothing is open yet, just open and animate in
@@ -4345,15 +4331,7 @@ document.addEventListener("keydown", function(e){
       const res0 = originalShowCard(target);
       requestAnimationFrame(()=>{
         const next0 = topMostVisibleCard();
-        if(next0){
-          animateIn(next0);
-          requestAnimationFrame(()=>{
-            requestAnimationFrame(()=>{
-              next0.classList.remove("mobile-pre-enter");
-              next0.style.visibility = "";
-            });
-          });
-        }
+        if(next0) animateIn(next0);
       });
       return res0;
     }
@@ -4377,28 +4355,10 @@ document.addEventListener("keydown", function(e){
         if(next){
           // Ensure it starts hidden (still gated), then animate in
           animateIn(next);
-          requestAnimationFrame(function(){
-            requestAnimationFrame(function(){
-              next.classList.remove("mobile-pre-enter");
-              next.style.visibility = "";
-            });
-          });
         }
-
-        const release = function(){
-          document.body.classList.remove("card-transitioning");
-          inFlight = false;
-        };
-
-        if(mobileSafariPrep){
-          requestAnimationFrame(function(){
-            requestAnimationFrame(function(){
-              setTimeout(release, 80);
-            });
-          });
-        } else {
-          release();
-        }
+        // Now allow opacity to be driven by animation
+        document.body.classList.remove("card-transitioning");
+        inFlight = false;
       });
 
       return res;
@@ -4589,24 +4549,27 @@ document.addEventListener("keydown", function(e){
     if(!mq.matches || handoffLock) return;
     handoffLock = true;
 
-    // Cover the whole handoff and suppress visible cards underneath.
+    // Keep the mobile nav overlay as a full mask while the target card mounts underneath.
     overlay.classList.add("handoff");
     document.body.classList.add("mobile-nav-transitioning");
 
-    // Trigger the site's normal navigation underneath the overlay.
+    // Trigger the site's normal navigation underneath the still-visible overlay.
     try{ fn(); }catch(e){}
 
-    // Start overlay fade after one frame so the target card can mount while still hidden.
-    requestAnimationFrame(function(){
+    // Safari can paint the target card before the enter fade is visually ready.
+    // Hold the overlay mask a little longer so the user never sees that flash.
+    const MASK_HOLD_MS = 180;
+
+    setTimeout(function(){
       closeOverlay();
 
-      // Keep cards hidden until the site's own transition is underway.
+      // Keep cards hidden until the site's own transition is definitely underway.
       releaseGateLater();
 
       setTimeout(function(){
         handoffLock = false;
-      }, OVERLAY_FADE_MS + HOLD_AFTER_TRIGGER_MS + 80);
-    });
+      }, OVERLAY_FADE_MS + HOLD_AFTER_TRIGGER_MS + MASK_HOLD_MS + 80);
+    }, MASK_HOLD_MS);
   }
 
   function copySidebarIntoOverlay(){

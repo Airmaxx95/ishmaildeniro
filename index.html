@@ -2785,18 +2785,23 @@ html, body{
 }
 
 
-/* === Mobile: single horizontal images match stacked size === */
+/* === Mobile lightbox: horizontals match stacked size and stay centered === */
 @media (max-width: 900px){
 
-  /* horizontal images that appear alone should NOT go full width */
-  .lightbox-slide:not(.lb-stacked) img{
-      width: 84% !important;
-      max-width: 84% !important;
-      height: auto !important;
-      margin-left: auto !important;
-      margin-right: auto !important;
-      display: block !important;
-      object-fit: contain !important;
+  .lightbox-slide{
+      display:flex !important;
+      justify-content:center !important;
+      align-items:center !important;
+  }
+
+  .lightbox-slide img{
+      width:88% !important;
+      max-width:88% !important;
+      height:auto !important;
+      object-fit:contain !important;
+      margin-left:auto !important;
+      margin-right:auto !important;
+      display:block !important;
   }
 
 }

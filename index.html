@@ -2784,6 +2784,17 @@ html, body{
   }
 }
 
+
+/* Reduce horizontal images by 10% on mobile lightbox */
+@media (max-width: 900px){
+  .lightbox-slide img.landscape,
+  .lightbox-slide img.horizontal{
+    width:90% !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+}
+
 </style>
 </head>
 <body>

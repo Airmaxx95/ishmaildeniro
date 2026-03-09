@@ -2785,13 +2785,22 @@ html, body{
 }
 
 
-/* Reduce horizontal images by 10% on mobile lightbox */
+/* === Mobile stacked lightbox images: keep safely inside rounded frame === */
 @media (max-width: 900px){
-  .lightbox-slide img.landscape,
-  .lightbox-slide img.horizontal{
-    width:80% !important;
-    margin-left:auto !important;
-    margin-right:auto !important;
+  .lightbox-slide.lb-stacked .lb-cell{
+    overflow: hidden !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .lightbox-slide.lb-stacked img{
+    width: 84% !important;
+    max-width: 84% !important;
+    height: auto !important;
+    max-height: 84% !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
+    display: block !important;
   }
 }
 

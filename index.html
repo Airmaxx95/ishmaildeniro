@@ -5510,5 +5510,35 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+/* === Rebuild lightbox slides when switching between mobile and desktop === */
+(function(){
+  const mq = window.matchMedia("(max-width: 900px)");
+  let last = mq.matches;
+
+  function rebuildIfNeeded(){
+    const overlay = document.querySelector(".lightbox-overlay.active");
+    if(!overlay) return;
+    if(mq.matches === last) return;
+    last = mq.matches;
+
+    const track = overlay.querySelector(".lightbox-track");
+    if(!track) return;
+
+    const imgs = Array.from(track.querySelectorAll("img")).map(i=>i.src);
+    if(typeof buildSlides === "function"){
+      buildSlides(imgs);
+    }
+  }
+
+  try{
+    mq.addEventListener("change", rebuildIfNeeded);
+  }catch(e){
+    mq.addListener(rebuildIfNeeded);
+  }
+
+  window.addEventListener("resize", rebuildIfNeeded);
+})();
+
 </body>
 </html>

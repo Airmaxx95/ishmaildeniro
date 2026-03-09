@@ -2353,7 +2353,7 @@ body.card-transitioning .card.work-card.visible{
     width: 100vw !important;
     min-width: 100vw !important;
     height: 100svh !important;
-    padding: 72px 0 44px 0 !important;
+    padding: 56px 0 44px 0 !important;
     box-sizing: border-box !important;
     scroll-snap-align: center !important;
     scroll-snap-stop: always !important;
@@ -2384,7 +2384,7 @@ body.card-transitioning .card.work-card.visible{
   }
 
   .lightbox-footer{
-    bottom: 32px !important;
+    bottom: 14px !important;
     left: 16px !important;
     right: 16px !important;
     transform: none !important;
@@ -2838,6 +2838,16 @@ html, body{
   .lightbox-track{gap:12px;}
 }
 </style>
+
+<style id="mobile-lightbox-ui-lower">
+@media (max-width: 900px){
+  .lightbox-slug,
+  .lightbox-close{
+    top: 56px !important;
+  }
+}
+</style>
+
 </head>
 <body>
 

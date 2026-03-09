@@ -2735,6 +2735,14 @@ html, body{
   .card.mobile-pre-enter{
     opacity: 0 !important;
     visibility: hidden !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body.mobile-nav-transitioning .card.mobile-pre-enter,
+  body.mobile-nav-transitioning .card.mobile-pre-enter.visible{
+    opacity: 0 !important;
+    visibility: hidden !important;
   }
 }
 
@@ -3320,7 +3328,13 @@ function showCard(card){
   card.classList.remove("hidden");
   card.classList.add("visible");
   card.style.display = "block";
-  card.style.visibility = "visible";
+  if(card.classList && card.classList.contains("mobile-pre-enter")){
+    card.style.visibility = "hidden";
+    card.style.opacity = "0";
+  } else {
+    card.style.visibility = "visible";
+    card.style.opacity = "";
+  }
   card.style.zIndex = String(++Z_TOP);
   const wt = card.querySelector && card.querySelector('.work-text');
   if(wt){ requestAnimationFrame(()=>updateWorkTextFade(wt)); setTimeout(()=>updateWorkTextFade(wt), 80); }
@@ -4653,9 +4667,9 @@ document.addEventListener("keydown", function(e){
           });
 
           if(target && typeof window.showCard === "function"){
-            target.classList.remove('hidden');
-            target.style.display = '';
-            target.style.visibility = '';
+            target.classList.add('mobile-pre-enter');
+            target.style.visibility = 'hidden';
+            target.style.opacity = '0';
             window.showCard(target);
           } else {
             const orig = document.querySelector('#sidebarNav [data-open-work="'+slug+'"]');

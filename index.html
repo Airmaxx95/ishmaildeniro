@@ -2705,9 +2705,9 @@ html, body{
 }
 
 
-/* === Lightbox close hard hide === */
+/* === Lightbox close behaviour (allow blur-out animation) === */
 .lightbox-overlay[aria-hidden="true"]{
-  display: none !important;
+  opacity: 0 !important;
   pointer-events: none !important;
 }
 .lightbox-overlay[aria-hidden="false"]{
@@ -2724,9 +2724,15 @@ html, body{
 }
 
 
-/* === Mobile nav Safari flash guard === */
+/* === Blur animation GPU smoothing (Safari/Chrome) === */
+.lightbox-overlay{
+  will-change: opacity, filter, transform;
+  backface-visibility: hidden;
+}
+
+/* === Mobile nav Safari pre-enter guard === */
 @media (max-width: 900px){
-  body.mobile-nav-transitioning .card.card-enter{
+  .card.mobile-pre-enter{
     opacity: 0 !important;
   }
 }
@@ -3634,6 +3640,7 @@ document.addEventListener("keydown", function(e){
       active.blur();
     }
 
+    // Start the visual fade/blur-out first.
     overlay.classList.remove("active");
     overlay.setAttribute("aria-hidden","true");
     overlay.setAttribute("inert","");
@@ -3659,8 +3666,8 @@ document.addEventListener("keydown", function(e){
       });
     };
 
-    setTimeout(finishClose, 360);
-    requestAnimationFrame(finishClose);
+    // Match the 520ms overlay blur/fade transition, with a little buffer.
+    setTimeout(finishClose, 560);
   }
 
   // Click / tap open
@@ -4302,7 +4309,21 @@ document.addEventListener("keydown", function(e){
     card.classList.remove("card-enter");
     void card.offsetWidth;
     card.classList.add("card-enter");
-    setTimeout(()=>{ try{ card.classList.remove("card-enter"); }catch(e){} }, 520);
+
+    // Safari mobile nav handoff fix:
+    // keep the card hidden until the enter class is definitely attached and painting.
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        card.classList.remove("mobile-pre-enter");
+        card.style.opacity = "";
+      });
+    });
+
+    setTimeout(()=>{
+      try{ card.classList.remove("card-enter"); }catch(e){}
+      try{ card.classList.remove("mobile-pre-enter"); }catch(e){}
+      try{ card.style.opacity = ""; }catch(e){}
+    }, 520);
   }
 
   const originalShowCard = window.showCard;
@@ -4347,16 +4368,21 @@ document.addEventListener("keydown", function(e){
           // Ensure it starts hidden (still gated), then animate in
           animateIn(next);
         }
-        // Safari can paint the target card one frame too early when opened from mobile nav.
-        // Hold the gate a little longer so the enter state is fully applied before reveal.
-        requestAnimationFrame(function(){
+
+        const release = function(){
+          document.body.classList.remove("card-transitioning");
+          inFlight = false;
+        };
+
+        if(window.matchMedia && window.matchMedia("(max-width: 900px)").matches){
           requestAnimationFrame(function(){
-            setTimeout(function(){
-              document.body.classList.remove("card-transitioning");
-              inFlight = false;
-            }, 40);
+            requestAnimationFrame(function(){
+              setTimeout(release, 50);
+            });
           });
-        });
+        } else {
+          release();
+        }
       });
 
       return res;
@@ -4611,9 +4637,13 @@ document.addEventListener("keydown", function(e){
           });
 
           if(target && typeof window.showCard === "function"){
+            // Safari can paint the target card for one frame before the enter animation attaches.
+            // Mark it as pre-enter hidden before revealing it.
+            target.classList.add('mobile-pre-enter');
             target.classList.remove('hidden');
             target.style.display = '';
             target.style.visibility = '';
+            target.style.opacity = '0';
             window.showCard(target);
           } else {
             const orig = document.querySelector('#sidebarNav [data-open-work="'+slug+'"]');
@@ -5363,9 +5393,8 @@ document.addEventListener("keydown", function(e){
     const closeBtn = e.target.closest && e.target.closest('.lightbox-close');
     const overlayBg = e.target && e.target.classList && e.target.classList.contains('lightbox-overlay');
     if(header || closeBtn || overlayBg){
-      setTimeout(repairPostCloseState, 0);
-      setTimeout(repairPostCloseState, 120);
-      setTimeout(repairPostCloseState, 420);
+      // Wait until the blur/fade-out transition has finished before hard-hiding.
+      setTimeout(repairPostCloseState, 560);
     }
   }, true);
 

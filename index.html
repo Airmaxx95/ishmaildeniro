@@ -2785,46 +2785,19 @@ html, body{
 }
 
 
-/* === Mobile lightbox: consistent sizing on iPhone Safari === */
+/* === Mobile lightbox: reduce centre swipe gap for iPhone === */
 @media (max-width: 900px){
+
   .lightbox-track{
-    gap: 8px !important;
-    padding: 0 8px !important;
+    gap:4px !important;
+    padding:0 4px !important;
   }
 
   .lightbox-slide{
-    flex: 0 0 calc(100% - 16px) !important;
-    max-width: calc(100% - 16px) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    flex:0 0 calc(100% - 8px) !important;
+    max-width:calc(100% - 8px) !important;
   }
 
-  .lightbox-slide img{
-    width: auto !important;
-    height: auto !important;
-    max-width: 70% !important;
-    max-height: 70svh !important;
-    object-fit: contain !important;
-    transform: none !important;
-  }
-
-  /* Keep stacked mobile slides coherent on iPhone Safari */
-  .lightbox-slide.lb-stacked{
-    align-items: center !important;
-    justify-items: center !important;
-  }
-
-  .lightbox-slide.lb-stacked .lb-cell{
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .lightbox-slide.lb-stacked .lb-cell img{
-    max-width: 70% !important;
-    max-height: 100% !important;
-  }
 }
 
 </style>

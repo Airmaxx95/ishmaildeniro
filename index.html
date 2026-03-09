@@ -2798,13 +2798,14 @@ html, body{
 }
 
 
-/* === Mobile lightbox stacked horizontals: prevent off‑screen cropping === */
+/* === Mobile lightbox stacked horizontals: balanced fill (less white space, no thumbnail feel) === */
 @media (max-width: 900px){
-
   .lightbox-slide.lb-stacked{
-    height: calc(100svh - 120px) !important;
-    max-height: calc(100svh - 120px) !important;
+    height: calc(100svh - 84px) !important;
+    max-height: calc(100svh - 84px) !important;
     grid-template-rows: 1fr 1fr !important;
+    gap: 8px !important;
+    align-items: center !important;
   }
 
   .lightbox-slide.lb-stacked .lb-cell{
@@ -2812,17 +2813,17 @@ html, body{
     align-items:center !important;
     justify-content:center !important;
     overflow:hidden !important;
-    max-height:50% !important;
+    min-height: 0 !important;
   }
 
   .lightbox-slide.lb-stacked img{
-    width:100% !important;
-    height:auto !important;
-    max-height:100% !important;
-    object-fit:contain !important;
-    display:block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
   }
-
 }
 
 </style>
@@ -2835,34 +2836,6 @@ html, body{
 	 viewBox="0 0 184.25 179.73" style="enable-background:new 0 0 184.25 179.73;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#DEFF00;}
-
-/* === Mobile lightbox stacked horizontals: prevent off‑screen cropping === */
-@media (max-width: 900px){
-
-  .lightbox-slide.lb-stacked{
-    height: calc(100svh - 120px) !important;
-    max-height: calc(100svh - 120px) !important;
-    grid-template-rows: 1fr 1fr !important;
-  }
-
-  .lightbox-slide.lb-stacked .lb-cell{
-    display:flex !important;
-    align-items:center !important;
-    justify-content:center !important;
-    overflow:hidden !important;
-    max-height:50% !important;
-  }
-
-  .lightbox-slide.lb-stacked img{
-    width:100% !important;
-    height:auto !important;
-    max-height:100% !important;
-    object-fit:contain !important;
-    display:block !important;
-  }
-
-}
-
 </style>
 <path class="st0" d="M183.04,113.21L122.3,88.33c-0.59-0.24-0.76-0.99-0.33-1.46l43.92-48.78c0.64-0.71,0.67-1.78,0.08-2.53
 	c-0.6-0.75-1.65-0.95-2.49-0.48l-57.59,32.54c-0.56,0.31-1.26-0.02-1.36-0.65L94.06,1.64c0-0.01-0.01-0.02-0.01-0.02

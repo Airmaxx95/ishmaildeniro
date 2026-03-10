@@ -5951,5 +5951,121 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script id="sidebar-highlight-persist-fix">
+(function(){
+  if (window.__SIDEBAR_HIGHLIGHT_PERSIST_FIX__) return;
+  window.__SIDEBAR_HIGHLIGHT_PERSIST_FIX__ = true;
+
+  const mq = window.matchMedia("(min-width: 901px)");
+  let currentSlug = "";
+
+  function desktop(){ return mq.matches; }
+
+  function clearSidebarActive(){
+    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
+      li.classList.remove("active");
+    });
+    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
+      el.classList.remove("active-link");
+    });
+  }
+
+  function applySidebarActive(slug){
+    if (!desktop()) return;
+    clearSidebarActive();
+
+    const clean = String(slug || "").trim();
+    currentSlug = clean;
+    if (!clean) return;
+
+    const lower = clean.toLowerCase();
+
+    if (lower === "biography" || lower === "research"){
+      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(clean) + '"]');
+      if (topBtn) topBtn.classList.add("active-link");
+      return;
+    }
+
+    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(clean) + '"]');
+    if (!link) return;
+    const li = link.closest("li");
+    if (li) li.classList.add("active");
+  }
+
+  // Keep the clicked sidebar slug highlighted on desktop.
+  document.addEventListener("click", function(e){
+    if (!desktop()) return;
+
+    const sidebarWork = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-open-work]');
+    if (sidebarWork){
+      const slug = sidebarWork.getAttribute("data-open-work") || "";
+      applySidebarActive(slug);
+
+      requestAnimationFrame(function(){ applySidebarActive(slug); });
+      setTimeout(function(){ applySidebarActive(slug); }, 60);
+      setTimeout(function(){ applySidebarActive(slug); }, 160);
+      return;
+    }
+
+    const sidebarInfo = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-nav="info"]');
+    const header = e.target.closest && e.target.closest("#globalHeader");
+    if (sidebarInfo || header){
+      currentSlug = "";
+      clearSidebarActive();
+      return;
+    }
+
+    const openBio = e.target.closest && e.target.closest("#openBiography");
+    if (openBio){
+      applySidebarActive("biography");
+      return;
+    }
+
+    const openResearch = e.target.closest && e.target.closest("#openResearch");
+    if (openResearch){
+      applySidebarActive("research");
+      return;
+    }
+  }, true);
+
+  // After cards open, re-apply the last sidebar selection so highlight persists.
+  const origShowCard = window.showCard;
+  if (typeof origShowCard === "function"){
+    window.showCard = function(card){
+      const out = origShowCard.apply(this, arguments);
+      if (desktop() && currentSlug){
+        requestAnimationFrame(function(){ applySidebarActive(currentSlug); });
+        setTimeout(function(){ applySidebarActive(currentSlug); }, 60);
+      }
+      return out;
+    };
+  }
+
+  const origGoHome = window.goHome;
+  if (typeof origGoHome === "function"){
+    window.goHome = function(){
+      const out = origGoHome.apply(this, arguments);
+      if (desktop()){
+        currentSlug = "";
+        clearSidebarActive();
+      }
+      return out;
+    };
+  }
+
+  window.addEventListener("resize", function(){
+    if (!desktop()){
+      currentSlug = "";
+      clearSidebarActive();
+      return;
+    }
+    if (currentSlug){
+      applySidebarActive(currentSlug);
+    }
+  });
+})();
+</script>
+
 </body>
 </html>

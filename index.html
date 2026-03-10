@@ -2996,6 +2996,23 @@ html, body{
 }
 </style>
 
+
+<style id="sidebar-highlight-cleanup">
+/* Remove active dash on viewed sidebar title */
+.sidebar-list li.active .sidebar-link::after{
+  content: none !important;
+}
+
+/* Keep active state visually stable on desktop */
+@media (min-width: 901px){
+  #sidebarNav .sidebar-link,
+  #sidebarNav .sidebar-link.active-link,
+  #sidebarNav .sidebar-list li.active .sidebar-link{
+    transition: none !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -5855,6 +5872,116 @@ document.addEventListener("keydown", function(e){
 
 
 
+
+
+<script id="sidebar-active-doublefire-fix">
+(function(){
+  if (window.__SIDEBAR_ACTIVE_DOUBLEFIRE_FIX__) return;
+  window.__SIDEBAR_ACTIVE_DOUBLEFIRE_FIX__ = true;
+
+  const mq = window.matchMedia("(min-width: 901px)");
+  let rafId = null;
+  let lastSlug = null;
+
+  function currentTopWorkSlug(){
+    const cards = Array.from(document.querySelectorAll(".card.work-card.visible"))
+      .filter(function(c){
+        const cs = getComputedStyle(c);
+        return cs.display !== "none" && cs.visibility !== "hidden";
+      });
+
+    if(!cards.length) return "";
+
+    cards.sort(function(a,b){
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+
+    return String(cards[0]?.dataset?.workSlug || "").trim();
+  }
+
+  function applySidebarActiveStable(){
+    if(!mq.matches) return;
+
+    const slug = currentTopWorkSlug();
+
+    // Clear existing states once
+    document.querySelectorAll(".sidebar-list li.active").forEach(function(li){
+      li.classList.remove("active");
+    });
+    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
+      el.classList.remove("active-link");
+    });
+
+    if(!slug){
+      lastSlug = "";
+      return;
+    }
+
+    if(slug.toLowerCase() === "biography" || slug.toLowerCase() === "research"){
+      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+      if(topBtn) topBtn.classList.add("active-link");
+      lastSlug = slug;
+      return;
+    }
+
+    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+    if(link){
+      const li = link.closest("li");
+      if(li) li.classList.add("active");
+    }
+    lastSlug = slug;
+  }
+
+  function scheduleStableSidebarActive(){
+    if(!mq.matches) return;
+    if(rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(function(){
+      rafId = requestAnimationFrame(function(){
+        applySidebarActiveStable();
+      });
+    });
+  }
+
+  // Run after sidebar/work interactions on desktop
+  document.addEventListener("click", function(e){
+    if(!mq.matches) return;
+    const t = e.target;
+    if(!t) return;
+    if(t.closest && (
+      t.closest("#sidebarNav .sidebar-link") ||
+      t.closest("#globalHeader") ||
+      t.closest("[data-open-work]") ||
+      t.closest("[data-nav='info']")
+    )){
+      scheduleStableSidebarActive();
+    }
+  }, true);
+
+  // Run after card transitions settle
+  const origShowCard = window.showCard;
+  if(typeof origShowCard === "function"){
+    window.showCard = function(card){
+      const out = origShowCard.apply(this, arguments);
+      if(mq.matches){
+        scheduleStableSidebarActive();
+      }
+      return out;
+    };
+  }
+
+  window.addEventListener("load", function(){
+    scheduleStableSidebarActive();
+    setTimeout(scheduleStableSidebarActive, 60);
+    setTimeout(scheduleStableSidebarActive, 160);
+  }, {once:true});
+
+  window.addEventListener("resize", function(){
+    scheduleStableSidebarActive();
+  });
+})();
+</script>
 
 </body>
 </html>

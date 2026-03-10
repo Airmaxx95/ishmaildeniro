@@ -2926,13 +2926,9 @@ html, body{
 </style>
 
 
-<style id="mobile-nav-header-repair-css">
+<style id="mobile-nav-clean-rebuild-css">
 @media (max-width: 900px){
-  body.mobile-menu-open #globalHeader{
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
+  body.mobile-menu-open #globalHeader,
   body.mobile-menu-open #sidebarNav{
     opacity: 0 !important;
     visibility: hidden !important;
@@ -4746,517 +4742,25 @@ document.addEventListener("keydown", function(e){
 
 
 
-<script>
-(function(){
-  const mq = window.matchMedia("(max-width: 900px)");
-  const toggle = document.getElementById("mobileNavToggle");
-  const overlay = document.getElementById("mobileNavOverlay");
-  const content = document.getElementById("mobileNavContent");
-  const closeBtn = overlay ? overlay.querySelector(".mobile-nav-close") : null;
-
-  if(!toggle || !overlay || !content) return;
-
-  const OVERLAY_FADE_MS = 220;
-  const HOLD_AFTER_TRIGGER_MS = 260; // keep gate up long enough for the site's own fade-in to begin
-  let handoffLock = false;
-
-  function closeOverlay(){
-    const active = document.activeElement;
-    if(active && overlay.contains(active) && typeof active.blur === "function"){
-      active.blur();
-    }
-    overlay.classList.remove("open", "handoff");
-    overlay.setAttribute("aria-hidden", "true");
-    overlay.setAttribute("inert", "");
-    toggle.classList.remove("is-open");
-    toggle.setAttribute("aria-expanded", "false");
-    if(typeof toggle.focus === "function"){
-      try{ toggle.focus({preventScroll:true}); }catch(e){ toggle.focus(); }
-    }
-  }
-
-  function syncLightboxState(){
-    if(!mq.matches){
-      document.body.classList.remove("mobile-lightbox-open", "mobile-nav-transitioning");
-      closeOverlay();
-      return;
-    }
-    const openLightbox =
-      document.querySelector(".lightbox-overlay.active, .lightbox.active, .lightbox-overlay[aria-hidden='false']");
-    document.body.classList.toggle("mobile-lightbox-open", !!openLightbox);
-  }
-
-  function releaseGateLater(){
-    // Hold through at least one paint + a short delay so subsequent-work transitions don't flash.
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        setTimeout(function(){
-          document.body.classList.remove("mobile-nav-transitioning");
-        }, HOLD_AFTER_TRIGGER_MS);
-      });
-    });
-  }
-
-  function handoffTo(fn){
-    if(!mq.matches || handoffLock) return;
-    handoffLock = true;
-
-    // Cover the whole handoff and suppress visible cards underneath.
-    overlay.classList.add("handoff");
-    document.body.classList.add("mobile-nav-transitioning");
-
-    // Trigger the site's normal navigation underneath the overlay.
-    try{ fn(); }catch(e){}
-
-    // Start overlay fade after one frame so the target card can mount while still hidden.
-    requestAnimationFrame(function(){
-      closeOverlay();
-
-      // Keep cards hidden until the site's own transition is underway.
-      releaseGateLater();
-
-      setTimeout(function(){
-        handoffLock = false;
-      }, OVERLAY_FADE_MS + HOLD_AFTER_TRIGGER_MS + 80);
-    });
-  }
-
-  function copySidebarIntoOverlay(){
-    if(!mq.matches) return;
-    const sidebarWorks = document.getElementById("sidebarWorks");
-    if(!sidebarWorks) return;
-
-    const researchItem = WORKS_DATA.find(w => String(w.slug||"").trim().toLowerCase() === "research");
-    const researchVisible = !!(researchItem && String(researchItem.site_visible||"yes").trim().toLowerCase() === "yes");
-    const htmlTop = [
-      '<button type="button" class="sidebar-link" data-nav="info">Info</button>',
-      '<button type="button" class="sidebar-link" data-open-work="biography">Biography</button>',
-      researchVisible ? '<button type="button" class="sidebar-link" data-open-work="research">Research</button>' : '',
-      '<div class="sidebar-divider" aria-hidden="true"></div>'
-    ].join("");
-
-    content.innerHTML = '<div class="sidebar-inner">' + htmlTop + sidebarWorks.innerHTML + '</div>';
-
-    content.querySelectorAll("[data-nav='info']").forEach(btn=>{
-      btn.addEventListener("click", function(){
-        handoffTo(function(){
-          const header = document.getElementById("globalHeader");
-          if(header) header.click();
-        });
-      });
-    });
-
-    content.querySelectorAll("[data-open-work]").forEach(btn=>{
-      btn.addEventListener("click", function(){
-        const slug = this.getAttribute("data-open-work");
-        handoffTo(function(){
-          const target =
-            document.querySelector('.card.work-card[data-slug="'+slug+'"]') ||
-            document.querySelector('.card.work-card[data-work-slug="'+slug+'"]');
-
-          // Hard-close any currently visible cards first so the next work opens fresh.
-          document.querySelectorAll('.card.visible').forEach(function(card){
-            if(card !== target){
-              card.classList.remove('visible');
-              card.classList.add('hidden');
-              card.style.display = 'none';
-              card.style.visibility = 'hidden';
-            }
-          });
-
-          if(target && typeof window.showCard === "function"){
-            target.classList.add('mobile-pre-enter');
-            target.style.visibility = 'hidden';
-            target.style.opacity = '0';
-            window.showCard(target);
-          } else {
-            const orig = document.querySelector('#sidebarNav [data-open-work="'+slug+'"]');
-            if(orig) orig.click();
-          }
-        });
-      });
-    });
-  }
-
-  function openOverlay(){
-    if(!mq.matches || handoffLock) return;
-    copySidebarIntoOverlay();
-    overlay.classList.add("open");
-    overlay.classList.remove("handoff");
-    overlay.setAttribute("aria-hidden", "false");
-    overlay.removeAttribute("inert");
-    toggle.classList.add("is-open");
-    toggle.setAttribute("aria-expanded", "true");
-  }
-
-  toggle.addEventListener("click", function(){
-    if(!mq.matches || handoffLock) return;
-    if(overlay.classList.contains("open")) closeOverlay();
-    else openOverlay();
-  });
-
-  if(closeBtn){
-    closeBtn.addEventListener("click", function(){
-      if(!mq.matches || handoffLock) return;
-      closeOverlay();
-    });
-  }
-
-  overlay.addEventListener("click", function(e){
-    if(!mq.matches || handoffLock) return;
-    if(e.target === overlay) closeOverlay();
-  });
-
-  document.addEventListener("keydown", function(e){
-    if(!mq.matches || handoffLock) return;
-    if(e.key === "Escape" && overlay.classList.contains("open")) closeOverlay();
-  });
-
-  window.addEventListener("load", syncLightboxState, {once:true});
-  window.addEventListener("resize", syncLightboxState);
-})();
-</script>
-
-
-
-
-
-
-
-<script>
-(function(){
-  const mq = window.matchMedia("(max-width: 900px)");
-  const header = document.getElementById("globalHeader");
-  const overlay = document.getElementById("mobileNavOverlay");
-  const toggle = document.getElementById("mobileNavToggle");
-
-  if(!header || !overlay || !toggle) return;
-  if(window.__MOBILE_HEADER_GO_HOME_PATCH) return;
-  window.__MOBILE_HEADER_GO_HOME_PATCH = true;
-
-  function closeMobileNav(){
-    overlay.classList.remove("open", "handoff");
-    overlay.setAttribute("aria-hidden", "true");
-    toggle.classList.remove("is-open");
-    toggle.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("mobile-menu-open");
-  }
-
-  function isMobileMenuOpen(){
-    return mq.matches && overlay.classList.contains("open");
-  }
-
-  function goInfoFromHeader(e){
-    if(!isMobileMenuOpen()) return;
-    e.preventDefault();
-    e.stopPropagation();
-
-    closeMobileNav();
-
-    if(typeof window.goHome === "function"){
-      window.goHome();
-      return;
-    }
-
-    const info =
-      document.querySelector(".card.info-card") ||
-      document.getElementById("infoCard");
-    if(info && typeof window.showCard === "function"){
-      window.showCard(info);
-    }
-  }
-
-  header.addEventListener("click", goInfoFromHeader, true);
-  header.addEventListener("keydown", function(e){
-    if((e.key === "Enter" || e.key === " ") && isMobileMenuOpen()){
-      goInfoFromHeader(e);
-    }
-  }, true);
-})();
-</script>
-
-
-
-<script>
-(function(){
-  const mq = window.matchMedia("(max-width: 900px)");
-  if(window.__LIGHTWEIGHT_MOBILE_STATE_SYNC) return;
-  window.__LIGHTWEIGHT_MOBILE_STATE_SYNC = true;
-
-  const overlay = document.getElementById("mobileNavOverlay");
-
-  function setMenuOpenState(){
-    if(!mq.matches){
-      document.body.classList.remove("mobile-menu-open");
-      return;
-    }
-    const open = !!(overlay && overlay.classList.contains("open"));
-    document.body.classList.toggle("mobile-menu-open", open);
-  }
-
-  function setLightboxState(open){
-    if(!mq.matches){
-      document.body.classList.remove("mobile-lightbox-open");
-      return;
-    }
-    document.body.classList.toggle("mobile-lightbox-open", !!open);
-  }
-
-  // Menu button state: infer from user interactions rather than observing the entire DOM
-  document.addEventListener("click", function(e){
-    const t = e.target;
-    if(!t) return;
-
-    // Opening the mobile menu
-    if(t.closest && t.closest("#mobileNavToggle")){
-      requestAnimationFrame(setMenuOpenState);
-      return;
-    }
-
-    // Closing the mobile menu
-    if(
-      (t.closest && t.closest("#mobileNavOverlay .mobile-nav-close")) ||
-      (t.id === "mobileNavOverlay")
-    ){
-      requestAnimationFrame(setMenuOpenState);
-      return;
-    }
-
-    // Opening lightbox from any media box
-    if(t.closest && t.closest(".media-box")){
-      setLightboxState(true);
-      return;
-    }
-
-    // Closing lightbox from close button
-    if(t.closest && t.closest(".lightbox-close")){
-      setLightboxState(false);
-      return;
-    }
-
-    // Clicking overlay background closes lightbox in many builds
-    if(t.classList && (t.classList.contains("lightbox-overlay") || t.classList.contains("lightbox"))){
-      setLightboxState(false);
-      return;
-    }
-  }, true);
-
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape"){
-      setLightboxState(false);
-      requestAnimationFrame(setMenuOpenState);
-    }
-  }, true);
-
-  window.addEventListener("resize", function(){
-    if(!mq.matches){
-      document.body.classList.remove("mobile-lightbox-open", "mobile-menu-open");
-    } else {
-      setMenuOpenState();
-    }
-  });
-
-  window.addEventListener("load", function(){
-    setMenuOpenState();
-    // Initial lightbox state check only once
-    const open = !!document.querySelector(".lightbox-overlay.active, .lightbox.active, .lightbox-overlay[aria-hidden='false']");
-    setLightboxState(open);
-  }, {once:true});
-})();
-</script>
-
-
-<script>
-(function(){
-  const mq = window.matchMedia("(max-width: 900px)");
-  const header = document.getElementById("globalHeader");
-  const menuBtn = document.getElementById("mobileNavToggle");
-  const overlay = document.getElementById("mobileNavOverlay");
-  if(!header || !menuBtn || !overlay) return;
-  if(window.__MOBILE_CHROME_HARD_FIX) return;
-  window.__MOBILE_CHROME_HARD_FIX = true;
-
-  function topMostVisibleCard(){
-    const visibles = Array.from(document.querySelectorAll(".card.visible"))
-      .filter(c => c && c.style.display !== "none" && c.style.visibility !== "hidden");
-    if(!visibles.length) return null;
-    visibles.sort((a,b)=>{
-      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
-      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
-      return zb - za;
-    });
-    return visibles[0];
-  }
-
-  function lightboxOpen(){
-    return !!document.querySelector(".lightbox-overlay.active, .lightbox.active, .lightbox-overlay[aria-hidden='false']");
-  }
-
-  function closeMobileNavRaw(){
-    overlay.classList.remove("open", "handoff");
-    overlay.setAttribute("aria-hidden", "true");
-    menuBtn.classList.remove("is-open");
-    menuBtn.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("mobile-menu-open");
-  }
-
-  function showMenuBtn(){
-    menuBtn.style.display = "";
-    menuBtn.style.opacity = "";
-    menuBtn.style.visibility = "";
-    menuBtn.style.pointerEvents = "";
-  }
-
-  function hideMenuBtn(){
-    menuBtn.style.display = "none";
-    menuBtn.style.opacity = "0";
-    menuBtn.style.visibility = "hidden";
-    menuBtn.style.pointerEvents = "none";
-  }
-
-  function hideHeader(){
-    header.classList.remove("visible");
-    header.style.opacity = "0";
-    header.style.visibility = "hidden";
-    header.style.pointerEvents = "none";
-  }
-
-  function releaseHeader(){
-    header.style.opacity = "";
-    header.style.visibility = "";
-    header.style.pointerEvents = "";
-  }
-
-  function syncMobileChrome(){
-    if(!mq.matches) return;
-
-    const lbOpen = lightboxOpen();
-    const top = topMostVisibleCard();
-    const onInfo = !!(top && top.classList && top.classList.contains("info-card"));
-    const menuOpen = overlay.classList.contains("open");
-
-    if(lbOpen){
-      hideMenuBtn();
-      releaseHeader(); // header may be visible over lightbox by site logic
-      return;
-    }
-
-    showMenuBtn();
-
-    if(onInfo && !menuOpen){
-      hideHeader();
-    } else {
-      releaseHeader();
-    }
-  }
-
-  // Wrap goHome so returning to Info on mobile always restores correct chrome
-  if(typeof window.goHome === "function" && !window.__MOBILE_CHROME_HARD_FIX_GOHOME){
-    const oldGoHome = window.goHome;
-    window.__MOBILE_CHROME_HARD_FIX_GOHOME = true;
-    window.goHome = function(){
-      if(mq.matches){
-        closeMobileNavRaw();
-        document.body.classList.remove("mobile-lightbox-open");
-      }
-      const res = oldGoHome();
-      if(mq.matches){
-        requestAnimationFrame(syncMobileChrome);
-        setTimeout(syncMobileChrome, 220);
-      }
-      return res;
-    };
-  }
-
-  // Header clicks: let site logic run, then reconcile mobile chrome
-  header.addEventListener("click", function(){
-    if(!mq.matches) return;
-    setTimeout(syncMobileChrome, 30);
-    setTimeout(syncMobileChrome, 220);
-  }, true);
-
-  // Lightbox close / escape: reconcile after close
-  document.addEventListener("click", function(e){
-    if(!mq.matches) return;
-    const t = e.target;
-    if(!t) return;
-    if(t.closest && t.closest(".lightbox-close")){
-      setTimeout(syncMobileChrome, 30);
-      setTimeout(syncMobileChrome, 220);
-    }
-  }, true);
-
-  document.addEventListener("keydown", function(e){
-    if(!mq.matches) return;
-    if(e.key === "Escape"){
-      setTimeout(syncMobileChrome, 30);
-      setTimeout(syncMobileChrome, 220);
-    }
-  }, true);
-
-  window.addEventListener("load", syncMobileChrome, {once:true});
-  window.addEventListener("resize", syncMobileChrome);
-
-  // If card navigation happens by other means, reconcile once after it
-  if(typeof window.showCard === "function" && !window.__MOBILE_CHROME_HARD_FIX_SHOWCARD){
-    const oldShowCard = window.showCard;
-    window.__MOBILE_CHROME_HARD_FIX_SHOWCARD = true;
-    window.showCard = function(card){
-      const res = oldShowCard(card);
-      if(mq.matches){
-        requestAnimationFrame(syncMobileChrome);
-        setTimeout(syncMobileChrome, 220);
-      }
-      return res;
-    };
-  }
-})();
-</script>
-
-
-<script>
-(function(){
-  const mq = window.matchMedia("(max-width: 900px)");
-  const header = document.getElementById("globalHeader");
-  const menuBtn = document.getElementById("mobileNavToggle");
-  const overlay = document.getElementById("mobileNavOverlay");
-  if(!header || !menuBtn || !overlay) return;
-  if(window.__MOBILE_MENU_RESTORE_AFTER_HEADER_CLICK) return;
-  window.__MOBILE_MENU_RESTORE_AFTER_HEADER_CLICK = true;
-
-  function restoreMenuIfNeeded(){
-    if(!mq.matches) return;
-
-    const lightboxOpen = !!document.querySelector(
-      ".lightbox-overlay.active, .lightbox.active, .lightbox-overlay[aria-hidden='false']"
-    );
-
-    // Always clear stale mobile menu/lightbox state after header-driven navigation.
-    if(!lightboxOpen){
-      document.body.classList.remove("mobile-lightbox-open");
-      menuBtn.style.display = "block";
-      menuBtn.style.opacity = "1";
-      menuBtn.style.visibility = "visible";
-      menuBtn.style.pointerEvents = "auto";
-    }
-  }
-
-  header.addEventListener("click", function(){
-    if(!mq.matches) return;
-    // Let existing header/lightbox/card logic run first, then restore mobile chrome.
-    setTimeout(restoreMenuIfNeeded, 40);
-    setTimeout(restoreMenuIfNeeded, 240);
-  }, true);
-
-  header.addEventListener("keydown", function(e){
-    if(!mq.matches) return;
-    if(e.key === "Enter" || e.key === " "){
-      setTimeout(restoreMenuIfNeeded, 40);
-      setTimeout(restoreMenuIfNeeded, 240);
-    }
-  }, true);
-})();
-</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <script>
@@ -5627,613 +5131,20 @@ document.addEventListener("keydown", function(e){
 </script>
 
 
-<script id="mobile-info-blank-fix">
+<script id="mobile-nav-clean-rebuild-js">
 (function(){
-  const mq = window.matchMedia("(max-width: 900px)");
-  const content = document.getElementById("mobileNavContent");
-  if(!content) return;
-
-  function safeGoInfo(){
-    const info =
-      document.querySelector(".card.info-card") ||
-      document.getElementById("infoCard");
-    if(!info) return;
-
-    document.querySelectorAll(".card").forEach(function(card){
-      if(card !== info){
-        card.classList.remove("visible");
-        card.classList.add("hidden");
-        card.style.display = "none";
-        card.style.visibility = "hidden";
-        card.style.opacity = "";
-      }
-    });
-
-    info.classList.remove("hidden", "mobile-pre-enter");
-    info.classList.add("visible");
-    info.style.display = "block";
-    info.style.visibility = "visible";
-    info.style.opacity = "";
-
-    if(typeof window.showCard === "function"){
-      window.showCard(info);
-    }
-    if(typeof window.goHome === "function"){
-      window.goHome();
-    }
-  }
-
-  content.addEventListener("click", function(e){
-    const btn = e.target.closest && e.target.closest("[data-nav='info']");
-    if(!btn || !mq.matches) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-
-    const overlay = document.getElementById("mobileNavOverlay");
-    const toggle = document.getElementById("mobileNavToggle");
-
-    document.body.classList.add("mobile-nav-transitioning");
-
-    if(overlay){
-      overlay.classList.remove("open", "handoff");
-      overlay.setAttribute("aria-hidden", "true");
-      overlay.setAttribute("inert", "");
-    }
-    if(toggle){
-      toggle.classList.remove("is-open");
-      toggle.setAttribute("aria-expanded", "false");
-    }
-    document.body.classList.remove("mobile-menu-open");
-
-    requestAnimationFrame(function(){
-      safeGoInfo();
-      requestAnimationFrame(function(){
-        setTimeout(function(){
-          document.body.classList.remove("mobile-nav-transitioning");
-        }, 260);
-      });
-    });
-  }, true);
-})();
-</script>
-
-
-<script id="mobile-overlay-focus-fix">
-(function(){
-  const overlay = document.getElementById("mobileNavOverlay");
-  if(!overlay) return;
-
-  function releaseOverlayFocus(){
-    const active = document.activeElement;
-    if(active && overlay.contains(active) && typeof active.blur === "function"){
-      active.blur();
-    }
-  }
-
-  document.addEventListener("click", function(e){
-    const trigger = e.target.closest && (
-      e.target.closest("[data-nav='info']") ||
-      e.target.closest("[data-open-work]") ||
-      e.target.closest(".mobile-nav-close")
-    );
-    if(!trigger) return;
-    if(window.matchMedia("(max-width: 900px)").matches){
-      releaseOverlayFocus();
-    }
-  }, true);
-
-  const observer = new MutationObserver(function(){
-    if(overlay.getAttribute("aria-hidden") === "true"){
-      releaseOverlayFocus();
-    }
-  });
-
-  observer.observe(overlay, { attributes: true, attributeFilter: ["aria-hidden", "class", "inert"] });
-})();
-</script>
-
-
-<script id="mobile-info-direct-fix-v2">
-(function(){
-  if (window.__MOBILE_INFO_DIRECT_FIX_V2) return;
-  window.__MOBILE_INFO_DIRECT_FIX_V2 = true;
+  if (window.__MOBILE_NAV_CLEAN_REBUILD__) return;
+  window.__MOBILE_NAV_CLEAN_REBUILD__ = true;
 
   const mq = window.matchMedia("(max-width: 900px)");
-
-  function closeMobileOverlay(){
-    const overlay = document.getElementById("mobileNavOverlay");
-    const toggle = document.getElementById("mobileNavToggle");
-    const active = document.activeElement;
-
-    if (overlay && active && overlay.contains(active) && typeof active.blur === "function"){
-      active.blur();
-    }
-
-    if (overlay){
-      overlay.classList.remove("open", "handoff");
-      overlay.setAttribute("aria-hidden", "true");
-      overlay.setAttribute("inert", "");
-      overlay.style.pointerEvents = "none";
-      overlay.style.opacity = "0";
-    }
-
-    if (toggle){
-      toggle.classList.remove("is-open");
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.style.display = "block";
-      toggle.style.opacity = "1";
-      toggle.style.visibility = "visible";
-      toggle.style.pointerEvents = "auto";
-    }
-
-    document.body.classList.remove("mobile-menu-open");
-    document.body.classList.remove("mobile-nav-transitioning");
-  }
-
-  function showInfoCardNow(){
-    const info =
-      document.querySelector(".card.info-card") ||
-      document.getElementById("infoCard");
-    if (!info) return;
-
-    document.querySelectorAll(".card").forEach(function(card){
-      if (card !== info){
-        card.classList.remove("visible", "card-enter", "mobile-pre-enter");
-        card.classList.add("hidden");
-        card.style.display = "none";
-        card.style.visibility = "hidden";
-        card.style.opacity = "";
-        card.style.animation = "";
-      }
-    });
-
-    info.classList.remove("hidden", "info-ghost", "card-exit", "mobile-pre-enter");
-    info.classList.add("visible");
-    info.style.display = "block";
-    info.style.visibility = "visible";
-    info.style.opacity = "1";
-    info.style.animation = "none";
-    info.style.pointerEvents = "auto";
-    info.style.zIndex = "999";
-
-    const header = document.getElementById("globalHeader");
-    if (header){
-      header.classList.remove("visible");
-      header.style.opacity = "0";
-      header.style.visibility = "hidden";
-      header.style.pointerEvents = "none";
-    }
-
-    const sidebar = document.getElementById("sidebarNav");
-    if (sidebar){
-      sidebar.classList.remove("visible");
-      sidebar.style.opacity = "0";
-      sidebar.style.pointerEvents = "none";
-    }
-  }
-
-  document.addEventListener("click", function(e){
-    const btn = e.target.closest && e.target.closest('[data-nav="info"]');
-    if (!btn || !mq.matches) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-    if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-
-    closeMobileOverlay();
-
-    requestAnimationFrame(function(){
-      showInfoCardNow();
-      setTimeout(function(){
-        showInfoCardNow();
-      }, 60);
-    });
-  }, true);
-})();
-</script>
-
-
-<script id="mobile-menu-reopen-fix">
-(function(){
-  if (window.__MOBILE_MENU_REOPEN_FIX) return;
-  window.__MOBILE_MENU_REOPEN_FIX = true;
-
-  const mq = window.matchMedia("(max-width: 900px)");
-  const toggle = document.getElementById("mobileNavToggle");
-  const overlay = document.getElementById("mobileNavOverlay");
-  const content = document.getElementById("mobileNavContent");
-  const closeBtn = overlay ? overlay.querySelector(".mobile-nav-close") : null;
-  if (!toggle || !overlay || !content) return;
-
-  function isMobile(){
-    return mq.matches;
-  }
-
-  function researchVisible(){
-    try{
-      return !!(window.WORKS_DATA || []).find(function(w){
-        return String(w.slug || "").trim().toLowerCase() === "research" &&
-               String(w.site_visible || "yes").trim().toLowerCase() === "yes";
-      });
-    }catch(e){
-      return true;
-    }
-  }
-
-  function buildOverlayMarkup(){
-    const sidebarWorks = document.getElementById("sidebarWorks");
-    const worksHtml = sidebarWorks ? sidebarWorks.innerHTML : "";
-    const topHtml = [
-      '<button type="button" class="sidebar-link" data-nav="info">Info</button>',
-      '<button type="button" class="sidebar-link" data-open-work="biography">Biography</button>',
-      researchVisible() ? '<button type="button" class="sidebar-link" data-open-work="research">Research</button>' : '',
-      '<div class="sidebar-divider" aria-hidden="true"></div>'
-    ].join("");
-    content.innerHTML = '<div class="sidebar-inner">' + topHtml + worksHtml + '</div>';
-  }
-
-  function openMenu(){
-    if (!isMobile()) return;
-    buildOverlayMarkup();
-    overlay.classList.add("open");
-    overlay.classList.remove("handoff");
-    overlay.removeAttribute("inert");
-    overlay.setAttribute("aria-hidden", "false");
-    overlay.style.opacity = "1";
-    overlay.style.pointerEvents = "auto";
-    toggle.classList.add("is-open");
-    toggle.setAttribute("aria-expanded", "true");
-    document.body.classList.add("mobile-menu-open");
-  }
-
-  function closeMenu(){
-    if (!isMobile()) return;
-    const active = document.activeElement;
-    if (active && overlay.contains(active) && typeof active.blur === "function"){
-      active.blur();
-    }
-    overlay.classList.remove("open", "handoff");
-    overlay.setAttribute("aria-hidden", "true");
-    overlay.setAttribute("inert", "");
-    overlay.style.opacity = "0";
-    overlay.style.pointerEvents = "none";
-    toggle.classList.remove("is-open");
-    toggle.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("mobile-menu-open");
-  }
-
-  function openWorkBySlug(slug){
-    const target =
-      document.querySelector('.card.work-card[data-slug="' + slug + '"]') ||
-      document.querySelector('.card.work-card[data-work-slug="' + slug + '"]');
-    if (!target) return;
-    if (typeof window.showCard === "function"){
-      target.classList.remove("hidden", "mobile-pre-enter");
-      target.classList.add("visible");
-      target.style.display = "block";
-      target.style.visibility = "visible";
-      target.style.opacity = "";
-      window.showCard(target);
-    } else {
-      document.querySelectorAll(".card").forEach(function(card){
-        if (card !== target){
-          card.classList.remove("visible");
-          card.classList.add("hidden");
-          card.style.display = "none";
-          card.style.visibility = "hidden";
-        }
-      });
-      target.classList.remove("hidden");
-      target.classList.add("visible");
-      target.style.display = "block";
-      target.style.visibility = "visible";
-    }
-  }
-
-  function goInfo(){
-    const info = document.querySelector(".card.info-card") || document.getElementById("infoCard");
-    if (!info) return;
-    document.querySelectorAll(".card").forEach(function(card){
-      if (card !== info){
-        card.classList.remove("visible", "mobile-pre-enter");
-        card.classList.add("hidden");
-        card.style.display = "none";
-        card.style.visibility = "hidden";
-      }
-    });
-    info.classList.remove("hidden", "info-ghost", "mobile-pre-enter");
-    info.classList.add("visible");
-    info.style.display = "block";
-    info.style.visibility = "visible";
-    info.style.opacity = "1";
-    if (typeof window.showCard === "function"){
-      window.showCard(info);
-    }
-  }
-
-  document.addEventListener("click", function(e){
-    const t = e.target.closest ? e.target.closest("#mobileNavToggle, #mobileNavOverlay .mobile-nav-close, #mobileNavContent [data-nav='info'], #mobileNavContent [data-open-work]") : null;
-    if (!t || !isMobile()) return;
-
-    if (t.matches("#mobileNavToggle")){
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-      if (overlay.classList.contains("open")) closeMenu();
-      else openMenu();
-      return;
-    }
-
-    if (t.matches("#mobileNavOverlay .mobile-nav-close")){
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-      closeMenu();
-      return;
-    }
-
-    if (t.matches("#mobileNavContent [data-nav='info']")){
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-      closeMenu();
-      requestAnimationFrame(goInfo);
-      return;
-    }
-
-    if (t.matches("#mobileNavContent [data-open-work]")){
-      const slug = t.getAttribute("data-open-work");
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-      closeMenu();
-      requestAnimationFrame(function(){ openWorkBySlug(slug); });
-      return;
-    }
-  }, true);
-
-  overlay.addEventListener("click", function(e){
-    if (!isMobile()) return;
-    if (e.target === overlay) closeMenu();
-  }, true);
-
-  window.addEventListener("resize", function(){
-    if (!isMobile()){
-      overlay.classList.remove("open", "handoff");
-      overlay.setAttribute("aria-hidden", "true");
-      overlay.setAttribute("inert", "");
-      document.body.classList.remove("mobile-menu-open");
-      toggle.classList.remove("is-open");
-      toggle.setAttribute("aria-expanded", "false");
-    }
-  });
-})();
-</script>
-
-
-<script id="mobile-menu-deep-fix">
-(function(){
-  if (window.__MOBILE_MENU_DEEP_FIX__) return;
-  window.__MOBILE_MENU_DEEP_FIX__ = true;
-
-  const mq = window.matchMedia("(max-width: 900px)");
-  const toggle = document.getElementById("mobileNavToggle");
+  const menuBtn = document.getElementById("mobileNavToggle");
   const overlay = document.getElementById("mobileNavOverlay");
   const content = document.getElementById("mobileNavContent");
   const closeBtn = overlay ? overlay.querySelector(".mobile-nav-close") : null;
   const header = document.getElementById("globalHeader");
   const sidebar = document.getElementById("sidebarNav");
 
-  if (!toggle || !overlay || !content) return;
-
-  function isMobile(){
-    return mq.matches;
-  }
-
-  function getInfoCard(){
-    return document.querySelector(".card.info-card") || document.getElementById("infoCard");
-  }
-
-  function getWorkCard(slug){
-    return document.querySelector('.card.work-card[data-slug="' + slug + '"]') ||
-           document.querySelector('.card.work-card[data-work-slug="' + slug + '"]');
-  }
-
-  function hardCloseMenu(){
-    const active = document.activeElement;
-    if (active && overlay.contains(active) && typeof active.blur === "function"){
-      active.blur();
-    }
-
-    overlay.classList.remove("open", "handoff");
-    overlay.setAttribute("aria-hidden", "true");
-    overlay.setAttribute("inert", "");
-    overlay.style.opacity = "0";
-    overlay.style.pointerEvents = "none";
-
-    toggle.classList.remove("is-open");
-    toggle.setAttribute("aria-expanded", "false");
-
-    document.body.classList.remove("mobile-menu-open", "mobile-nav-transitioning");
-  }
-
-  function researchVisible(){
-    try{
-      return !!(window.WORKS_DATA || []).find(function(w){
-        return String(w.slug || "").trim().toLowerCase() === "research" &&
-               String(w.site_visible || "yes").trim().toLowerCase() === "yes";
-      });
-    }catch(e){
-      return true;
-    }
-  }
-
-  function rebuildMobileMenu(){
-    const sidebarWorks = document.getElementById("sidebarWorks");
-    const worksHtml = sidebarWorks ? sidebarWorks.innerHTML : "";
-    const topHtml = [
-      '<button type="button" class="sidebar-link" data-nav="info">Info</button>',
-      '<button type="button" class="sidebar-link" data-open-work="biography">Biography</button>',
-      researchVisible() ? '<button type="button" class="sidebar-link" data-open-work="research">Research</button>' : '',
-      '<div class="sidebar-divider" aria-hidden="true"></div>'
-    ].join("");
-    content.innerHTML = '<div class="sidebar-inner">' + topHtml + worksHtml + '</div>';
-  }
-
-  function openMenu(){
-    if (!isMobile()) return;
-    rebuildMobileMenu();
-    overlay.classList.add("open");
-    overlay.classList.remove("handoff");
-    overlay.setAttribute("aria-hidden", "false");
-    overlay.removeAttribute("inert");
-    overlay.style.opacity = "1";
-    overlay.style.pointerEvents = "auto";
-
-    toggle.classList.add("is-open");
-    toggle.setAttribute("aria-expanded", "true");
-
-    document.body.classList.add("mobile-menu-open");
-  }
-
-  function hardShowCard(card, isInfo){
-    if (!card) return;
-
-    document.querySelectorAll(".card").forEach(function(c){
-      if (c !== card){
-        c.classList.remove("visible", "card-enter", "card-exit", "mobile-pre-enter");
-        c.classList.add("hidden");
-        c.style.display = "none";
-        c.style.visibility = "hidden";
-        c.style.opacity = "";
-        c.style.animation = "";
-      }
-    });
-
-    card.classList.remove("hidden", "info-ghost", "card-exit", "mobile-pre-enter");
-    card.classList.add("visible");
-    card.style.display = "block";
-    card.style.visibility = "visible";
-    card.style.opacity = "1";
-    card.style.animation = "none";
-    card.style.pointerEvents = "auto";
-
-    if (typeof window.showCard === "function"){
-      window.showCard(card);
-    }
-
-    if (header){
-      if (isInfo){
-        header.classList.remove("visible");
-        header.style.opacity = "0";
-        header.style.visibility = "hidden";
-        header.style.pointerEvents = "none";
-      } else {
-        header.classList.add("visible");
-        header.style.opacity = "";
-        header.style.visibility = "";
-        header.style.pointerEvents = "";
-      }
-    }
-
-    if (sidebar){
-      sidebar.classList.remove("visible");
-      sidebar.style.opacity = "0";
-      sidebar.style.pointerEvents = "none";
-    }
-  }
-
-  function goInfoDirect(){
-    hardCloseMenu();
-    const info = getInfoCard();
-    hardShowCard(info, true);
-  }
-
-  function openWorkDirect(slug){
-    hardCloseMenu();
-    const target = getWorkCard(slug);
-    if (!target) return;
-    hardShowCard(target, false);
-  }
-
-  toggle.addEventListener("click", function(e){
-    if (!isMobile()) return;
-    e.preventDefault();
-    e.stopPropagation();
-    if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-
-    if (overlay.classList.contains("open")) hardCloseMenu();
-    else openMenu();
-  }, true);
-
-  if (closeBtn){
-    closeBtn.addEventListener("click", function(e){
-      if (!isMobile()) return;
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-      hardCloseMenu();
-    }, true);
-  }
-
-  content.addEventListener("click", function(e){
-    if (!isMobile()) return;
-
-    const infoBtn = e.target.closest && e.target.closest("[data-nav='info']");
-    const workBtn = e.target.closest && e.target.closest("[data-open-work]");
-
-    if (!infoBtn && !workBtn) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-    if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-
-    if (infoBtn){
-      requestAnimationFrame(goInfoDirect);
-      return;
-    }
-
-    if (workBtn){
-      const slug = workBtn.getAttribute("data-open-work");
-      requestAnimationFrame(function(){
-        openWorkDirect(slug);
-      });
-    }
-  }, true);
-
-  overlay.addEventListener("click", function(e){
-    if (!isMobile()) return;
-    if (e.target === overlay){
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-      hardCloseMenu();
-    }
-  }, true);
-
-  window.addEventListener("resize", function(){
-    if (!isMobile()){
-      hardCloseMenu();
-    }
-  });
-})();
-</script>
-
-
-<script id="mobile-nav-header-repair-js">
-(function(){
-  if (window.__MOBILE_NAV_HEADER_REPAIR__) return;
-  window.__MOBILE_NAV_HEADER_REPAIR__ = true;
-
-  const mq = window.matchMedia("(max-width: 900px)");
-  const toggle = document.getElementById("mobileNavToggle");
-  const overlay = document.getElementById("mobileNavOverlay");
-  const content = document.getElementById("mobileNavContent");
-  const header = document.getElementById("globalHeader");
-  const sidebar = document.getElementById("sidebarNav");
-  if (!toggle || !overlay || !content) return;
+  if(!menuBtn || !overlay || !content) return;
 
   let zTop = 1000;
 
@@ -6241,21 +5152,21 @@ document.addEventListener("keydown", function(e){
     return mq.matches;
   }
 
-  function getInfoCard(){
+  function infoCard(){
     return document.querySelector(".card.info-card") || document.getElementById("infoCard");
   }
 
-  function getVisibleCards(){
-    return Array.from(document.querySelectorAll(".card.visible")).filter(function(card){
+  function isInfo(card){
+    return !!(card && card.classList && card.classList.contains("info-card"));
+  }
+
+  function topVisibleCard(){
+    const cards = Array.from(document.querySelectorAll(".card.visible")).filter(function(card){
       const cs = getComputedStyle(card);
       return cs.display !== "none" && cs.visibility !== "hidden";
     });
-  }
-
-  function getTopVisibleCard(){
-    const cards = getVisibleCards();
-    if (!cards.length) return null;
-    cards.sort(function(a, b){
+    if(!cards.length) return null;
+    cards.sort(function(a,b){
       const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
       const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
       return zb - za;
@@ -6263,39 +5174,33 @@ document.addEventListener("keydown", function(e){
     return cards[0];
   }
 
-  function isInfoCard(card){
-    return !!(card && card.classList && card.classList.contains("info-card"));
-  }
-
-  function getWorkCard(slug){
-    return document.querySelector('.card.work-card[data-slug="' + slug + '"]') ||
-           document.querySelector('.card.work-card[data-work-slug="' + slug + '"]');
+  function workCardBySlug(slug){
+    return document.querySelector('.card.work-card[data-slug="'+slug+'"]') ||
+           document.querySelector('.card.work-card[data-work-slug="'+slug+'"]');
   }
 
   function setInfoGhost(on){
-    const info = getInfoCard();
-    if (!info) return;
-    info.classList.toggle("info-ghost", !!on);
+    const info = infoCard();
+    if(info) info.classList.toggle("info-ghost", !!on);
   }
 
   function hideCard(card){
-    if (!card) return;
+    if(!card) return;
     card.classList.remove("visible", "card-enter", "card-exit", "mobile-pre-enter");
     card.classList.add("hidden");
     card.style.display = "none";
     card.style.visibility = "hidden";
     card.style.opacity = "";
     card.style.animation = "";
-    card.style.pointerEvents = "";
   }
 
   function showCardDirect(card){
-    if (!card) return;
+    if(!card) return;
     document.querySelectorAll(".card").forEach(function(c){
-      if (c !== card) hideCard(c);
+      if(c !== card) hideCard(c);
     });
 
-    card.classList.remove("hidden", "card-exit", "mobile-pre-enter");
+    card.classList.remove("hidden", "card-exit", "mobile-pre-enter", "info-ghost");
     card.classList.add("visible");
     card.style.display = "block";
     card.style.visibility = "visible";
@@ -6304,13 +5209,37 @@ document.addEventListener("keydown", function(e){
     card.style.pointerEvents = "auto";
     card.style.zIndex = String(++zTop);
 
-    setInfoGhost(!isInfoCard(card));
+    setInfoGhost(!isInfo(card));
 
     const wt = card.querySelector && card.querySelector(".work-text");
-    if (wt && typeof window.updateWorkTextFade === "function"){
+    if(wt && typeof window.updateWorkTextFade === "function"){
       try{ window.updateWorkTextFade(wt); }catch(e){}
-      setTimeout(function(){ try{ window.updateWorkTextFade(wt); }catch(e){} }, 60);
+      setTimeout(function(){ try{ window.updateWorkTextFade(wt); }catch(e){} }, 80);
     }
+  }
+
+  function setHeaderVisible(on){
+    if(!header) return;
+    header.classList.toggle("visible", !!on);
+    header.style.opacity = on ? "" : "0";
+    header.style.visibility = on ? "" : "hidden";
+    header.style.pointerEvents = on ? "" : "none";
+  }
+
+  function setSidebarHidden(){
+    if(!sidebar) return;
+    sidebar.classList.remove("visible");
+    sidebar.style.opacity = "0";
+    sidebar.style.visibility = "hidden";
+    sidebar.style.pointerEvents = "none";
+  }
+
+  function applyChrome(){
+    if(!isMobile()) return;
+    const menuOpen = overlay.classList.contains("open");
+    const current = topVisibleCard();
+    setHeaderVisible(!menuOpen && !!current && !isInfo(current));
+    setSidebarHidden();
   }
 
   function researchVisible(){
@@ -6337,7 +5266,7 @@ document.addEventListener("keydown", function(e){
   }
 
   function openMenu(){
-    if (!isMobile()) return;
+    if(!isMobile()) return;
     rebuildMenu();
     overlay.classList.add("open");
     overlay.classList.remove("handoff");
@@ -6345,15 +5274,15 @@ document.addEventListener("keydown", function(e){
     overlay.removeAttribute("inert");
     overlay.style.opacity = "1";
     overlay.style.pointerEvents = "auto";
-    toggle.classList.add("is-open");
-    toggle.setAttribute("aria-expanded", "true");
+    menuBtn.classList.add("is-open");
+    menuBtn.setAttribute("aria-expanded", "true");
     document.body.classList.add("mobile-menu-open");
     applyChrome();
   }
 
   function closeMenu(){
     const active = document.activeElement;
-    if (active && overlay.contains(active) && typeof active.blur === "function"){
+    if(active && overlay.contains(active) && typeof active.blur === "function"){
       active.blur();
     }
     overlay.classList.remove("open", "handoff");
@@ -6361,159 +5290,132 @@ document.addEventListener("keydown", function(e){
     overlay.setAttribute("inert", "");
     overlay.style.opacity = "0";
     overlay.style.pointerEvents = "none";
-    toggle.classList.remove("is-open");
-    toggle.setAttribute("aria-expanded", "false");
+    menuBtn.classList.remove("is-open");
+    menuBtn.setAttribute("aria-expanded", "false");
     document.body.classList.remove("mobile-menu-open", "mobile-nav-transitioning");
     applyChrome();
   }
 
-  function applyChrome(){
-    if (!isMobile()){
-      document.body.classList.remove("mobile-menu-open");
-      return;
-    }
-
-    const menuOpen = overlay.classList.contains("open");
-    const current = getTopVisibleCard();
-    const showHeader = !menuOpen && !!current && !isInfoCard(current);
-
-    if (header){
-      header.classList.toggle("visible", showHeader);
-      header.style.opacity = showHeader ? "" : "0";
-      header.style.visibility = showHeader ? "" : "hidden";
-      header.style.pointerEvents = showHeader ? "" : "none";
-    }
-
-    if (sidebar){
-      sidebar.classList.remove("visible");
-      sidebar.style.opacity = "0";
-      sidebar.style.visibility = "hidden";
-      sidebar.style.pointerEvents = "none";
-    }
-  }
-
   function goInfo(){
     closeMenu();
-    const info = getInfoCard();
-    if (!info) return;
-    showCardDirect(info);
+    const card = infoCard();
+    if(card) showCardDirect(card);
     applyChrome();
   }
 
   function goWork(slug){
     closeMenu();
-    const target = getWorkCard(slug);
-    if (!target) return;
-    showCardDirect(target);
+    const card = workCardBySlug(slug);
+    if(card) showCardDirect(card);
     applyChrome();
   }
 
-  toggle.addEventListener("click", function(e){
-    if (!isMobile()) return;
+  menuBtn.addEventListener("click", function(e){
+    if(!isMobile()) return;
     e.preventDefault();
     e.stopPropagation();
-    if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-    if (overlay.classList.contains("open")) closeMenu();
+    if(typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+    if(overlay.classList.contains("open")) closeMenu();
     else openMenu();
   }, true);
 
-  overlay.addEventListener("click", function(e){
-    if (!isMobile()) return;
-    if (e.target === overlay){
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
-      closeMenu();
-    }
-  }, true);
-
-  const closeBtn = overlay.querySelector(".mobile-nav-close");
-  if (closeBtn){
+  if(closeBtn){
     closeBtn.addEventListener("click", function(e){
-      if (!isMobile()) return;
+      if(!isMobile()) return;
       e.preventDefault();
       e.stopPropagation();
-      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+      if(typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
       closeMenu();
     }, true);
   }
 
+  overlay.addEventListener("click", function(e){
+    if(!isMobile()) return;
+    if(e.target === overlay){
+      e.preventDefault();
+      e.stopPropagation();
+      if(typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+      closeMenu();
+    }
+  }, true);
+
   content.addEventListener("click", function(e){
-    if (!isMobile()) return;
+    if(!isMobile()) return;
     const infoBtn = e.target.closest && e.target.closest("[data-nav='info']");
     const workBtn = e.target.closest && e.target.closest("[data-open-work]");
-    if (!infoBtn && !workBtn) return;
+    if(!infoBtn && !workBtn) return;
 
     e.preventDefault();
     e.stopPropagation();
-    if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+    if(typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
 
-    if (infoBtn){
+    if(infoBtn){
       requestAnimationFrame(goInfo);
       return;
     }
-    if (workBtn){
+
+    if(workBtn){
       const slug = workBtn.getAttribute("data-open-work");
       requestAnimationFrame(function(){ goWork(slug); });
     }
   }, true);
 
+  if(header){
+    header.addEventListener("click", function(e){
+      if(!isMobile()) return;
+      if(document.body.classList.contains("mobile-menu-open")) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if(typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+      goInfo();
+    }, true);
+
+    header.addEventListener("keydown", function(e){
+      if(!isMobile()) return;
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        goInfo();
+      }
+    }, true);
+  }
+
   document.addEventListener("click", function(e){
-    if (!isMobile()) return;
+    if(!isMobile()) return;
     const t = e.target;
-    if (!t) return;
-    if (t.closest && t.closest("#globalHeader")){
-      requestAnimationFrame(applyChrome);
-      return;
-    }
-    if (t.closest && t.closest(".media-box")){
-      requestAnimationFrame(applyChrome);
-      return;
-    }
+    if(!t) return;
+    if(t.closest && t.closest(".media-box")) requestAnimationFrame(applyChrome);
+    if(t.closest && t.closest(".lightbox-close")) requestAnimationFrame(applyChrome);
   }, true);
 
   document.addEventListener("keydown", function(e){
-    if (!isMobile()) return;
-    if (e.key === "Escape" && overlay.classList.contains("open")){
+    if(!isMobile()) return;
+    if(e.key === "Escape" && overlay.classList.contains("open")){
       closeMenu();
-    } else {
-      requestAnimationFrame(applyChrome);
+      return;
     }
+    requestAnimationFrame(applyChrome);
   }, true);
-
-  const observer = new MutationObserver(function(){
-    if (isMobile()) requestAnimationFrame(applyChrome);
-  });
-  observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-  document.querySelectorAll(".card, #mobileNavOverlay, #globalHeader").forEach(function(el){
-    observer.observe(el, { attributes: true, attributeFilter: ["class", "style", "aria-hidden"] });
-  });
 
   window.addEventListener("load", function(){
     closeMenu();
     applyChrome();
-  }, { once: true });
+  }, {once:true});
 
   window.addEventListener("resize", function(){
-    if (!isMobile()){
-      closeMenu();
-      if (header){
-        header.style.opacity = "";
-        header.style.visibility = "";
-        header.style.pointerEvents = "";
-      }
-      if (sidebar){
-        sidebar.style.opacity = "";
-        sidebar.style.visibility = "";
-        sidebar.style.pointerEvents = "";
-      }
+    if(!isMobile()){
+      overlay.classList.remove("open", "handoff");
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.setAttribute("inert", "");
+      document.body.classList.remove("mobile-menu-open");
+      menuBtn.classList.remove("is-open");
+      menuBtn.setAttribute("aria-expanded", "false");
       return;
     }
     applyChrome();
   });
 
   window.addEventListener("orientationchange", function(){
-    setTimeout(applyChrome, 50);
+    setTimeout(applyChrome, 80);
   });
 })();
 </script>

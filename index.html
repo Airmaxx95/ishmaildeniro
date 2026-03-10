@@ -3044,6 +3044,23 @@ html, body{
 }
 </style>
 
+
+<style id="sidebar-highlight-nuked-clean-css">
+/* No active dash */
+.sidebar-list li.active .sidebar-link::after{
+  content: none !important;
+}
+
+/* Stable desktop sidebar visual state */
+@media (min-width: 901px){
+  #sidebarNav .sidebar-link,
+  #sidebarNav .sidebar-link.active-link,
+  #sidebarNav .sidebar-list li.active .sidebar-link{
+    transition: none !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -5827,19 +5844,30 @@ document.addEventListener("keydown", function(e){
 
 
 
-<script id="sidebar-showcard-consolidated-js">
+
+
+
+
+
+
+
+
+
+
+
+
+<script id="sidebar-highlight-nuked-clean-js">
 (function(){
-  if (window.__SIDEBAR_SHOWCARD_CONSOLIDATED__) return;
-  window.__SIDEBAR_SHOWCARD_CONSOLIDATED__ = true;
+  if (window.__SIDEBAR_HIGHLIGHT_NUKED_CLEAN__) return;
+  window.__SIDEBAR_HIGHLIGHT_NUKED_CLEAN__ = true;
 
   const mq = window.matchMedia("(min-width: 901px)");
-  let forcedSlug = "";
-  let forcedUntil = 0;
-  let rafId = 0;
 
-  function desktop(){ return mq.matches; }
+  function desktop(){
+    return mq.matches;
+  }
 
-  function clearActive(){
+  function clearSidebarActive(){
     document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
       li.classList.remove("active");
     });
@@ -5848,551 +5876,77 @@ document.addEventListener("keydown", function(e){
     });
   }
 
-  function topVisibleWorkSlug(){
-    const cards = Array.from(document.querySelectorAll(".card.work-card.visible")).filter(function(card){
-      const cs = getComputedStyle(card);
-      return cs.display !== "none" && cs.visibility !== "hidden";
-    });
-
-    if (!cards.length) return "";
-
-    cards.sort(function(a,b){
-      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
-      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
-      return zb - za;
-    });
-
-    return String(cards[0]?.dataset?.workSlug || "").trim();
-  }
-
-  function applySlug(slug){
+  function setSidebarActiveBySlug(slug){
     if (!desktop()) return;
-    clearActive();
-    if (!slug) return;
+    clearSidebarActive();
 
-    const lower = String(slug).trim().toLowerCase();
+    const clean = String(slug || "").trim();
+    if (!clean) return;
+
+    const lower = clean.toLowerCase();
+
     if (lower === "biography" || lower === "research"){
-      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(clean) + '"]');
       if (topBtn) topBtn.classList.add("active-link");
       return;
     }
 
-    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(clean) + '"]');
     if (!link) return;
     const li = link.closest("li");
     if (li) li.classList.add("active");
   }
 
-  function scheduleApply(){
-    if (!desktop()) return;
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        const slug = (forcedSlug && Date.now() < forcedUntil) ? forcedSlug : topVisibleWorkSlug();
-        applySlug(slug);
-      });
-    });
-  }
-
+  // Desktop sidebar clicks: highlight only the clicked target immediately.
   document.addEventListener("click", function(e){
     if (!desktop()) return;
 
     const sidebarWork = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-open-work]');
     if (sidebarWork){
-      forcedSlug = String(sidebarWork.getAttribute("data-open-work") || "").trim();
-      forcedUntil = Date.now() + 900;
-      applySlug(forcedSlug);
-      scheduleApply();
-      setTimeout(scheduleApply, 80);
-      setTimeout(function(){
-        if (Date.now() >= forcedUntil) forcedSlug = "";
-        scheduleApply();
-      }, 220);
+      const slug = sidebarWork.getAttribute("data-open-work") || "";
+      setSidebarActiveBySlug(slug);
       return;
     }
 
     const sidebarInfo = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-nav="info"]');
+    if (sidebarInfo){
+      clearSidebarActive();
+      return;
+    }
+
     const header = e.target.closest && e.target.closest("#globalHeader");
-    const generic = e.target.closest && e.target.closest("[data-open-work], [data-nav='info'], #openBiography");
-    if (sidebarInfo || header || generic){
-      scheduleApply();
+    if (header){
+      clearSidebarActive();
+      return;
+    }
+
+    const openBio = e.target.closest && e.target.closest("#openBiography");
+    if (openBio){
+      setSidebarActiveBySlug("biography");
+      return;
+    }
+
+    const openResearch = e.target.closest && e.target.closest("#openResearch");
+    if (openResearch){
+      setSidebarActiveBySlug("research");
+      return;
     }
   }, true);
 
-  const origShowCard = window.showCard;
-  if (typeof origShowCard === "function"){
-    window.showCard = function(card){
-      const out = origShowCard.apply(this, arguments);
-      if (!desktop()) return out;
-
-      const slug = String(card?.dataset?.workSlug || "").trim();
-      if (slug){
-        if (!forcedSlug || Date.now() >= forcedUntil || forcedSlug === slug){
-          forcedSlug = slug;
-          forcedUntil = Date.now() + 180;
-        }
-      }
-      scheduleApply();
-      setTimeout(scheduleApply, 60);
+  // If Info is explicitly opened through the site's goHome flow, clear desktop sidebar highlight.
+  const origGoHome = window.goHome;
+  if (typeof origGoHome === "function"){
+    window.goHome = function(){
+      const out = origGoHome.apply(this, arguments);
+      if (desktop()) clearSidebarActive();
       return out;
     };
   }
 
-  window.addEventListener("load", function(){
-    scheduleApply();
-    setTimeout(scheduleApply, 80);
-    setTimeout(scheduleApply, 180);
-  }, {once:true});
-
   window.addEventListener("resize", function(){
     if (!desktop()){
-      forcedSlug = "";
-      forcedUntil = 0;
-      clearActive();
-      return;
+      clearSidebarActive();
     }
-    scheduleApply();
-  });
-})();
-</script>
-
-
-<script id="sidebar-click-hold-fix">
-(function(){
-  if (window.__SIDEBAR_CLICK_HOLD_FIX__) return;
-  window.__SIDEBAR_CLICK_HOLD_FIX__ = true;
-
-  const mq = window.matchMedia("(min-width: 901px)");
-  let forcedSlug = "";
-  let releaseTimer = null;
-
-  function desktop(){ return mq.matches; }
-
-  function clearActiveNow(){
-    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
-      li.classList.remove("active");
-    });
-    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
-      el.classList.remove("active-link");
-    });
-  }
-
-  function applySlugNow(slug){
-    if (!desktop()) return;
-    clearActiveNow();
-    if (!slug) return;
-
-    const lower = String(slug).trim().toLowerCase();
-    if (lower === "biography" || lower === "research"){
-      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-      if (topBtn) topBtn.classList.add("active-link");
-      return;
-    }
-
-    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-    if (!link) return;
-    const li = link.closest("li");
-    if (li) li.classList.add("active");
-  }
-
-  function topVisibleWorkSlug(){
-    const cards = Array.from(document.querySelectorAll(".card.work-card.visible")).filter(function(card){
-      const cs = getComputedStyle(card);
-      return cs.display !== "none" && cs.visibility !== "hidden";
-    });
-
-    if (!cards.length) return "";
-
-    cards.sort(function(a,b){
-      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
-      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
-      return zb - za;
-    });
-
-    return String(cards[0]?.dataset?.workSlug || "").trim();
-  }
-
-  function syncForcedRelease(){
-    if (!desktop() || !forcedSlug) return;
-    const current = topVisibleWorkSlug();
-    if (current && current === forcedSlug){
-      if (releaseTimer) clearTimeout(releaseTimer);
-      releaseTimer = setTimeout(function(){
-        forcedSlug = "";
-      }, 120);
-    }
-  }
-
-  function applyCurrentState(){
-    if (!desktop()) return;
-    applySlugNow(forcedSlug || topVisibleWorkSlug());
-    syncForcedRelease();
-  }
-
-  document.addEventListener("click", function(e){
-    if (!desktop()) return;
-    const sidebarWork = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-open-work]');
-    if (!sidebarWork) return;
-
-    const slug = String(sidebarWork.getAttribute("data-open-work") || "").trim();
-    if (!slug) return;
-
-    forcedSlug = slug;
-    if (releaseTimer) clearTimeout(releaseTimer);
-
-    applySlugNow(slug);
-
-    requestAnimationFrame(function(){
-      applySlugNow(slug);
-    });
-    setTimeout(function(){
-      applyCurrentState();
-    }, 80);
-    setTimeout(function(){
-      applyCurrentState();
-    }, 180);
-    setTimeout(function(){
-      applyCurrentState();
-    }, 320);
-  }, true);
-
-  const origShowCard = window.showCard;
-  if (typeof origShowCard === "function"){
-    window.showCard = function(card){
-      const out = origShowCard.apply(this, arguments);
-      if (desktop()){
-        requestAnimationFrame(applyCurrentState);
-        setTimeout(applyCurrentState, 60);
-        setTimeout(applyCurrentState, 140);
-      }
-      return out;
-    };
-  }
-
-  window.addEventListener("load", function(){
-    applyCurrentState();
-    setTimeout(applyCurrentState, 80);
-  }, {once:true});
-
-  window.addEventListener("resize", function(){
-    if (!desktop()){
-      forcedSlug = "";
-      if (releaseTimer) clearTimeout(releaseTimer);
-      return;
-    }
-    applyCurrentState();
-  });
-})();
-</script>
-
-
-<script id="sidebar-smooth-handover-fix">
-(function(){
-  if (window.__SIDEBAR_SMOOTH_HANDOVER_FIX__) return;
-  window.__SIDEBAR_SMOOTH_HANDOVER_FIX__ = true;
-
-  const mq = window.matchMedia("(min-width: 901px)");
-  let lockedSlug = "";
-  let lockUntil = 0;
-  let rafToken = 0;
-
-  function desktop(){ return mq.matches; }
-
-  function clearActiveNow(){
-    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
-      li.classList.remove("active");
-    });
-    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
-      el.classList.remove("active-link");
-    });
-  }
-
-  function applySlugNow(slug){
-    if (!desktop()) return;
-    clearActiveNow();
-    if (!slug) return;
-
-    const lower = String(slug).trim().toLowerCase();
-    if (lower === "biography" || lower === "research"){
-      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-      if (topBtn) topBtn.classList.add("active-link");
-      return;
-    }
-
-    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-    if (!link) return;
-    const li = link.closest("li");
-    if (li) li.classList.add("active");
-  }
-
-  function topVisibleWorkSlug(){
-    const cards = Array.from(document.querySelectorAll(".card.work-card.visible")).filter(function(card){
-      const cs = getComputedStyle(card);
-      return cs.display !== "none" && cs.visibility !== "hidden";
-    });
-
-    if (!cards.length) return "";
-
-    cards.sort(function(a,b){
-      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
-      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
-      return zb - za;
-    });
-
-    return String(cards[0]?.dataset?.workSlug || "").trim();
-  }
-
-  function currentSidebarSlug(){
-    const topActive = document.querySelector('#sidebarNav .sidebar-link.active-link[data-open-work]');
-    if (topActive) return String(topActive.getAttribute('data-open-work') || '').trim();
-    const active = document.querySelector('#sidebarNav .sidebar-list li.active .sidebar-link[data-open-work]');
-    if (active) return String(active.getAttribute('data-open-work') || '').trim();
-    return "";
-  }
-
-  function effectiveSlug(){
-    if (desktop() && lockedSlug && Date.now() < lockUntil){
-      return lockedSlug;
-    }
-    return topVisibleWorkSlug();
-  }
-
-  function syncSidebarSmooth(){
-    if (!desktop()) return;
-    const slug = effectiveSlug();
-    const current = currentSidebarSlug();
-    if (slug && current === slug) return;
-    applySlugNow(slug);
-  }
-
-  function scheduleSync(){
-    if (!desktop()) return;
-    rafToken += 1;
-    const token = rafToken;
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        if (token !== rafToken) return;
-        syncSidebarSmooth();
-      });
-    });
-  }
-
-  document.addEventListener("click", function(e){
-    if (!desktop()) return;
-    const sidebarWork = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-open-work]');
-    if (!sidebarWork) return;
-
-    const slug = String(sidebarWork.getAttribute("data-open-work") || "").trim();
-    if (!slug) return;
-
-    lockedSlug = slug;
-    lockUntil = Date.now() + 1200;
-
-    applySlugNow(slug);
-
-    requestAnimationFrame(function(){ applySlugNow(slug); });
-    setTimeout(scheduleSync, 80);
-    setTimeout(scheduleSync, 220);
-    setTimeout(function(){
-      if (topVisibleWorkSlug() === lockedSlug) {
-        lockUntil = Date.now() + 120;
-      }
-      scheduleSync();
-    }, 420);
-  }, true);
-
-  const origShowCard = window.showCard;
-  if (typeof origShowCard === "function"){
-    window.showCard = function(card){
-      const out = origShowCard.apply(this, arguments);
-      if (desktop()){
-        const shownSlug = String(card?.dataset?.workSlug || "").trim();
-        if (lockedSlug && shownSlug && shownSlug === lockedSlug){
-          lockUntil = Date.now() + 180;
-        }
-        scheduleSync();
-        setTimeout(scheduleSync, 60);
-        setTimeout(scheduleSync, 140);
-      }
-      return out;
-    };
-  }
-
-  window.addEventListener("load", function(){
-    syncSidebarSmooth();
-    setTimeout(syncSidebarSmooth, 80);
-  }, {once:true});
-
-  window.addEventListener("resize", function(){
-    if (!desktop()){
-      lockedSlug = "";
-      lockUntil = 0;
-      return;
-    }
-    scheduleSync();
-  });
-})();
-</script>
-
-
-<script id="sidebar-no-old-flash-fix">
-(function(){
-  if (window.__SIDEBAR_NO_OLD_FLASH_FIX__) return;
-  window.__SIDEBAR_NO_OLD_FLASH_FIX__ = true;
-
-  const mq = window.matchMedia("(min-width: 901px)");
-  let pendingSlug = "";
-  let pendingUntil = 0;
-  let settleUntil = 0;
-  let rafId = 0;
-
-  function desktop(){ return mq.matches; }
-
-  function clearActive(){
-    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
-      li.classList.remove("active");
-    });
-    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
-      el.classList.remove("active-link");
-    });
-  }
-
-  function applySlug(slug){
-    if (!desktop()) return;
-    clearActive();
-    if (!slug) return;
-
-    const lower = String(slug).trim().toLowerCase();
-    if (lower === "biography" || lower === "research"){
-      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-      if (topBtn) topBtn.classList.add("active-link");
-      return;
-    }
-
-    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-    if (!link) return;
-    const li = link.closest("li");
-    if (li) li.classList.add("active");
-  }
-
-  function topVisibleWorkSlug(){
-    const cards = Array.from(document.querySelectorAll(".card.work-card.visible")).filter(function(card){
-      const cs = getComputedStyle(card);
-      return cs.display !== "none" && cs.visibility !== "hidden";
-    });
-
-    if (!cards.length) return "";
-
-    cards.sort(function(a,b){
-      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
-      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
-      return zb - za;
-    });
-
-    return String(cards[0]?.dataset?.workSlug || "").trim();
-  }
-
-  function effectiveSlug(){
-    const now = Date.now();
-
-    if (desktop() && pendingSlug && now < pendingUntil){
-      const top = topVisibleWorkSlug();
-
-      if (top && top === pendingSlug){
-        if (settleUntil < now + 220) settleUntil = now + 220;
-      }
-
-      if (settleUntil && now < settleUntil){
-        return pendingSlug;
-      }
-
-      if (!top || top !== pendingSlug){
-        return pendingSlug;
-      }
-
-      pendingSlug = "";
-      pendingUntil = 0;
-      settleUntil = 0;
-      return top;
-    }
-
-    return topVisibleWorkSlug();
-  }
-
-  function sync(){
-    if (!desktop()) return;
-    applySlug(effectiveSlug());
-  }
-
-  function scheduleSync(){
-    if (!desktop()) return;
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(function(){
-      rafId = requestAnimationFrame(sync);
-    });
-  }
-
-  document.addEventListener("click", function(e){
-    if (!desktop()) return;
-
-    const workLink = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-open-work]');
-    if (workLink){
-      const slug = String(workLink.getAttribute("data-open-work") || "").trim();
-      if (!slug) return;
-
-      pendingSlug = slug;
-      pendingUntil = Date.now() + 1800;
-      settleUntil = 0;
-
-      applySlug(slug);
-
-      requestAnimationFrame(function(){ applySlug(slug); });
-      setTimeout(function(){ applySlug(slug); }, 40);
-      setTimeout(scheduleSync, 120);
-      setTimeout(scheduleSync, 260);
-      setTimeout(scheduleSync, 520);
-      return;
-    }
-
-    const otherNav = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-nav="info"], #globalHeader, [data-nav="info"]');
-    if (otherNav){
-      pendingSlug = "";
-      pendingUntil = 0;
-      settleUntil = 0;
-      scheduleSync();
-    }
-  }, true);
-
-  const origShowCard = window.showCard;
-  if (typeof origShowCard === "function"){
-    window.showCard = function(card){
-      const out = origShowCard.apply(this, arguments);
-      if (desktop()){
-        const shownSlug = String(card?.dataset?.workSlug || "").trim();
-        if (pendingSlug && shownSlug === pendingSlug){
-          settleUntil = Date.now() + 220;
-        }
-        scheduleSync();
-        setTimeout(scheduleSync, 50);
-        setTimeout(scheduleSync, 140);
-      }
-      return out;
-    };
-  }
-
-  window.addEventListener("load", function(){
-    sync();
-    setTimeout(sync, 80);
-  }, {once:true});
-
-  window.addEventListener("resize", function(){
-    if (!desktop()){
-      pendingSlug = "";
-      pendingUntil = 0;
-      settleUntil = 0;
-      return;
-    }
-    scheduleSync();
   });
 })();
 </script>

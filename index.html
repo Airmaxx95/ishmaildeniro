@@ -3062,46 +3062,17 @@ html, body{
 </style>
 
 
-<style id="sidebar-ellipsis-hover-full-title">
+<style id="sidebar-20ch-only">
 @media (min-width: 901px) {
-
-  /* Ellipsis limit ~20 characters */
   #sidebarNav .sidebar-list .sidebar-link {
-    position: relative;
-    display: block;
-    max-width: 20ch;
-    margin-left: auto;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: right;
-  }
-
-  /* Hover tooltip showing full title */
-  #sidebarNav .sidebar-list .sidebar-link::before {
-    content: attr(data-full-title);
-    position: absolute;
-    right: 0;
-    top: 0;
-    transform: translateX(100%);
-    margin-right: 12px;
-
-    white-space: nowrap;
-    padding: 4px 8px;
-    font-size: 12px;
-    line-height: 1.2;
-
-    background: white;
-    color: black;
-    border: 1px solid rgba(0,0,0,0.15);
-
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 120ms ease;
-  }
-
-  #sidebarNav .sidebar-list .sidebar-link:hover::before {
-    opacity: 1;
+    display: block !important;
+    width: 100% !important;
+    max-width: 20ch !important;
+    margin-left: auto !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: right !important;
   }
 }
 </style>

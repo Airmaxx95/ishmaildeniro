@@ -5956,5 +5956,134 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script id="sidebar-click-hold-fix">
+(function(){
+  if (window.__SIDEBAR_CLICK_HOLD_FIX__) return;
+  window.__SIDEBAR_CLICK_HOLD_FIX__ = true;
+
+  const mq = window.matchMedia("(min-width: 901px)");
+  let forcedSlug = "";
+  let releaseTimer = null;
+
+  function desktop(){ return mq.matches; }
+
+  function clearActiveNow(){
+    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
+      li.classList.remove("active");
+    });
+    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
+      el.classList.remove("active-link");
+    });
+  }
+
+  function applySlugNow(slug){
+    if (!desktop()) return;
+    clearActiveNow();
+    if (!slug) return;
+
+    const lower = String(slug).trim().toLowerCase();
+    if (lower === "biography" || lower === "research"){
+      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+      if (topBtn) topBtn.classList.add("active-link");
+      return;
+    }
+
+    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+    if (!link) return;
+    const li = link.closest("li");
+    if (li) li.classList.add("active");
+  }
+
+  function topVisibleWorkSlug(){
+    const cards = Array.from(document.querySelectorAll(".card.work-card.visible")).filter(function(card){
+      const cs = getComputedStyle(card);
+      return cs.display !== "none" && cs.visibility !== "hidden";
+    });
+
+    if (!cards.length) return "";
+
+    cards.sort(function(a,b){
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+
+    return String(cards[0]?.dataset?.workSlug || "").trim();
+  }
+
+  function syncForcedRelease(){
+    if (!desktop() || !forcedSlug) return;
+    const current = topVisibleWorkSlug();
+    if (current && current === forcedSlug){
+      if (releaseTimer) clearTimeout(releaseTimer);
+      releaseTimer = setTimeout(function(){
+        forcedSlug = "";
+      }, 120);
+    }
+  }
+
+  function applyCurrentState(){
+    if (!desktop()) return;
+    applySlugNow(forcedSlug || topVisibleWorkSlug());
+    syncForcedRelease();
+  }
+
+  document.addEventListener("click", function(e){
+    if (!desktop()) return;
+    const sidebarWork = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-open-work]');
+    if (!sidebarWork) return;
+
+    const slug = String(sidebarWork.getAttribute("data-open-work") || "").trim();
+    if (!slug) return;
+
+    forcedSlug = slug;
+    if (releaseTimer) clearTimeout(releaseTimer);
+
+    applySlugNow(slug);
+
+    requestAnimationFrame(function(){
+      applySlugNow(slug);
+    });
+    setTimeout(function(){
+      applyCurrentState();
+    }, 80);
+    setTimeout(function(){
+      applyCurrentState();
+    }, 180);
+    setTimeout(function(){
+      applyCurrentState();
+    }, 320);
+  }, true);
+
+  const origShowCard = window.showCard;
+  if (typeof origShowCard === "function"){
+    window.showCard = function(card){
+      const out = origShowCard.apply(this, arguments);
+      if (desktop()){
+        requestAnimationFrame(applyCurrentState);
+        setTimeout(applyCurrentState, 60);
+        setTimeout(applyCurrentState, 140);
+      }
+      return out;
+    };
+  }
+
+  window.addEventListener("load", function(){
+    applyCurrentState();
+    setTimeout(applyCurrentState, 80);
+  }, {once:true});
+
+  window.addEventListener("resize", function(){
+    if (!desktop()){
+      forcedSlug = "";
+      if (releaseTimer) clearTimeout(releaseTimer);
+      return;
+    }
+    applyCurrentState();
+  });
+})();
+</script>
+
 </body>
 </html>

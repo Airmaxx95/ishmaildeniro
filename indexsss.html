@@ -3098,12 +3098,6 @@ html, body{
 }
 </style>
 
-
-<!-- Performance: preconnect + font preload -->
-<link rel="preconnect" href="https://githubusercontent.com">
-<link rel="preload" href="./database/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf" as="font" type="font/ttf" crossorigin>
-<link rel="preload" href="./database/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf" as="font" type="font/ttf" crossorigin>
-
 </head>
 <body>
 
@@ -6335,76 +6329,6 @@ document.addEventListener("keydown", function(e){
       setTimeout(syncMobileHeaderForCurrentCard, 80);
     }
   }, {once:true});
-})();
-</script>
-
-
-<script id="performance-optimizations">
-(function(){
-  function applyImageOptimizations(root){
-    (root || document).querySelectorAll('img').forEach(function(img){
-      if(!img.hasAttribute('loading')) img.setAttribute('loading','lazy');
-      if(!img.hasAttribute('decoding')) img.setAttribute('decoding','async');
-    });
-  }
-
-  function preloadTopVisibleCardMedia(){
-    var cards = Array.from(document.querySelectorAll('.card.work-card.visible')).filter(function(card){
-      var cs = getComputedStyle(card);
-      return cs.display !== 'none' && cs.visibility !== 'hidden';
-    });
-
-    if(!cards.length) return;
-
-    cards.sort(function(a,b){
-      var za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
-      var zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
-      return zb - za;
-    });
-
-    var card = cards[0];
-    var mediaBox = card.querySelector('.media-box');
-    if(!mediaBox) return;
-
-    var bg = mediaBox.style.backgroundImage || getComputedStyle(mediaBox).backgroundImage || '';
-    var match = bg.match(/url\(["']?(.*?)["']?\)/i);
-    if(!match || !match[1]) return;
-
-    var href = match[1];
-    var existing = document.querySelector('link[data-preload-media]');
-    if(existing && existing.getAttribute('href') === href) return;
-
-    if(existing) existing.remove();
-
-    var link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = href;
-    link.setAttribute('data-preload-media', href);
-    document.head.appendChild(link);
-  }
-
-  applyImageOptimizations(document);
-
-  window.addEventListener('load', function(){
-    applyImageOptimizations(document);
-    setTimeout(preloadTopVisibleCardMedia, 80);
-  }, {once:true});
-
-  var mo = new MutationObserver(function(){
-    applyImageOptimizations(document);
-  });
-  mo.observe(document.documentElement, {childList:true, subtree:true});
-
-  var origShowCard = window.showCard;
-  if(typeof origShowCard === 'function'){
-    window.showCard = function(card){
-      var out = origShowCard.apply(this, arguments);
-      applyImageOptimizations(card || document);
-      setTimeout(preloadTopVisibleCardMedia, 40);
-      return out;
-    };
-  }
 })();
 </script>
 

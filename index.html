@@ -6242,5 +6242,95 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script id="mobile-bio-research-header-fix">
+(function(){
+  if (window.__MOBILE_BIO_RESEARCH_HEADER_FIX__) return;
+  window.__MOBILE_BIO_RESEARCH_HEADER_FIX__ = true;
+
+  const mq = window.matchMedia("(max-width: 900px)");
+  const header = document.getElementById("globalHeader");
+  if (!header) return;
+
+  function isMobile(){
+    return mq.matches;
+  }
+
+  function syncMobileHeaderForCurrentCard(){
+    if (!isMobile()) return;
+
+    const cards = Array.from(document.querySelectorAll(".card.visible")).filter(function(card){
+      const cs = getComputedStyle(card);
+      return cs.display !== "none" && cs.visibility !== "hidden";
+    });
+
+    if (!cards.length) return;
+
+    cards.sort(function(a,b){
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+
+    const top = cards[0];
+    const isInfo = !!(top && top.classList && top.classList.contains("info-card"));
+
+    header.classList.toggle("visible", !isInfo);
+    header.style.opacity = isInfo ? "0" : "";
+    header.style.visibility = isInfo ? "hidden" : "";
+    header.style.pointerEvents = isInfo ? "none" : "";
+  }
+
+  // Catch direct mobile clicks from the Info card for Biography / Research
+  document.addEventListener("click", function(e){
+    if (!isMobile()) return;
+
+    const bioBtn = e.target.closest && e.target.closest("#openBiography");
+    const researchBtn = e.target.closest && e.target.closest("#openResearch");
+    if (!bioBtn && !researchBtn) return;
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(syncMobileHeaderForCurrentCard);
+    });
+    setTimeout(syncMobileHeaderForCurrentCard, 80);
+    setTimeout(syncMobileHeaderForCurrentCard, 180);
+  }, true);
+
+  // Also catch direct showCard calls for biography / research cards
+  const origShowCard = window.showCard;
+  if (typeof origShowCard === "function"){
+    window.showCard = function(card){
+      const out = origShowCard.apply(this, arguments);
+
+      if (isMobile()){
+        const slug = String(card?.dataset?.workSlug || "").trim().toLowerCase();
+        if (slug === "biography" || slug === "research"){
+          requestAnimationFrame(syncMobileHeaderForCurrentCard);
+          setTimeout(syncMobileHeaderForCurrentCard, 60);
+        }
+      }
+
+      return out;
+    };
+  }
+
+  window.addEventListener("resize", function(){
+    if (isMobile()){
+      syncMobileHeaderForCurrentCard();
+    }
+  });
+
+  window.addEventListener("orientationchange", function(){
+    setTimeout(syncMobileHeaderForCurrentCard, 80);
+  });
+
+  window.addEventListener("load", function(){
+    if (isMobile()){
+      setTimeout(syncMobileHeaderForCurrentCard, 80);
+    }
+  }, {once:true});
+})();
+</script>
+
 </body>
 </html>

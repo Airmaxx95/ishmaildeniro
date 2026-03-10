@@ -5718,5 +5718,105 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script id="mobile-info-direct-fix-v2">
+(function(){
+  if (window.__MOBILE_INFO_DIRECT_FIX_V2) return;
+  window.__MOBILE_INFO_DIRECT_FIX_V2 = true;
+
+  const mq = window.matchMedia("(max-width: 900px)");
+
+  function closeMobileOverlay(){
+    const overlay = document.getElementById("mobileNavOverlay");
+    const toggle = document.getElementById("mobileNavToggle");
+    const active = document.activeElement;
+
+    if (overlay && active && overlay.contains(active) && typeof active.blur === "function"){
+      active.blur();
+    }
+
+    if (overlay){
+      overlay.classList.remove("open", "handoff");
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.setAttribute("inert", "");
+      overlay.style.pointerEvents = "none";
+      overlay.style.opacity = "0";
+    }
+
+    if (toggle){
+      toggle.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.style.display = "block";
+      toggle.style.opacity = "1";
+      toggle.style.visibility = "visible";
+      toggle.style.pointerEvents = "auto";
+    }
+
+    document.body.classList.remove("mobile-menu-open");
+    document.body.classList.remove("mobile-nav-transitioning");
+  }
+
+  function showInfoCardNow(){
+    const info =
+      document.querySelector(".card.info-card") ||
+      document.getElementById("infoCard");
+    if (!info) return;
+
+    document.querySelectorAll(".card").forEach(function(card){
+      if (card !== info){
+        card.classList.remove("visible", "card-enter", "mobile-pre-enter");
+        card.classList.add("hidden");
+        card.style.display = "none";
+        card.style.visibility = "hidden";
+        card.style.opacity = "";
+        card.style.animation = "";
+      }
+    });
+
+    info.classList.remove("hidden", "info-ghost", "card-exit", "mobile-pre-enter");
+    info.classList.add("visible");
+    info.style.display = "block";
+    info.style.visibility = "visible";
+    info.style.opacity = "1";
+    info.style.animation = "none";
+    info.style.pointerEvents = "auto";
+    info.style.zIndex = "999";
+
+    const header = document.getElementById("globalHeader");
+    if (header){
+      header.classList.remove("visible");
+      header.style.opacity = "0";
+      header.style.visibility = "hidden";
+      header.style.pointerEvents = "none";
+    }
+
+    const sidebar = document.getElementById("sidebarNav");
+    if (sidebar){
+      sidebar.classList.remove("visible");
+      sidebar.style.opacity = "0";
+      sidebar.style.pointerEvents = "none";
+    }
+  }
+
+  document.addEventListener("click", function(e){
+    const btn = e.target.closest && e.target.closest('[data-nav="info"]');
+    if (!btn || !mq.matches) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+
+    closeMobileOverlay();
+
+    requestAnimationFrame(function(){
+      showInfoCardNow();
+      setTimeout(function(){
+        showInfoCardNow();
+      }, 60);
+    });
+  }, true);
+})();
+</script>
+
 </body>
 </html>

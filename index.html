@@ -5683,5 +5683,40 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script id="mobile-overlay-focus-fix">
+(function(){
+  const overlay = document.getElementById("mobileNavOverlay");
+  if(!overlay) return;
+
+  function releaseOverlayFocus(){
+    const active = document.activeElement;
+    if(active && overlay.contains(active) && typeof active.blur === "function"){
+      active.blur();
+    }
+  }
+
+  document.addEventListener("click", function(e){
+    const trigger = e.target.closest && (
+      e.target.closest("[data-nav='info']") ||
+      e.target.closest("[data-open-work]") ||
+      e.target.closest(".mobile-nav-close")
+    );
+    if(!trigger) return;
+    if(window.matchMedia("(max-width: 900px)").matches){
+      releaseOverlayFocus();
+    }
+  }, true);
+
+  const observer = new MutationObserver(function(){
+    if(overlay.getAttribute("aria-hidden") === "true"){
+      releaseOverlayFocus();
+    }
+  });
+
+  observer.observe(overlay, { attributes: true, attributeFilter: ["aria-hidden", "class", "inert"] });
+})();
+</script>
+
 </body>
 </html>

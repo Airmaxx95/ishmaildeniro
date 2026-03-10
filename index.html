@@ -6067,5 +6067,60 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script id="mobile-nav-research-restore-fix">
+(function(){
+  if (window.__MOBILE_NAV_RESEARCH_RESTORE_FIX__) return;
+  window.__MOBILE_NAV_RESEARCH_RESTORE_FIX__ = true;
+
+  const mq = window.matchMedia("(max-width: 900px)");
+  const content = document.getElementById("mobileNavContent");
+  const overlay = document.getElementById("mobileNavOverlay");
+  if (!content || !overlay) return;
+
+  function hasResearchWork(){
+    return !!(
+      document.querySelector('#sidebarNav .sidebar-link[data-open-work="research"]') ||
+      document.querySelector('.card.work-card[data-work-slug="research"]') ||
+      document.querySelector('.card.work-card[data-slug="research"]')
+    );
+  }
+
+  function restoreResearchLink(){
+    if (!mq.matches) return;
+    if (!overlay.classList.contains("open")) return;
+
+    const inner = content.querySelector(".sidebar-inner");
+    if (!inner) return;
+
+    const hasBio = !!inner.querySelector('.sidebar-link[data-open-work="biography"]');
+    const hasResearch = !!inner.querySelector('.sidebar-link[data-open-work="research"]');
+
+    if (hasBio && !hasResearch && hasResearchWork()){
+      const bioBtn = inner.querySelector('.sidebar-link[data-open-work="biography"]');
+      const researchBtn = document.createElement("button");
+      researchBtn.type = "button";
+      researchBtn.className = "sidebar-link";
+      researchBtn.setAttribute("data-open-work", "research");
+      researchBtn.textContent = "Research";
+      bioBtn.insertAdjacentElement("afterend", researchBtn);
+    }
+  }
+
+  const observer = new MutationObserver(function(){
+    requestAnimationFrame(restoreResearchLink);
+  });
+
+  observer.observe(content, { childList: true, subtree: true });
+  observer.observe(overlay, { attributes: true, attributeFilter: ["class"] });
+
+  window.addEventListener("load", function(){
+    setTimeout(restoreResearchLink, 50);
+  }, { once: true });
+
+  window.addEventListener("resize", restoreResearchLink);
+})();
+</script>
+
 </body>
 </html>

@@ -7,6 +7,42 @@
 <link rel="shortcut icon" href="./favicon.ico">
 <title>Ishmail De Niro</title>
 <style>
+
+/* === Safari Atkinson font fix === */
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("./database/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("./database/Atkinson_Hyperlegible/AtkinsonHyperlegible-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("./database/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("./database/Atkinson_Hyperlegible/AtkinsonHyperlegible-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+html, body, body *{
+  font-family: "Atkinson Hyperlegible", "Atkinson", sans-serif;
+}
+
+
 body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 .stage{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;background:#ffffff;overflow:hidden;}
 .card{width:720px;height:480px;background:rgb(230,231,232);border-radius:16px;padding:30px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-sizing:border-box;}

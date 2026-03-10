@@ -5610,5 +5610,78 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script id="mobile-info-blank-fix">
+(function(){
+  const mq = window.matchMedia("(max-width: 900px)");
+  const content = document.getElementById("mobileNavContent");
+  if(!content) return;
+
+  function safeGoInfo(){
+    const info =
+      document.querySelector(".card.info-card") ||
+      document.getElementById("infoCard");
+    if(!info) return;
+
+    document.querySelectorAll(".card").forEach(function(card){
+      if(card !== info){
+        card.classList.remove("visible");
+        card.classList.add("hidden");
+        card.style.display = "none";
+        card.style.visibility = "hidden";
+        card.style.opacity = "";
+      }
+    });
+
+    info.classList.remove("hidden", "mobile-pre-enter");
+    info.classList.add("visible");
+    info.style.display = "block";
+    info.style.visibility = "visible";
+    info.style.opacity = "";
+
+    if(typeof window.showCard === "function"){
+      window.showCard(info);
+    }
+    if(typeof window.goHome === "function"){
+      window.goHome();
+    }
+  }
+
+  content.addEventListener("click", function(e){
+    const btn = e.target.closest && e.target.closest("[data-nav='info']");
+    if(!btn || !mq.matches) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    const overlay = document.getElementById("mobileNavOverlay");
+    const toggle = document.getElementById("mobileNavToggle");
+
+    document.body.classList.add("mobile-nav-transitioning");
+
+    if(overlay){
+      overlay.classList.remove("open", "handoff");
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.setAttribute("inert", "");
+    }
+    if(toggle){
+      toggle.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+    document.body.classList.remove("mobile-menu-open");
+
+    requestAnimationFrame(function(){
+      safeGoInfo();
+      requestAnimationFrame(function(){
+        setTimeout(function(){
+          document.body.classList.remove("mobile-nav-transitioning");
+        }, 260);
+      });
+    });
+  }, true);
+})();
+</script>
+
 </body>
 </html>

@@ -2979,6 +2979,23 @@ html, body{
 }
 </style>
 
+
+<style id="sidebar-css-ellipsis-stable">
+/* Stable desktop sidebar truncation with CSS only */
+@media (min-width: 901px){
+  #sidebarNav .sidebar-list .sidebar-link{
+    display: block !important;
+    width: 100% !important;
+    max-width: 20ch !important;
+    margin-left: auto !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: right !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -5830,150 +5847,14 @@ document.addEventListener("keydown", function(e){
 </script>
 
 
-<style id="sidebar-truncation-fix-css">
-/* Desktop sidebar: keep full work titles stable */
-@media (min-width: 901px){
-  #sidebarNav .sidebar-link{
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-  }
-}
-</style>
-
-<script id="sidebar-truncation-fix-js">
-(function(){
-  if (window.__SIDEBAR_TRUNCATION_FIX__) return;
-  window.__SIDEBAR_TRUNCATION_FIX__ = true;
-
-  const mq = window.matchMedia("(min-width: 901px)");
-
-  function restoreSidebarTitles(){
-    if (!mq.matches) return;
-    document.querySelectorAll("#sidebarNav .sidebar-list .sidebar-link").forEach(function(link){
-      const full =
-        link.getAttribute("data-full-title") ||
-        link.getAttribute("title") ||
-        link.dataset.fullTitle ||
-        link.textContent.trim();
-
-      if (!link.getAttribute("data-full-title")){
-        link.setAttribute("data-full-title", full);
-      }
-
-      link.textContent = full;
-      link.setAttribute("title", full);
-    });
-  }
-
-  function scheduleRestore(){
-    requestAnimationFrame(function(){
-      requestAnimationFrame(restoreSidebarTitles);
-    });
-  }
-
-  const originalShowCard = window.showCard;
-  if (typeof originalShowCard === "function"){
-    window.showCard = function(card){
-      const out = originalShowCard.apply(this, arguments);
-      scheduleRestore();
-      return out;
-    };
-  }
-
-  document.addEventListener("click", function(e){
-    const t = e.target;
-    if (!t) return;
-    if (t.closest && (
-      t.closest("#sidebarNav .sidebar-link") ||
-      t.closest("#globalHeader") ||
-      t.closest("[data-open-work]") ||
-      t.closest("[data-nav='info']")
-    )){
-      scheduleRestore();
-    }
-  }, true);
-
-  window.addEventListener("resize", scheduleRestore);
-  window.addEventListener("load", function(){
-    restoreSidebarTitles();
-    setTimeout(restoreSidebarTitles, 80);
-    setTimeout(restoreSidebarTitles, 180);
-  }, {once:true});
-})();
-</script>
 
 
-<style id="sidebar-no-truncation-hard-fix">
-@media (min-width: 901px){
-  #sidebarNav .sidebar-link{
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    max-width: none !important;
-  }
-}
-</style>
 
-<script id="sidebar-no-truncation-hard-fix-js">
-(function(){
-  if (window.__SIDEBAR_NO_TRUNCATION_HARD_FIX__) return;
-  window.__SIDEBAR_NO_TRUNCATION_HARD_FIX__ = true;
 
-  const mq = window.matchMedia("(min-width: 901px)");
 
-  function restoreFullTitles(){
-    if (!mq.matches) return;
-    document.querySelectorAll("#sidebarNav .sidebar-list .sidebar-link").forEach(function(link){
-      const full =
-        link.getAttribute("data-full-title") ||
-        link.getAttribute("title") ||
-        link.dataset.fullTitle ||
-        link.textContent.trim();
-      if (full) {
-        link.setAttribute("data-full-title", full);
-        link.setAttribute("title", full);
-        link.textContent = full;
-      }
-    });
-  }
 
-  function run(){
-    requestAnimationFrame(function(){
-      requestAnimationFrame(restoreFullTitles);
-    });
-  }
 
-  const origShowCard = window.showCard;
-  if (typeof origShowCard === "function"){
-    window.showCard = function(card){
-      const out = origShowCard.apply(this, arguments);
-      run();
-      return out;
-    };
-  }
 
-  document.addEventListener("click", function(e){
-    const t = e.target;
-    if (!t) return;
-    if (t.closest && (
-      t.closest("#sidebarNav .sidebar-link") ||
-      t.closest("#globalHeader") ||
-      t.closest("[data-open-work]") ||
-      t.closest("[data-nav='info']")
-    )){
-      run();
-    }
-  }, true);
-
-  window.addEventListener("resize", run);
-  window.addEventListener("load", function(){
-    restoreFullTitles();
-    setTimeout(restoreFullTitles, 50);
-    setTimeout(restoreFullTitles, 150);
-  }, {once:true});
-})();
-</script>
 
 </body>
 </html>

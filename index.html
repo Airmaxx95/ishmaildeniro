@@ -5874,5 +5874,79 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<style id="sidebar-truncation-fix-css">
+/* Desktop sidebar: keep full work titles stable */
+@media (min-width: 901px){
+  #sidebarNav .sidebar-link{
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+}
+</style>
+
+<script id="sidebar-truncation-fix-js">
+(function(){
+  if (window.__SIDEBAR_TRUNCATION_FIX__) return;
+  window.__SIDEBAR_TRUNCATION_FIX__ = true;
+
+  const mq = window.matchMedia("(min-width: 901px)");
+
+  function restoreSidebarTitles(){
+    if (!mq.matches) return;
+    document.querySelectorAll("#sidebarNav .sidebar-list .sidebar-link").forEach(function(link){
+      const full =
+        link.getAttribute("data-full-title") ||
+        link.getAttribute("title") ||
+        link.dataset.fullTitle ||
+        link.textContent.trim();
+
+      if (!link.getAttribute("data-full-title")){
+        link.setAttribute("data-full-title", full);
+      }
+
+      link.textContent = full;
+      link.setAttribute("title", full);
+    });
+  }
+
+  function scheduleRestore(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(restoreSidebarTitles);
+    });
+  }
+
+  const originalShowCard = window.showCard;
+  if (typeof originalShowCard === "function"){
+    window.showCard = function(card){
+      const out = originalShowCard.apply(this, arguments);
+      scheduleRestore();
+      return out;
+    };
+  }
+
+  document.addEventListener("click", function(e){
+    const t = e.target;
+    if (!t) return;
+    if (t.closest && (
+      t.closest("#sidebarNav .sidebar-link") ||
+      t.closest("#globalHeader") ||
+      t.closest("[data-open-work]") ||
+      t.closest("[data-nav='info']")
+    )){
+      scheduleRestore();
+    }
+  }, true);
+
+  window.addEventListener("resize", scheduleRestore);
+  window.addEventListener("load", function(){
+    restoreSidebarTitles();
+    setTimeout(restoreSidebarTitles, 80);
+    setTimeout(restoreSidebarTitles, 180);
+  }, {once:true});
+})();
+</script>
+
 </body>
 </html>

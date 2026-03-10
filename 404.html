@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Redirecting…</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script>
+(function () {
+  var attempted = window.location.pathname + window.location.search + window.location.hash;
+  var target = "/";
+  var redirectParam = "?redirect=" + encodeURIComponent(attempted);
+  window.location.replace(target + redirectParam);
+})();
+</script>
+
+<style>
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Helvetica, Arial, sans-serif;
+  background:#ffffff;
+  color:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+}
+.msg{
+  font-size:14px;
+  opacity:.6;
+}
+</style>
+</head>
+
+<body>
+<div class="msg">Redirecting…</div>
+</body>
+</html>

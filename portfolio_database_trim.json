@@ -59,13 +59,7 @@
     "artwork_materials": "Fluted Polypropylene ,UV Print, Low-Density Polyethelene, Polyester Strapping, Steel, Glass ",
     "dimensions": "200x300cm",
     "cover_image": "database/images/recent-activity-nomadic-vitrine/placeholder image.jpg",
-    "gallery_images": [
-      "database/images/recent-activity-nomadic-vitrine/01.jpg",
-      "database/images/recent-activity-nomadic-vitrine/02.jpg",
-      "database/images/recent-activity-nomadic-vitrine/03.jpg",
-      "database/images/recent-activity-nomadic-vitrine/04.jpg",
-      "database/images/recent-activity-nomadic-vitrine/05.jpg"
-    ],
+    "gallery_images": "database/images/recent-activity-nomadic-vitrine/01.jpg, database/images/recent-activity-nomadic-vitrine/02.jpg, database/images/recent-activity-nomadic-vitrine/03.jpg, database/images/recent-activity-nomadic-vitrine/04.jpg, database/images/recent-activity-nomadic-vitrine/05.jpg",
     "photographed_by": "Stuart Whipps",
     "photographed_by_url": "https://stuartwhipps.studio/",
     "links_optiona": "Recent Activity",
@@ -101,16 +95,7 @@
     "artwork_materials": null,
     "dimensions": null,
     "cover_image": "database/images/prayer-room/placeholder image.jpeg",
-    "gallery_images": [
-      "database/images/prayer-room/01.jpeg",
-      "database/images/prayer-room/02.jpeg",
-      "database/images/prayer-room/03.jpeg",
-      "database/images/prayer-room/04.jpeg",
-      "database/images/prayer-room/06.jpeg",
-      "database/images/prayer-room/07.jpeg",
-      "database/images/prayer-room/08.jpeg",
-      "database/images/prayer-room/09.jpeg"
-    ],
+    "gallery_images": "database/images/prayer-room/01.jpeg, database/images/prayer-room/02.jpeg, database/images/prayer-room/03.jpeg, database/images/prayer-room/04.jpeg, database/images/prayer-room/06.jpeg, database/images/prayer-room/07.jpeg, database/images/prayer-room/08.jpeg, database/images/prayer-room/09.jpeg",
     "photographed_by": null,
     "photographed_by_url": null,
     "links_optiona": "Prayer Room",
@@ -146,20 +131,7 @@
     "artwork_materials": "Mixed Artworks",
     "dimensions": "Dimensions variable",
     "cover_image": "database/images/if-stars-ever-fell/placeholder image.jpeg",
-    "gallery_images": [
-      "database/images/if-stars-ever-fell/01.jpeg",
-      "database/images/if-stars-ever-fell/02.jpeg",
-      "database/images/if-stars-ever-fell/03.jpeg",
-      "database/images/if-stars-ever-fell/04.jpeg",
-      "database/images/if-stars-ever-fell/05.jpeg",
-      "database/images/if-stars-ever-fell/06.jpeg",
-      "database/images/if-stars-ever-fell/07.jpeg",
-      "database/images/if-stars-ever-fell/08.jpeg",
-      "database/images/if-stars-ever-fell/09.jpeg",
-      "database/images/if-stars-ever-fell/10.jpeg",
-      "database/images/if-stars-ever-fell/11.jpeg",
-      "database/images/if-stars-ever-fell/12.jpeg"
-    ],
+    "gallery_images": "database/images/if-stars-ever-fell/01.jpeg, database/images/if-stars-ever-fell/02.jpeg, database/images/if-stars-ever-fell/03.jpeg, database/images/if-stars-ever-fell/04.jpeg, database/images/if-stars-ever-fell/05.jpeg, database/images/if-stars-ever-fell/06.jpeg, database/images/if-stars-ever-fell/07.jpeg, database/images/if-stars-ever-fell/08.jpeg, database/images/if-stars-ever-fell/09.jpeg, database/images/if-stars-ever-fell/10.jpeg, database/images/if-stars-ever-fell/11.jpeg, database/images/if-stars-ever-fell/12.jpeg",
     "photographed_by": "Stuart Whipps",
     "photographed_by_url": "https://stuartwhipps.studio/",
     "links_optiona": "Prayer Room",
@@ -195,13 +167,7 @@
     "artwork_materials": "Fluted polypropylene, Ahesive Vinyl, Print, Cotton T-Shirt, Carpet, Oud, Steel Dart, Incandescent bulb ",
     "dimensions": "200x300cm",
     "cover_image": "database/images/the-saracens-head/placeholder image.jpeg",
-    "gallery_images": [
-      "database/images/the-saracens-head/01.jpeg",
-      "database/images/the-saracens-head/02.jpeg",
-      "database/images/the-saracens-head/03.jpeg",
-      "database/images/the-saracens-head/04.jpeg",
-      "database/images/the-saracens-head/05.jpeg"
-    ],
+    "gallery_images": "database/images/the-saracens-head/01.jpeg, database/images/the-saracens-head/02.jpeg, database/images/the-saracens-head/03.jpeg, database/images/the-saracens-head/04.jpeg, database/images/the-saracens-head/05.jpeg",
     "photographed_by": "Adam Grainger",
     "photographed_by_url": null,
     "links_optiona": "CheapCheap — https://dinosaurkilby.co.uk/the-saracens-head | 500 Review — https://500review.substack.com/p/inside-the-saracens-head",
@@ -237,13 +203,7 @@
     "artwork_materials": "Fluted Polypropylene ,UV Print, Low-Density Polyethelene, Polyester Strapping, Steel, Glass ",
     "dimensions": "200x300cm",
     "cover_image": "database/images/winter-sculpture-park/placeholder image.JPG",
-    "gallery_images": [
-      "database/images/winter-sculpture-park/01.JPG",
-      "database/images/winter-sculpture-park/02.JPG",
-      "database/images/winter-sculpture-park/03.JPG",
-      "database/images/winter-sculpture-park/04.JPG",
-      "database/images/winter-sculpture-park/05.JPG"
-    ],
+    "gallery_images": "database/images/winter-sculpture-park/01.JPG, database/images/winter-sculpture-park/02.JPG, database/images/winter-sculpture-park/03.JPG, database/images/winter-sculpture-park/04.JPG, database/images/winter-sculpture-park/05.JPG",
     "photographed_by": "Stuart Whipps",
     "photographed_by_url": "https://stuartwhipps.studio/",
     "links_optiona": "Recent Activity",
@@ -279,10 +239,7 @@
     "artwork_materials": "Polyester mesh, Steel, Screen-print, gloss adhesive Vinyl ",
     "dimensions": "200x300cm",
     "cover_image": "database/images/are-the-stones-standing-still/placeholder image.jpg",
-    "gallery_images": [
-      "database/images/are-the-stones-standing-still/01.jpg",
-      "database/images/are-the-stones-standing-still/02.jpg"
-    ],
+    "gallery_images": "database/images/are-the-stones-standing-still/01.jpg, database/images/are-the-stones-standing-still/02.jpg",
     "photographed_by": "Staffordshire St",
     "photographed_by_url": null,
     "links_optiona": "Staffordshire St — https://www.staffordshirest.com/are-the-stones-standing-still",
@@ -318,10 +275,7 @@
     "artwork_materials": "Steel, Compsoite Panel, Adhesive Vinyl, Screen-Print",
     "dimensions": "200x300cm",
     "cover_image": "database/images/diy/placeholder image.jpeg",
-    "gallery_images": [
-      "database/images/diy/01.jpeg",
-      "database/images/diy/02.jpeg"
-    ],
+    "gallery_images": "database/images/diy/01.jpeg, database/images/diy/02.jpeg",
     "photographed_by": "Ruby Waage Townsend",
     "photographed_by_url": null,
     "links_optiona": "Ruby Waage Townsend",
@@ -357,13 +311,7 @@
     "artwork_materials": "Polyester mesh, Steel, Print, Fluorescent yellow badges ",
     "dimensions": "200x300cm",
     "cover_image": "database/images/if-it-thunders-on-all-fools-day/placeholder image.jpg",
-    "gallery_images": [
-      "database/images/if-it-thunders-on-all-fools-day/01.jpg",
-      "database/images/if-it-thunders-on-all-fools-day/02.jpg",
-      "database/images/if-it-thunders-on-all-fools-day/03.jpg",
-      "database/images/if-it-thunders-on-all-fools-day/04.jpg",
-      "database/images/if-it-thunders-on-all-fools-day/05.jpg"
-    ],
+    "gallery_images": "database/images/if-it-thunders-on-all-fools-day/01.jpg, database/images/if-it-thunders-on-all-fools-day/02.jpg, database/images/if-it-thunders-on-all-fools-day/03.jpg, database/images/if-it-thunders-on-all-fools-day/04.jpg, database/images/if-it-thunders-on-all-fools-day/05.jpg",
     "photographed_by": "Stuart Whipps",
     "photographed_by_url": "https://stuartwhipps.studio/",
     "links_optiona": "Eastside Projects — https://eastsideprojects.org/projects/if-it-thunders-on-all-fools-day/",
@@ -399,11 +347,7 @@
     "artwork_materials": "Mirror, Adhesive viynl Print,  Low-Density Polyethylene",
     "dimensions": "200x300cm",
     "cover_image": "database/images/bene-culture-x-satellite-store/placeholder image.JPG",
-    "gallery_images": [
-      "database/images/bene-culture-x-satellite-store/01.JPG",
-      "database/images/bene-culture-x-satellite-store/02.JPG",
-      "database/images/bene-culture-x-satellite-store/03.JPG"
-    ],
+    "gallery_images": "database/images/bene-culture-x-satellite-store/01.JPG, database/images/bene-culture-x-satellite-store/02.JPG, database/images/bene-culture-x-satellite-store/03.JPG",
     "photographed_by": "Bene Culture",
     "photographed_by_url": null,
     "links_optiona": "Bene Culture",
@@ -439,10 +383,7 @@
     "artwork_materials": "Adhesive Vinyl, UV Print, Door",
     "dimensions": "200x300cm",
     "cover_image": "database/images/summer-camp-2023/placeholder image.jpg",
-    "gallery_images": [
-      "database/images/summer-camp-2023/01.jpg",
-      "database/images/summer-camp-2023/02.jpg"
-    ],
+    "gallery_images": "database/images/summer-camp-2023/01.jpg, database/images/summer-camp-2023/02.jpg",
     "photographed_by": "Stuart Whipps",
     "photographed_by_url": "https://stuartwhipps.studio/",
     "links_optiona": "Eastside Projects — https://eastsideprojects.org/esp/projects/summer-camp-2022/",
@@ -478,10 +419,7 @@
     "artwork_materials": "Fabricated steel panel, Automotive Paint, Adhesive Vinyl ",
     "dimensions": "200x300cm",
     "cover_image": "database/images/summer-camp-2022/placeholder image.jpeg",
-    "gallery_images": [
-      "database/images/summer-camp-2022/01.jpeg",
-      "database/images/summer-camp-2022/02.jpeg"
-    ],
+    "gallery_images": "database/images/summer-camp-2022/01.jpeg, database/images/summer-camp-2022/02.jpeg",
     "photographed_by": "Stuart Whipps",
     "photographed_by_url": "https://stuartwhipps.studio/",
     "links_optiona": "Eastside Projects — https://eastsideprojects.org/esp/projects/summer-camp-2022/",
@@ -517,13 +455,7 @@
     "artwork_materials": "Fluted Polypropylene ,UV Print, Low-Density Polyethelene, Polyester Strapping, Steel, Glass ",
     "dimensions": "200x300cm",
     "cover_image": "database/images/recent-activity-nomadic-vitrine/placeholder image.jpg",
-    "gallery_images": [
-      "database/images/recent-activity-nomadic-vitrine/01.jpg",
-      "database/images/recent-activity-nomadic-vitrine/02.jpg",
-      "database/images/recent-activity-nomadic-vitrine/03.jpg",
-      "database/images/recent-activity-nomadic-vitrine/04.jpg",
-      "database/images/recent-activity-nomadic-vitrine/05.jpg"
-    ],
+    "gallery_images": "database/images/recent-activity-nomadic-vitrine/01.jpg, database/images/recent-activity-nomadic-vitrine/02.jpg, database/images/recent-activity-nomadic-vitrine/03.jpg, database/images/recent-activity-nomadic-vitrine/04.jpg, database/images/recent-activity-nomadic-vitrine/05.jpg",
     "photographed_by": "Stuart Whipps",
     "photographed_by_url": "https://stuartwhipps.studio/",
     "links_optiona": "Recent Activity",

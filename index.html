@@ -4217,51 +4217,6 @@ document.addEventListener("keydown", function(e){
 
 
 
-/* === Sidebar Exact 20 Character Truncation === */
-(function(){
-  const MAX = 20;
-
-  function truncateSidebarTitles(){
-    const links = document.querySelectorAll("#sidebarNav .sidebar-list .sidebar-link");
-
-    links.forEach(link=>{
-      const full = link.getAttribute("data-full-title") || link.textContent.trim();
-
-      // store original full title once
-      if(!link.getAttribute("data-full-title")){
-        link.setAttribute("data-full-title", full);
-      }
-
-      if(full.length > MAX){
-        link.textContent = full.slice(0, MAX) + "…";
-      }else{
-        link.textContent = full;
-      }
-    });
-  }
-
-  window.addEventListener("load", ()=>{
-    setTimeout(truncateSidebarTitles, 50);
-  });
-
-  // Re-run after sidebar rebuild (wrap existing builder if present)
-  const originalShowCard = window.showCard;
-  if(typeof originalShowCard === "function"){
-    window.showCard = function(card){
-      originalShowCard(card);
-      setTimeout(truncateSidebarTitles, 50);
-    };
-  }
-
-})();
-
-
-
-
-
-
-
-
 /* === Sidebar Position (VERTICAL MATCHED + RULES): 
    - LEFT: Works use actual rect; Biography uses synthetic work-card rect (so it never follows biography geometry)
    - TOP: Both states use shared synthetic work-frame top (perfect vertical match)
@@ -5944,6 +5899,78 @@ document.addEventListener("keydown", function(e){
     restoreSidebarTitles();
     setTimeout(restoreSidebarTitles, 80);
     setTimeout(restoreSidebarTitles, 180);
+  }, {once:true});
+})();
+</script>
+
+
+<style id="sidebar-no-truncation-hard-fix">
+@media (min-width: 901px){
+  #sidebarNav .sidebar-link{
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: none !important;
+  }
+}
+</style>
+
+<script id="sidebar-no-truncation-hard-fix-js">
+(function(){
+  if (window.__SIDEBAR_NO_TRUNCATION_HARD_FIX__) return;
+  window.__SIDEBAR_NO_TRUNCATION_HARD_FIX__ = true;
+
+  const mq = window.matchMedia("(min-width: 901px)");
+
+  function restoreFullTitles(){
+    if (!mq.matches) return;
+    document.querySelectorAll("#sidebarNav .sidebar-list .sidebar-link").forEach(function(link){
+      const full =
+        link.getAttribute("data-full-title") ||
+        link.getAttribute("title") ||
+        link.dataset.fullTitle ||
+        link.textContent.trim();
+      if (full) {
+        link.setAttribute("data-full-title", full);
+        link.setAttribute("title", full);
+        link.textContent = full;
+      }
+    });
+  }
+
+  function run(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(restoreFullTitles);
+    });
+  }
+
+  const origShowCard = window.showCard;
+  if (typeof origShowCard === "function"){
+    window.showCard = function(card){
+      const out = origShowCard.apply(this, arguments);
+      run();
+      return out;
+    };
+  }
+
+  document.addEventListener("click", function(e){
+    const t = e.target;
+    if (!t) return;
+    if (t.closest && (
+      t.closest("#sidebarNav .sidebar-link") ||
+      t.closest("#globalHeader") ||
+      t.closest("[data-open-work]") ||
+      t.closest("[data-nav='info']")
+    )){
+      run();
+    }
+  }, true);
+
+  window.addEventListener("resize", run);
+  window.addEventListener("load", function(){
+    restoreFullTitles();
+    setTimeout(restoreFullTitles, 50);
+    setTimeout(restoreFullTitles, 150);
   }, {once:true});
 })();
 </script>

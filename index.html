@@ -3013,6 +3013,22 @@ html, body{
 }
 </style>
 
+
+<style id="sidebar-highlight-singlefire-css">
+/* Remove active dash and stop visual fighting on desktop */
+.sidebar-list li.active .sidebar-link::after{
+  content: none !important;
+}
+
+@media (min-width: 901px){
+  #sidebarNav .sidebar-link,
+  #sidebarNav .sidebar-link.active-link,
+  #sidebarNav .sidebar-list li.active .sidebar-link{
+    transition: none !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -4163,93 +4179,6 @@ document.addEventListener("keydown", function(e){
     }
   });
 })();
-
-/* === Sidebar Active Highlight Logic (workSlug-aware) === */
-(function(){
-
-  function topMostVisibleWorkCard(){
-    const cards = Array.from(document.querySelectorAll(".card.work-card.visible"))
-      .filter(c => (c.style.display !== "none") && (c.style.visibility !== "hidden"));
-    if(!cards.length) return null;
-
-    // pick highest z-index (string -> number)
-    cards.sort((a,b)=>{
-      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
-      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
-      return zb - za;
-    });
-    return cards[0] || null;
-  }
-
-  function updateSidebarActive(){
-    // Clear existing active states (works + top links)
-    document.querySelectorAll(".sidebar-list li.active").forEach(li => li.classList.remove("active"));
-    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(el => el.classList.remove("active-link"));
-
-    // Find the top-most visible work card
-    const cards = Array.from(document.querySelectorAll(".card.work-card.visible"))
-      .filter(c => c.style.display !== "none");
-    if(!cards.length) return;
-
-    cards.sort((a,b)=>{
-      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
-      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
-      return zb - za;
-    });
-    const card = cards[0];
-
-    const slug = (card?.dataset?.workSlug || "").trim();
-    if(!slug) return;
-
-    // Top sidebar links use active-link instead of li.active
-    if(slug.toLowerCase() === "biography" || slug.toLowerCase() === "research"){
-      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-      if(topBtn) topBtn.classList.add("active-link");
-      return;
-    }
-
-    // Otherwise highlight the corresponding work in the grouped list
-    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-    if(!link) return;
-    const li = link.closest("li");
-    if(li) li.classList.add("active");
-  }
-
-  // Hook into showCard (do not break original behavior)
-  const originalShowCard = window.showCard;
-  if(typeof originalShowCard === "function"){
-    window.showCard = function(card){
-      originalShowCard(card);
-      // allow DOM updates/z-index to settle
-      setTimeout(updateSidebarActive, 0);
-      setTimeout(updateSidebarActive, 40);
-    };
-  }
-
-  // Also update when opening via sidebar/info buttons (delegated click)
-  document.addEventListener("click", function(e){
-    const btn = e.target.closest && e.target.closest("[data-open-work], #openBiography, [data-nav='info']");
-    if(btn) {
-      setTimeout(updateSidebarActive, 0);
-      setTimeout(updateSidebarActive, 60);
-    }
-  });
-
-  window.addEventListener("load", function(){
-    setTimeout(updateSidebarActive, 80);
-  });
-
-  // Re-sync highlight after viewport/layout changes (e.g. media view back to full window size)
-  window.addEventListener("resize", function(){
-    setTimeout(updateSidebarActive, 0);
-    setTimeout(updateSidebarActive, 80);
-    setTimeout(updateSidebarActive, 180);
-  });
-
-})();
-
-
-
 
 /* === Sidebar Position (VERTICAL MATCHED + RULES): 
    - LEFT: Works use actual rect; Biography uses synthetic work-card rect (so it never follows biography geometry)
@@ -5874,23 +5803,25 @@ document.addEventListener("keydown", function(e){
 
 
 
-<script id="sidebar-active-doublefire-fix">
+
+
+
+<script id="sidebar-highlight-singlefire-js">
 (function(){
-  if (window.__SIDEBAR_ACTIVE_DOUBLEFIRE_FIX__) return;
-  window.__SIDEBAR_ACTIVE_DOUBLEFIRE_FIX__ = true;
+  if (window.__SIDEBAR_HIGHLIGHT_SINGLEFIRE__) return;
+  window.__SIDEBAR_HIGHLIGHT_SINGLEFIRE__ = true;
 
   const mq = window.matchMedia("(min-width: 901px)");
-  let rafId = null;
-  let lastSlug = null;
+  let rafToken = 0;
 
-  function currentTopWorkSlug(){
+  function topVisibleWorkSlug(){
     const cards = Array.from(document.querySelectorAll(".card.work-card.visible"))
-      .filter(function(c){
-        const cs = getComputedStyle(c);
+      .filter(function(card){
+        const cs = getComputedStyle(card);
         return cs.display !== "none" && cs.visibility !== "hidden";
       });
 
-    if(!cards.length) return "";
+    if (!cards.length) return "";
 
     cards.sort(function(a,b){
       const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
@@ -5901,85 +5832,77 @@ document.addEventListener("keydown", function(e){
     return String(cards[0]?.dataset?.workSlug || "").trim();
   }
 
-  function applySidebarActiveStable(){
-    if(!mq.matches) return;
-
-    const slug = currentTopWorkSlug();
-
-    // Clear existing states once
-    document.querySelectorAll(".sidebar-list li.active").forEach(function(li){
+  function clearSidebarActive(){
+    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
       li.classList.remove("active");
     });
     document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
       el.classList.remove("active-link");
     });
+  }
 
-    if(!slug){
-      lastSlug = "";
-      return;
-    }
+  function applySidebarActive(){
+    if (!mq.matches) return;
 
-    if(slug.toLowerCase() === "biography" || slug.toLowerCase() === "research"){
+    clearSidebarActive();
+
+    const slug = topVisibleWorkSlug();
+    if (!slug) return;
+
+    if (slug.toLowerCase() === "biography" || slug.toLowerCase() === "research"){
       const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-      if(topBtn) topBtn.classList.add("active-link");
-      lastSlug = slug;
+      if (topBtn) topBtn.classList.add("active-link");
       return;
     }
 
     const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-    if(link){
-      const li = link.closest("li");
-      if(li) li.classList.add("active");
-    }
-    lastSlug = slug;
+    if (!link) return;
+
+    const li = link.closest("li");
+    if (li) li.classList.add("active");
   }
 
-  function scheduleStableSidebarActive(){
-    if(!mq.matches) return;
-    if(rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(function(){
-      rafId = requestAnimationFrame(function(){
-        applySidebarActiveStable();
+  function scheduleApply(){
+    if (!mq.matches) return;
+    rafToken++;
+    const myToken = rafToken;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        if (myToken !== rafToken) return;
+        applySidebarActive();
       });
     });
   }
 
-  // Run after sidebar/work interactions on desktop
+  const origShowCard = window.showCard;
+  if (typeof origShowCard === "function"){
+    window.showCard = function(card){
+      const out = origShowCard.apply(this, arguments);
+      scheduleApply();
+      return out;
+    };
+  }
+
   document.addEventListener("click", function(e){
-    if(!mq.matches) return;
+    if (!mq.matches) return;
     const t = e.target;
-    if(!t) return;
-    if(t.closest && (
+    if (!t) return;
+    if (t.closest && (
       t.closest("#sidebarNav .sidebar-link") ||
       t.closest("#globalHeader") ||
       t.closest("[data-open-work]") ||
       t.closest("[data-nav='info']")
     )){
-      scheduleStableSidebarActive();
+      scheduleApply();
     }
   }, true);
 
-  // Run after card transitions settle
-  const origShowCard = window.showCard;
-  if(typeof origShowCard === "function"){
-    window.showCard = function(card){
-      const out = origShowCard.apply(this, arguments);
-      if(mq.matches){
-        scheduleStableSidebarActive();
-      }
-      return out;
-    };
-  }
-
   window.addEventListener("load", function(){
-    scheduleStableSidebarActive();
-    setTimeout(scheduleStableSidebarActive, 60);
-    setTimeout(scheduleStableSidebarActive, 160);
+    scheduleApply();
+    setTimeout(scheduleApply, 80);
   }, {once:true});
 
-  window.addEventListener("resize", function(){
-    scheduleStableSidebarActive();
-  });
+  window.addEventListener("resize", scheduleApply);
 })();
 </script>
 

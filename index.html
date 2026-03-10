@@ -2958,6 +2958,27 @@ html, body{
 }
 </style>
 
+
+<style id="mobile-work-flash-fix">
+@media (max-width: 900px){
+  body.mobile-nav-direct-jump .card.mobile-nav-direct-open{
+    opacity: 1 !important;
+    visibility: visible !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body.mobile-nav-direct-jump .card.card-enter,
+  body.mobile-nav-direct-jump .card.card-exit,
+  body.mobile-nav-direct-jump .card.mobile-pre-enter{
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -5595,6 +5616,155 @@ document.addEventListener("keydown", function(e){
   window.addEventListener("load", function(){ setTimeout(syncMenuWithLightbox, 50); }, { once: true });
 
   syncMenuWithLightbox();
+})();
+</script>
+
+
+<script id="mobile-work-flash-fix-js">
+(function(){
+  if (window.__MOBILE_WORK_FLASH_FIX__) return;
+  window.__MOBILE_WORK_FLASH_FIX__ = true;
+
+  const mq = window.matchMedia("(max-width: 900px)");
+  const overlay = document.getElementById("mobileNavOverlay");
+  const content = document.getElementById("mobileNavContent");
+  const header = document.getElementById("globalHeader");
+  const sidebar = document.getElementById("sidebarNav");
+
+  if (!overlay || !content) return;
+
+  let zTop = 4000;
+
+  function isMobile(){
+    return mq.matches;
+  }
+
+  function getInfoCard(){
+    return document.querySelector(".card.info-card") || document.getElementById("infoCard");
+  }
+
+  function getWorkCard(slug){
+    return document.querySelector('.card.work-card[data-slug="' + slug + '"]') ||
+           document.querySelector('.card.work-card[data-work-slug="' + slug + '"]');
+  }
+
+  function hideAllExcept(target){
+    document.querySelectorAll(".card").forEach(function(card){
+      card.classList.remove("visible", "card-enter", "card-exit", "mobile-pre-enter", "mobile-nav-direct-open");
+      if (card === target){
+        card.classList.remove("hidden", "info-ghost");
+        card.classList.add("visible", "mobile-nav-direct-open");
+        card.style.display = "block";
+        card.style.visibility = "visible";
+        card.style.opacity = "1";
+        card.style.animation = "none";
+        card.style.transition = "none";
+        card.style.pointerEvents = "auto";
+        card.style.zIndex = String(++zTop);
+      } else {
+        card.classList.add("hidden");
+        card.style.display = "none";
+        card.style.visibility = "hidden";
+        card.style.opacity = "";
+        card.style.animation = "";
+        card.style.transition = "";
+      }
+    });
+  }
+
+  function closeMenuHard(){
+    const active = document.activeElement;
+    if (active && overlay.contains(active) && typeof active.blur === "function"){
+      active.blur();
+    }
+    overlay.classList.remove("open", "handoff");
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.setAttribute("inert", "");
+    overlay.style.opacity = "0";
+    overlay.style.pointerEvents = "none";
+    document.body.classList.remove("mobile-menu-open", "mobile-nav-transitioning");
+  }
+
+  function syncChromeFor(card){
+    const isInfo = !!(card && card.classList && card.classList.contains("info-card"));
+
+    if (header){
+      header.classList.toggle("visible", !isInfo);
+      header.style.opacity = isInfo ? "0" : "";
+      header.style.visibility = isInfo ? "hidden" : "";
+      header.style.pointerEvents = isInfo ? "none" : "";
+    }
+
+    if (sidebar){
+      sidebar.classList.remove("visible");
+      sidebar.style.opacity = "0";
+      sidebar.style.visibility = "hidden";
+      sidebar.style.pointerEvents = "none";
+    }
+
+    const info = getInfoCard();
+    if (info){
+      info.classList.toggle("info-ghost", !isInfo);
+    }
+  }
+
+  function directOpenWork(slug){
+    const target = getWorkCard(slug);
+    if (!target) return;
+    document.body.classList.add("mobile-nav-direct-jump");
+    closeMenuHard();
+    hideAllExcept(target);
+    syncChromeFor(target);
+
+    const wt = target.querySelector && target.querySelector(".work-text");
+    if (wt && typeof window.updateWorkTextFade === "function"){
+      try{ window.updateWorkTextFade(wt); }catch(e){}
+      setTimeout(function(){ try{ window.updateWorkTextFade(wt); }catch(e){} }, 80);
+    }
+
+    setTimeout(function(){
+      document.body.classList.remove("mobile-nav-direct-jump");
+      target.classList.remove("mobile-nav-direct-open");
+      target.style.transition = "";
+    }, 120);
+  }
+
+  function directOpenInfo(){
+    const info = getInfoCard();
+    if (!info) return;
+    document.body.classList.add("mobile-nav-direct-jump");
+    closeMenuHard();
+    hideAllExcept(info);
+    syncChromeFor(info);
+
+    setTimeout(function(){
+      document.body.classList.remove("mobile-nav-direct-jump");
+      info.classList.remove("mobile-nav-direct-open");
+      info.style.transition = "";
+    }, 120);
+  }
+
+  content.addEventListener("click", function(e){
+    if (!isMobile()) return;
+
+    const workBtn = e.target.closest && e.target.closest("[data-open-work]");
+    const infoBtn = e.target.closest && e.target.closest("[data-nav='info']");
+    if (!workBtn && !infoBtn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+
+    if (infoBtn){
+      requestAnimationFrame(directOpenInfo);
+      return;
+    }
+
+    if (workBtn){
+      const slug = workBtn.getAttribute("data-open-work");
+      requestAnimationFrame(function(){ directOpenWork(slug); });
+    }
+  }, true);
 })();
 </script>
 

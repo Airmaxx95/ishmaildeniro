@@ -5420,5 +5420,138 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script id="mobile-nav-simulated-repair">
+(function(){
+  if (window.__MOBILE_NAV_SIMULATED_REPAIR__) return;
+  window.__MOBILE_NAV_SIMULATED_REPAIR__ = true;
+
+  const mq = window.matchMedia("(max-width: 900px)");
+  const menuBtn = document.getElementById("mobileNavToggle");
+  const overlay = document.getElementById("mobileNavOverlay");
+  const content = document.getElementById("mobileNavContent");
+  const header = document.getElementById("globalHeader");
+  const sidebar = document.getElementById("sidebarNav");
+  const sidebarWorks = document.getElementById("sidebarWorks");
+
+  if(!menuBtn || !overlay || !content || !header || !sidebar) return;
+
+  function visibleCards(){
+    return Array.from(document.querySelectorAll(".card.visible")).filter(function(card){
+      const cs = getComputedStyle(card);
+      return cs.display !== "none" && cs.visibility !== "hidden";
+    });
+  }
+
+  function topVisibleCard(){
+    const cards = visibleCards();
+    if(!cards.length) return null;
+    cards.sort(function(a,b){
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    return cards[0];
+  }
+
+  function isInfoCard(card){
+    return !!(card && card.classList && card.classList.contains("info-card"));
+  }
+
+  function clearMobileInlineState(){
+    document.body.classList.remove("mobile-menu-open", "mobile-nav-transitioning");
+    overlay.classList.remove("open", "handoff");
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.setAttribute("inert", "");
+    overlay.style.opacity = "";
+    overlay.style.pointerEvents = "";
+    overlay.style.visibility = "";
+    menuBtn.classList.remove("is-open");
+    menuBtn.setAttribute("aria-expanded", "false");
+    menuBtn.style.opacity = "";
+    menuBtn.style.visibility = "";
+    menuBtn.style.pointerEvents = "";
+    menuBtn.style.display = "";
+    header.style.opacity = "";
+    header.style.visibility = "";
+    header.style.pointerEvents = "";
+    sidebar.style.opacity = "";
+    sidebar.style.visibility = "";
+    sidebar.style.pointerEvents = "";
+  }
+
+  function restoreDesktopChrome(){
+    clearMobileInlineState();
+
+    if (typeof window.renderSidebarWorks === "function" && sidebarWorks){
+      try{ window.renderSidebarWorks(sidebarWorks); }catch(e){}
+    }
+
+    const current = topVisibleCard();
+    const showDesktopChrome = !!current && !isInfoCard(current);
+
+    if (typeof window.setGlobalHeaderVisible === "function"){
+      try{ window.setGlobalHeaderVisible(showDesktopChrome); }catch(e){}
+    } else {
+      header.classList.toggle("visible", showDesktopChrome);
+    }
+
+    if (typeof window.setSidebarVisible === "function"){
+      try{ window.setSidebarVisible(showDesktopChrome); }catch(e){}
+    } else {
+      sidebar.classList.toggle("visible", showDesktopChrome);
+    }
+  }
+
+  function enforceMobileChrome(){
+    if (!mq.matches) return;
+    const current = topVisibleCard();
+    const menuOpen = overlay.classList.contains("open");
+    const showHeader = !menuOpen && !!current && !isInfoCard(current);
+
+    header.classList.toggle("visible", showHeader);
+    header.style.opacity = showHeader ? "" : "0";
+    header.style.visibility = showHeader ? "" : "hidden";
+    header.style.pointerEvents = showHeader ? "" : "none";
+
+    sidebar.classList.remove("visible");
+    sidebar.style.opacity = "0";
+    sidebar.style.visibility = "hidden";
+    sidebar.style.pointerEvents = "none";
+  }
+
+  function runSimulationPass(){
+    if (mq.matches){
+      enforceMobileChrome();
+    } else {
+      restoreDesktopChrome();
+    }
+  }
+
+  const observer = new MutationObserver(function(){
+    requestAnimationFrame(runSimulationPass);
+  });
+
+  observer.observe(document.body, { attributes:true, attributeFilter:["class"] });
+  document.querySelectorAll(".card, #mobileNavOverlay, #globalHeader, #sidebarNav").forEach(function(el){
+    observer.observe(el, { attributes:true, attributeFilter:["class","style","aria-hidden"] });
+  });
+
+  window.addEventListener("resize", function(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(runSimulationPass);
+    });
+  });
+
+  window.addEventListener("orientationchange", function(){
+    setTimeout(runSimulationPass, 80);
+  });
+
+  window.addEventListener("load", function(){
+    runSimulationPass();
+  }, { once:true });
+})();
+</script>
+
 </body>
 </html>

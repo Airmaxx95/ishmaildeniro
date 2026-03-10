@@ -3029,6 +3029,21 @@ html, body{
 }
 </style>
 
+
+<style id="sidebar-highlight-consolidated-css">
+.sidebar-list li.active .sidebar-link::after{
+  content: none !important;
+}
+
+@media (min-width: 901px){
+  #sidebarNav .sidebar-link,
+  #sidebarNav .sidebar-link.active-link,
+  #sidebarNav .sidebar-list li.active .sidebar-link{
+    transition: none !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -5806,20 +5821,38 @@ document.addEventListener("keydown", function(e){
 
 
 
-<script id="sidebar-highlight-singlefire-js">
+
+
+
+
+
+
+<script id="sidebar-showcard-consolidated-js">
 (function(){
-  if (window.__SIDEBAR_HIGHLIGHT_SINGLEFIRE__) return;
-  window.__SIDEBAR_HIGHLIGHT_SINGLEFIRE__ = true;
+  if (window.__SIDEBAR_SHOWCARD_CONSOLIDATED__) return;
+  window.__SIDEBAR_SHOWCARD_CONSOLIDATED__ = true;
 
   const mq = window.matchMedia("(min-width: 901px)");
-  let rafToken = 0;
+  let forcedSlug = "";
+  let forcedUntil = 0;
+  let rafId = 0;
+
+  function desktop(){ return mq.matches; }
+
+  function clearActive(){
+    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
+      li.classList.remove("active");
+    });
+    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
+      el.classList.remove("active-link");
+    });
+  }
 
   function topVisibleWorkSlug(){
-    const cards = Array.from(document.querySelectorAll(".card.work-card.visible"))
-      .filter(function(card){
-        const cs = getComputedStyle(card);
-        return cs.display !== "none" && cs.visibility !== "hidden";
-      });
+    const cards = Array.from(document.querySelectorAll(".card.work-card.visible")).filter(function(card){
+      const cs = getComputedStyle(card);
+      return cs.display !== "none" && cs.visibility !== "hidden";
+    });
 
     if (!cards.length) return "";
 
@@ -5832,102 +5865,10 @@ document.addEventListener("keydown", function(e){
     return String(cards[0]?.dataset?.workSlug || "").trim();
   }
 
-  function clearSidebarActive(){
-    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
-      li.classList.remove("active");
-    });
-    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
-      el.classList.remove("active-link");
-    });
-  }
-
-  function applySidebarActive(){
-    if (!mq.matches) return;
-
-    clearSidebarActive();
-
-    const slug = topVisibleWorkSlug();
+  function applySlug(slug){
+    if (!desktop()) return;
+    clearActive();
     if (!slug) return;
-
-    if (slug.toLowerCase() === "biography" || slug.toLowerCase() === "research"){
-      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-      if (topBtn) topBtn.classList.add("active-link");
-      return;
-    }
-
-    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
-    if (!link) return;
-
-    const li = link.closest("li");
-    if (li) li.classList.add("active");
-  }
-
-  function scheduleApply(){
-    if (!mq.matches) return;
-    rafToken++;
-    const myToken = rafToken;
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        if (myToken !== rafToken) return;
-        applySidebarActive();
-      });
-    });
-  }
-
-  const origShowCard = window.showCard;
-  if (typeof origShowCard === "function"){
-    window.showCard = function(card){
-      const out = origShowCard.apply(this, arguments);
-      scheduleApply();
-      return out;
-    };
-  }
-
-  document.addEventListener("click", function(e){
-    if (!mq.matches) return;
-    const t = e.target;
-    if (!t) return;
-    if (t.closest && (
-      t.closest("#sidebarNav .sidebar-link") ||
-      t.closest("#globalHeader") ||
-      t.closest("[data-open-work]") ||
-      t.closest("[data-nav='info']")
-    )){
-      scheduleApply();
-    }
-  }, true);
-
-  window.addEventListener("load", function(){
-    scheduleApply();
-    setTimeout(scheduleApply, 80);
-  }, {once:true});
-
-  window.addEventListener("resize", scheduleApply);
-})();
-</script>
-
-
-<script id="sidebar-highlight-click-fix">
-(function(){
-  if (window.__SIDEBAR_HIGHLIGHT_CLICK_FIX__) return;
-  window.__SIDEBAR_HIGHLIGHT_CLICK_FIX__ = true;
-
-  const mq = window.matchMedia("(min-width: 901px)");
-  let forcedSlug = "";
-  let forcedUntil = 0;
-
-  function clearSidebarActiveNow(){
-    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
-      li.classList.remove("active");
-    });
-    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
-      el.classList.remove("active-link");
-    });
-  }
-
-  function applySlugNow(slug){
-    if (!mq.matches || !slug) return;
-    clearSidebarActiveNow();
 
     const lower = String(slug).trim().toLowerCase();
     if (lower === "biography" || lower === "research"){
@@ -5942,57 +5883,75 @@ document.addEventListener("keydown", function(e){
     if (li) li.classList.add("active");
   }
 
-  document.addEventListener("click", function(e){
-    if (!mq.matches) return;
-    const link = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-open-work]');
-    if (!link) return;
-
-    const slug = (link.getAttribute("data-open-work") || "").trim();
-    if (!slug) return;
-
-    forcedSlug = slug;
-    forcedUntil = Date.now() + 900;
-    applySlugNow(slug);
-
-    requestAnimationFrame(function(){
-      applySlugNow(slug);
+  function scheduleApply(){
+    if (!desktop()) return;
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        const slug = (forcedSlug && Date.now() < forcedUntil) ? forcedSlug : topVisibleWorkSlug();
+        applySlug(slug);
+      });
     });
-    setTimeout(function(){
-      if (Date.now() < forcedUntil && forcedSlug === slug){
-        applySlugNow(slug);
-      }
-    }, 80);
-    setTimeout(function(){
-      if (Date.now() < forcedUntil && forcedSlug === slug){
-        applySlugNow(slug);
-      }
-    }, 180);
+  }
+
+  document.addEventListener("click", function(e){
+    if (!desktop()) return;
+
+    const sidebarWork = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-open-work]');
+    if (sidebarWork){
+      forcedSlug = String(sidebarWork.getAttribute("data-open-work") || "").trim();
+      forcedUntil = Date.now() + 900;
+      applySlug(forcedSlug);
+      scheduleApply();
+      setTimeout(scheduleApply, 80);
+      setTimeout(function(){
+        if (Date.now() >= forcedUntil) forcedSlug = "";
+        scheduleApply();
+      }, 220);
+      return;
+    }
+
+    const sidebarInfo = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-nav="info"]');
+    const header = e.target.closest && e.target.closest("#globalHeader");
+    const generic = e.target.closest && e.target.closest("[data-open-work], [data-nav='info'], #openBiography");
+    if (sidebarInfo || header || generic){
+      scheduleApply();
+    }
   }, true);
 
-  const origTopVisibleWorkSlug = window.topVisibleWorkSlug;
-  // Hook the singlefire highlighter by wrapping showCard again with a short forced-slug grace period.
-  const origShowCard2 = window.showCard;
-  if (typeof origShowCard2 === "function"){
+  const origShowCard = window.showCard;
+  if (typeof origShowCard === "function"){
     window.showCard = function(card){
-      const out = origShowCard2.apply(this, arguments);
+      const out = origShowCard.apply(this, arguments);
+      if (!desktop()) return out;
 
-      if (mq.matches && forcedSlug && Date.now() < forcedUntil){
-        requestAnimationFrame(function(){
-          applySlugNow(forcedSlug);
-        });
-      } else if (mq.matches) {
-        forcedSlug = "";
+      const slug = String(card?.dataset?.workSlug || "").trim();
+      if (slug){
+        if (!forcedSlug || Date.now() >= forcedUntil || forcedSlug === slug){
+          forcedSlug = slug;
+          forcedUntil = Date.now() + 180;
+        }
       }
-
+      scheduleApply();
+      setTimeout(scheduleApply, 60);
       return out;
     };
   }
 
+  window.addEventListener("load", function(){
+    scheduleApply();
+    setTimeout(scheduleApply, 80);
+    setTimeout(scheduleApply, 180);
+  }, {once:true});
+
   window.addEventListener("resize", function(){
-    if (!mq.matches){
+    if (!desktop()){
       forcedSlug = "";
       forcedUntil = 0;
+      clearActive();
+      return;
     }
+    scheduleApply();
   });
 })();
 </script>

@@ -5768,5 +5768,111 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<style id="mobile-nav-double-fire-suppression-css">
+@media (max-width: 900px){
+  body.mobile-nav-no-fade .card,
+  body.mobile-nav-no-fade .card.card-enter,
+  body.mobile-nav-no-fade .card.card-exit,
+  body.mobile-nav-no-fade .card.mobile-pre-enter{
+    animation: none !important;
+    transition: none !important;
+  }
+}
+</style>
+
+<script id="mobile-nav-double-fire-suppression-js">
+(function(){
+  if (window.__MOBILE_NAV_DOUBLE_FIRE_SUPPRESSION__) return;
+  window.__MOBILE_NAV_DOUBLE_FIRE_SUPPRESSION__ = true;
+
+  const mq = window.matchMedia("(max-width: 900px)");
+
+  function isMobile(){ return mq.matches; }
+
+  function hideAllExcept(target){
+    document.querySelectorAll(".card").forEach(function(card){
+      if(card === target){
+        card.classList.remove("hidden", "card-enter", "card-exit", "mobile-pre-enter", "info-ghost");
+        card.classList.add("visible");
+        card.style.display = "block";
+        card.style.visibility = "visible";
+        card.style.opacity = "1";
+        card.style.animation = "none";
+        card.style.transition = "none";
+      }else{
+        card.classList.remove("visible", "card-enter", "card-exit", "mobile-pre-enter");
+        card.classList.add("hidden");
+        card.style.display = "none";
+        card.style.visibility = "hidden";
+        card.style.opacity = "";
+        card.style.animation = "";
+        card.style.transition = "";
+      }
+    });
+  }
+
+  function suppressFor(card){
+    window.__mobileNavSuppressUntil = Date.now() + 700;
+    window.__mobileNavSuppressCard = card || null;
+    document.body.classList.add("mobile-nav-no-fade");
+    setTimeout(function(){
+      document.body.classList.remove("mobile-nav-no-fade");
+      window.__mobileNavSuppressCard = null;
+    }, 750);
+  }
+
+  const origShowCard = window.showCard;
+  if (typeof origShowCard === "function"){
+    window.showCard = function(card){
+      if (
+        isMobile() &&
+        window.__mobileNavSuppressUntil &&
+        Date.now() < window.__mobileNavSuppressUntil
+      ){
+        const target = window.__mobileNavSuppressCard;
+        if (target && card === target){
+          hideAllExcept(card);
+          const isInfo = card.classList && card.classList.contains("info-card");
+          if (typeof window.setGlobalHeaderVisible === "function"){
+            try{ window.setGlobalHeaderVisible(!isInfo); }catch(e){}
+          }
+          if (typeof window.setSidebarVisible === "function"){
+            try{ window.setSidebarVisible(false); }catch(e){}
+          }
+          return card;
+        }
+      }
+      return origShowCard.apply(this, arguments);
+    };
+  }
+
+  document.addEventListener("click", function(e){
+    if (!isMobile()) return;
+    const btn = e.target.closest && e.target.closest("#mobileNavContent [data-open-work], #mobileNavContent [data-nav='info']");
+    if (!btn) return;
+
+    const slug = btn.getAttribute("data-open-work");
+    const target = slug
+      ? (document.querySelector('.card.work-card[data-slug="' + slug + '"]') ||
+         document.querySelector('.card.work-card[data-work-slug="' + slug + '"]'))
+      : (document.querySelector(".card.info-card") || document.getElementById("infoCard"));
+
+    suppressFor(target || null);
+
+    if (target){
+      hideAllExcept(target);
+      const isInfo = target.classList && target.classList.contains("info-card");
+      if (typeof window.setGlobalHeaderVisible === "function"){
+        try{ window.setGlobalHeaderVisible(!isInfo); }catch(err){}
+      }
+      if (typeof window.setSidebarVisible === "function"){
+        try{ window.setSidebarVisible(false); }catch(err){}
+      }
+    }
+  }, true);
+})();
+</script>
+
 </body>
 </html>

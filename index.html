@@ -5906,5 +5906,96 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script id="sidebar-highlight-click-fix">
+(function(){
+  if (window.__SIDEBAR_HIGHLIGHT_CLICK_FIX__) return;
+  window.__SIDEBAR_HIGHLIGHT_CLICK_FIX__ = true;
+
+  const mq = window.matchMedia("(min-width: 901px)");
+  let forcedSlug = "";
+  let forcedUntil = 0;
+
+  function clearSidebarActiveNow(){
+    document.querySelectorAll("#sidebarNav .sidebar-list li.active").forEach(function(li){
+      li.classList.remove("active");
+    });
+    document.querySelectorAll("#sidebarNav .sidebar-link.active-link").forEach(function(el){
+      el.classList.remove("active-link");
+    });
+  }
+
+  function applySlugNow(slug){
+    if (!mq.matches || !slug) return;
+    clearSidebarActiveNow();
+
+    const lower = String(slug).trim().toLowerCase();
+    if (lower === "biography" || lower === "research"){
+      const topBtn = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+      if (topBtn) topBtn.classList.add("active-link");
+      return;
+    }
+
+    const link = document.querySelector('#sidebarNav .sidebar-link[data-open-work="' + CSS.escape(slug) + '"]');
+    if (!link) return;
+    const li = link.closest("li");
+    if (li) li.classList.add("active");
+  }
+
+  document.addEventListener("click", function(e){
+    if (!mq.matches) return;
+    const link = e.target.closest && e.target.closest('#sidebarNav .sidebar-link[data-open-work]');
+    if (!link) return;
+
+    const slug = (link.getAttribute("data-open-work") || "").trim();
+    if (!slug) return;
+
+    forcedSlug = slug;
+    forcedUntil = Date.now() + 900;
+    applySlugNow(slug);
+
+    requestAnimationFrame(function(){
+      applySlugNow(slug);
+    });
+    setTimeout(function(){
+      if (Date.now() < forcedUntil && forcedSlug === slug){
+        applySlugNow(slug);
+      }
+    }, 80);
+    setTimeout(function(){
+      if (Date.now() < forcedUntil && forcedSlug === slug){
+        applySlugNow(slug);
+      }
+    }, 180);
+  }, true);
+
+  const origTopVisibleWorkSlug = window.topVisibleWorkSlug;
+  // Hook the singlefire highlighter by wrapping showCard again with a short forced-slug grace period.
+  const origShowCard2 = window.showCard;
+  if (typeof origShowCard2 === "function"){
+    window.showCard = function(card){
+      const out = origShowCard2.apply(this, arguments);
+
+      if (mq.matches && forcedSlug && Date.now() < forcedUntil){
+        requestAnimationFrame(function(){
+          applySlugNow(forcedSlug);
+        });
+      } else if (mq.matches) {
+        forcedSlug = "";
+      }
+
+      return out;
+    };
+  }
+
+  window.addEventListener("resize", function(){
+    if (!mq.matches){
+      forcedSlug = "";
+      forcedUntil = 0;
+    }
+  });
+})();
+</script>
+
 </body>
 </html>

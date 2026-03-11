@@ -1,17 +1,21 @@
 // scripts/csv_to_json.js
-// Converts cms/Database.csv -> cms/portfolio_database.json
-// No dependencies. Handles quoted CSV + commas inside quotes.
+// Converts cms/Database.csv -> portfolio_database.json (top-level ARRAY)
+// No dependencies. Robust CSV parsing (quotes, commas in quotes, CRLF).
+// Keeps values as strings; converts "true"/"false" to booleans; trims whitespace.
 
 const fs = require("fs");
 const path = require("path");
 
-const inputPath = path.join(__dirname, "..", "cms", "Database.csv");
-const outputPath = path.join(__dirname, "..", "portfolio_database.json");
+// INPUT: exported from your spreadsheet
+const INPUT_CSV = path.join(__dirname, "..", "cms", "Database.csv"); // capital D
+
+// OUTPUT: keep legacy shape your site expects (root file)
+const OUTPUT_JSON = path.join(__dirname, "..", "portfolio_database.json");
 
 function parseCSV(text) {
   const rows = [];
   let row = [];
-  let cur = "";
+  let cell = "";
   let inQuotes = false;
 
   for (let i = 0; i < text.length; i++) {
@@ -19,8 +23,9 @@ function parseCSV(text) {
     const next = text[i + 1];
 
     if (c === '"') {
+      // Escaped quote inside quoted field: ""
       if (inQuotes && next === '"') {
-        cur += '"';
+        cell += '"';
         i++;
       } else {
         inQuotes = !inQuotes;
@@ -28,76 +33,102 @@ function parseCSV(text) {
       continue;
     }
 
+    // Field separators and line breaks (only when not in quotes)
     if (!inQuotes && (c === "," || c === "\n" || c === "\r")) {
-      if (c === "\r" && next === "\n") continue;
+      // Handle CRLF
+      if (c === "\r" && next === "\n") {
+        // treat as newline, but skip this \r (the \n will be handled by this branch only if we don't skip)
+        // easiest: push cell now, then push row, and skip \n via i++ below
+      }
 
-      row.push(cur);
-      cur = "";
+      row.push(cell);
+      cell = "";
 
-      if (c === "\n") {
+      // Newline ends row
+      if (c === "\n" || c === "\r") {
         rows.push(row);
         row = [];
+
+        // If CRLF, skip the \n
+        if (c === "\r" && next === "\n") i++;
       }
+
       continue;
     }
 
-    cur += c;
+    cell += c;
   }
 
-  row.push(cur);
+  // Flush last cell/row
+  row.push(cell);
   rows.push(row);
 
-  return rows.filter(r => r.some(cell => String(cell).trim() !== ""));
+  // Remove completely empty trailing rows
+  return rows.filter(r => r.some(v => String(v).trim() !== ""));
 }
 
-function clean(v) {
+function normaliseHeader(h) {
+  // Keep headers exactly, but trim BOM/whitespace
+  return String(h ?? "")
+    .replace(/^\uFEFF/, "") // BOM
+    .trim();
+}
+
+function cleanValue(v) {
   const s = String(v ?? "").trim();
+
   if (s === "") return "";
+
+  // Convert literal booleans (optional but helpful)
   if (/^(true|false)$/i.test(s)) return /^true$/i.test(s);
+
   return s;
 }
 
-function maybeArray(v) {
-  // Keep compatible with your stable HTML:
-  // - if cell is JSON array text: ["a","b"] => array
-  // - else keep as string (your HTML can handle string or array for gallery_images)
-  const s = String(v ?? "").trim();
-  if (!s) return "";
+function buildObjectsFromRows(rows) {
+  if (!rows.length) return [];
 
-  if (s.startsWith("[") && s.endsWith("]")) {
-    try {
-      const parsed = JSON.parse(s);
-      if (Array.isArray(parsed)) return parsed;
-    } catch (_) {}
+  const headers = rows[0].map(normaliseHeader);
+
+  // Basic sanity: ignore completely blank headers
+  const usable = headers.map((h, idx) => ({ h, idx })).filter(x => x.h !== "");
+
+  const out = [];
+
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+
+    // Skip rows that are fully empty
+    const hasAny = row.some(v => String(v ?? "").trim() !== "");
+    if (!hasAny) continue;
+
+    const obj = {};
+    for (const { h, idx } of usable) {
+      obj[h] = cleanValue(row[idx] ?? "");
+    }
+
+    out.push(obj);
   }
-  return s;
+
+  return out;
 }
 
 function main() {
-  const csv = fs.readFileSync(inputPath, "utf8");
-  const rows = parseCSV(csv);
-
-  const headers = rows[0].map(h => String(h).trim());
-  const works = [];
-
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    const obj = {};
-
-    headers.forEach((h, idx) => {
-      obj[h] = clean(r[idx] ?? "");
-    });
-
-    if ("gallery_images" in obj) {
-      obj.gallery_images = maybeArray(obj.gallery_images);
-    }
-
-    works.push(obj);
+  if (!fs.existsSync(INPUT_CSV)) {
+    console.error(`Missing CSV: ${INPUT_CSV}`);
+    process.exit(1);
   }
 
-  const out = { works };
-  fs.writeFileSync(outputPath, JSON.stringify(out, null, 2), "utf8");
-  console.log(`Wrote ${outputPath} (${works.length} rows)`);
+  const csvText = fs.readFileSync(INPUT_CSV, "utf8");
+
+  const rows = parseCSV(csvText);
+  const objects = buildObjectsFromRows(rows);
+
+  // IMPORTANT: output is a TOP-LEVEL ARRAY (legacy format)
+  fs.writeFileSync(OUTPUT_JSON, JSON.stringify(objects, null, 2), "utf8");
+
+  console.log(`✅ Wrote ${OUTPUT_JSON}`);
+  console.log(`   Rows: ${objects.length}`);
 }
 
 main();

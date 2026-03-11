@@ -3720,51 +3720,22 @@ function createInfoCard(){
       <div class="col-left">
         <div class="left-top">
           <button class="section-title linklike" id="openBiography" type="button">Biography</button>
-          <div class="section-title"><a id="infoContactLink" href="mailto:ishmaildeniro@gmail.com">Contact</a></div>
-          <div class="section-title"><a id="infoCvLink" href="database/CV.pdf" download="" target="_blank" rel="noopener">Download CV</a></div>
+          <div class="section-title"><a href="mailto:ishmaildeniro@gmail.com">Contact</a></div>
+          <div class="section-title"><a href="database/CV.pdf" download="" target="_blank" rel="noopener">Download CV</a></div>
           <button class="section-title linklike" id="openResearch" type="button">Research</button>
         </div>
 
         <div class="left-bottom">
-          <div class="section-title" id="infoSocialHeading">SOCIAL:</div>
+          <div class="section-title">SOCIAL:</div>
           <ul class="list">
-            <li><a id="infoSocialLink1" href="https://www.instagram.com/ishmaildeniro/" target="_blank" rel="noopener">@ishmaildeniro</a></li>
-            <li><a id="infoSocialLink2" href="https://www.instagram.com/prayer.room.gallery/" target="_blank" rel="noopener">@prayer.room.gallery</a></li>
+            <li><a href="https://www.instagram.com/ishmaildeniro/" target="_blank" rel="noopener">@ishmaildeniro</a></li>
+            <li><a href="https://www.instagram.com/prayer.room.gallery/" target="_blank" rel="noopener">@prayer.room.gallery</a></li>
           </ul>
         </div>
       </div>
 
       <div class="col-right" id="infoSelectedWorks"></div>
   </div>`;
-
-  const biographyInfo = WORKS_DATA.find(w => String(w.slug || "").trim().toLowerCase() === "biography") || {};
-  const readInfoValue = (key, fallback) => {
-    const value = biographyInfo[key];
-    if (value === undefined || value === null) return fallback;
-    const trimmed = String(value).trim();
-    return trimmed || fallback;
-  };
-  const setLink = (id, labelKey, urlKey, fallbackLabel, fallbackUrl, openInNewTab) => {
-    const el = card.querySelector(`#${id}`);
-    if (!el) return;
-    el.textContent = readInfoValue(labelKey, fallbackLabel);
-    el.href = readInfoValue(urlKey, fallbackUrl);
-    if (openInNewTab) {
-      el.target = "_blank";
-      el.rel = "noopener";
-    }
-  };
-
-  setLink("infoContactLink", "contact_label", "contact_url", "Contact", "mailto:ishmaildeniro@gmail.com", false);
-  setLink("infoCvLink", "cv_label", "cv_url", "Download CV", "database/CV.pdf", true);
-
-  const socialHeading = card.querySelector("#infoSocialHeading");
-  if (socialHeading) {
-    socialHeading.textContent = readInfoValue("social_heading", "SOCIAL:");
-  }
-
-  setLink("infoSocialLink1", "social_1_label", "social_1_url", "@ishmaildeniro", "https://www.instagram.com/ishmaildeniro/", true);
-  setLink("infoSocialLink2", "social_2_label", "social_2_url", "@prayer.room.gallery", "https://www.instagram.com/prayer.room.gallery/", true);
 
   renderInfoSelectedWorks(card.querySelector('#infoSelectedWorks'));
   // Clock (Info card only)

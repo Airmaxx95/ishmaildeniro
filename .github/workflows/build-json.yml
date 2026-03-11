@@ -1,0 +1,35 @@
+name: Build JSON from CSV
+
+on:
+  push:
+    paths:
+      - "cms/Database.csv"
+      - "scripts/csv_to_json.js"
+      - ".github/workflows/build-json.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate JSON
+        run: node scripts/csv_to_json.js
+
+      - name: Commit generated JSON
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add cms/portfolio_database.json
+          git commit -m "Auto-generate portfolio_database.json" || exit 0
+          git push

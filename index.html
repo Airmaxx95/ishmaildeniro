@@ -3741,7 +3741,7 @@ function createInfoCard(){
 
   const biographyInfo = WORKS_DATA.find(w => String(w.slug || "").trim().toLowerCase() === "biography") || {};
   const readInfoValue = (key) => {
-    const value = bio[key];
+    const value = biographyInfo[key];
     if (value == null) return "";
     const trimmed = String(value).trim();
     return trimmed;

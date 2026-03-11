@@ -3537,8 +3537,10 @@ card.innerHTML =
       mb.style.backgroundRepeat = 'no-repeat';
     }
     mb.dataset.workSlug = w.slug || '';
-    mb.dataset.gallery = (w.gallery_images || '').trim();
-  }
+    mb.dataset.gallery = Array.isArray(w.gallery_images)
+        ? w.gallery_images.filter(Boolean).map(v=>String(v).trim()).filter(Boolean).join(', ')
+        : (typeof w.gallery_images === 'string' ? w.gallery_images.trim() : '');
+}
 
   // Scroll fades only when a scrollable text column exists
   if(hasText && !isBio){

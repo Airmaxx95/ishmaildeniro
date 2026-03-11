@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 
 const inputPath = path.join(__dirname, "..", "cms", "Database.csv");
-const outputPath = path.join(__dirname, "..", "cms", "portfolio_database.json");
+const outputPath = path.join(__dirname, "..", "portfolio_database.json");
 
 function parseCSV(text) {
   const rows = [];

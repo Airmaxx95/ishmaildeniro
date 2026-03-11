@@ -3208,37 +3208,6 @@ function escapeHtml(str){
     .replace(/'/g,"&#039;");
 }
 
-
-function getSiteSettings(){
-  const defaults = {
-    contact_label: "Contact",
-    contact_url: "mailto:ishmaildeniro@gmail.com",
-    cv_label: "Download CV",
-    cv_url: "database/CV.pdf",
-    social_heading: "SOCIAL:",
-    social_1_label: "@ishmaildeniro",
-    social_1_url: "https://www.instagram.com/ishmaildeniro/",
-    social_2_label: "@prayer.room.gallery",
-    social_2_url: "https://www.instagram.com/prayer.room.gallery/"
-  };
-
-  const settingsRow =
-    WORKS_DATA.find(w => String(w.slug || "").trim().toLowerCase() === "site-settings") ||
-    WORKS_DATA.find(w => String(w.slug || "").trim().toLowerCase() === "biography") ||
-    {};
-
-  const out = {...defaults};
-
-  Object.keys(defaults).forEach(key => {
-    const raw = settingsRow[key];
-    if(raw === undefined || raw === null) return;
-    const value = String(raw).trim();
-    if(value) out[key] = value;
-  });
-
-  return out;
-}
-
 function renderInfoSelectedWorks(container){
   if(!container) return;
 
@@ -3737,15 +3706,6 @@ function showCard(card){
 
 function createInfoCard(){
   const card = document.createElement("div");
-  const siteSettings = getSiteSettings();
-  const contactUrl = siteSettings.contact_url;
-  const isContactMailto = /^mailto:/i.test(contactUrl);
-  const cvIsDownloadableFile = !/^https?:/i.test(siteSettings.cv_url);
-  const socialLinks = [
-    { label: siteSettings.social_1_label, url: siteSettings.social_1_url },
-    { label: siteSettings.social_2_label, url: siteSettings.social_2_url }
-  ].filter(item => String(item.label || "").trim() && String(item.url || "").trim());
-
   card.className = "card info-card visible";
   card.setAttribute("role","article");
   card.setAttribute("aria-label","Info card");
@@ -3760,15 +3720,16 @@ function createInfoCard(){
       <div class="col-left">
         <div class="left-top">
           <button class="section-title linklike" id="openBiography" type="button">Biography</button>
-          <div class="section-title"><a href="${escapeHtml(contactUrl)}"${isContactMailto ? "" : ` target="_blank" rel="noopener"`}>${escapeHtml(siteSettings.contact_label)}</a></div>
-          <div class="section-title"><a href="${escapeHtml(siteSettings.cv_url)}"${cvIsDownloadableFile ? ' download=""' : ""} target="_blank" rel="noopener">${escapeHtml(siteSettings.cv_label)}</a></div>
+          <div class="section-title"><a href="mailto:ishmaildeniro@gmail.com">Contact</a></div>
+          <div class="section-title"><a href="database/CV.pdf" download="" target="_blank" rel="noopener">Download CV</a></div>
           <button class="section-title linklike" id="openResearch" type="button">Research</button>
         </div>
 
         <div class="left-bottom">
-          <div class="section-title">${escapeHtml(siteSettings.social_heading)}</div>
+          <div class="section-title">SOCIAL:</div>
           <ul class="list">
-            ${socialLinks.map(item => `<li><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.label)}</a></li>`).join("")}
+            <li><a href="https://www.instagram.com/ishmaildeniro/" target="_blank" rel="noopener">@ishmaildeniro</a></li>
+            <li><a href="https://www.instagram.com/prayer.room.gallery/" target="_blank" rel="noopener">@prayer.room.gallery</a></li>
           </ul>
         </div>
       </div>

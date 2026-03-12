@@ -6642,54 +6642,5 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
-<script>
-/* === Universal work-text fade binding (includes bio media view) === */
-(function(){
-  function bind(workText){
-    if(!workText || workText.dataset.fadeBound==="1") return;
-    const inner = workText.querySelector(".work-text-inner");
-    const bottomFade = workText.querySelector(".scroll-fade");
-    if(!inner || !bottomFade) return;
-
-    function update(){
-      const maxScroll = inner.scrollHeight - inner.clientHeight;
-      const hasOverflow = maxScroll > 1;
-      const atBottom = inner.scrollTop >= maxScroll - 1;
-      const atTop = inner.scrollTop <= 1;
-
-      workText.classList.toggle("has-overflow", hasOverflow);
-      workText.classList.toggle("at-bottom", hasOverflow && atBottom);
-      // top fade uses ::before on .work-text
-      workText.classList.toggle("has-top-fade", hasOverflow && !atTop);
-    }
-
-    inner.addEventListener("scroll", update, {passive:true});
-    window.addEventListener("resize", update);
-    // layout can change after fonts/images
-    setTimeout(update, 0);
-    setTimeout(update, 200);
-    setTimeout(update, 800);
-
-    workText.dataset.fadeBound="1";
-    update();
-  }
-
-  function run(){
-    document.querySelectorAll(".work-text").forEach(bind);
-  }
-
-  if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded", run);
-  } else {
-    run();
-  }
-
-  // catch dynamically injected cards
-  const mo = new MutationObserver(function(){ run(); });
-  mo.observe(document.documentElement, {childList:true, subtree:true});
-})();
-</script>
-
 </body>
 </html>

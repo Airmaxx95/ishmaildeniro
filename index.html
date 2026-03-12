@@ -3511,20 +3511,23 @@ function updateWorkTextFade(workTextEl){
   if(!inner) return;
 
   // Determine overflow
-  const hasOverflow = inner.scrollHeight > inner.clientHeight + 1;
+  const maxScroll = inner.scrollHeight - inner.clientHeight;
+  const hasOverflow = maxScroll > 1;
   workTextEl.classList.toggle("has-overflow", hasOverflow);
 
-  // Determine if at bottom (within 1px)
-  const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
+  // Determine top/bottom state (within 1px)
+  const atTop = inner.scrollTop <= 1;
+  const atBottom = inner.scrollTop >= (maxScroll - 1);
+
+  workTextEl.classList.toggle("at-top", atTop);
   workTextEl.classList.toggle("at-bottom", atBottom);
 
-
-  // Determine if at top (within 1px) -> controls top fade
-  const atTop = inner.scrollTop <= 1;
+  // Top fade uses ::before; only show when overflow + not at top
   workTextEl.classList.toggle("has-top-fade", hasOverflow && !atTop);
 
-  // If no overflow, ensure fade hidden
+  // If no overflow, ensure fades hidden
   if(!hasOverflow){
+    workTextEl.classList.add("at-top");
     workTextEl.classList.add("at-bottom");
     workTextEl.classList.remove("has-top-fade");
   }
@@ -3720,7 +3723,7 @@ card.innerHTML =
 }
 
   // Scroll fades only when a scrollable text column exists
-  if(hasText && !isBio){
+  if(hasText){
     bindWorkTextFade(card);
   }
 

@@ -270,7 +270,7 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   pointer-events: none;
   opacity: 0;
   transition: opacity 180ms ease;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+  background: linear-gradient(to bottom, rgba(230,231,232,0), rgba(230,231,232,1));
 }
 
 .work-text.has-overflow .scroll-fade{
@@ -450,7 +450,7 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   right: 0;
   height: 32px;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(to bottom, rgb(229, 231, 232) 0%, rgba(229, 231, 232, 0) 100%);
   opacity: 0;
   transition: opacity 0.2s ease;
   z-index: 2;
@@ -3514,23 +3514,12 @@ function updateWorkTextFade(workTextEl){
   const hasOverflow = inner.scrollHeight > inner.clientHeight + 1;
   workTextEl.classList.toggle("has-overflow", hasOverflow);
 
-  // Top state (within 1px)
-  const atTop = inner.scrollTop <= 1;
-  workTextEl.classList.toggle("at-top", atTop);
-
   // Determine if at bottom (within 1px)
   const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
   workTextEl.classList.toggle("at-bottom", atBottom);
 
-  // Show the top fade only when overflowing and not at top
-  workTextEl.classList.toggle("has-top-fade", hasOverflow && !atTop);
-
-  // If no overflow, ensure fades hidden
-  if(!hasOverflow){
-    workTextEl.classList.add("at-bottom");
-    workTextEl.classList.remove("has-top-fade");
-    workTextEl.classList.add("at-top");
-  }
+  // If no overflow, ensure fade hidden
+  if(!hasOverflow) workTextEl.classList.add("at-bottom");
 }
 
 function bindWorkTextFade(cardEl){
@@ -3722,8 +3711,8 @@ card.innerHTML =
         : (typeof w.gallery_images === 'string' ? w.gallery_images.trim() : '');
 }
 
-  // Scroll fades when a scrollable text column exists (including biography)
-  if(hasText){
+  // Scroll fades only when a scrollable text column exists
+  if(hasText && !isBio){
     bindWorkTextFade(card);
   }
 
@@ -6017,40 +6006,6 @@ document.addEventListener("keydown", function(e){
     transition: none !important;
   }
 }
-
-/* === FORCE BIO MEDIA VIEW FADES (white) === */
-@media (max-width: 900px) {
-  .card.work-card.is-biography .work-text {
-    position: relative;
-    overflow: hidden; /* lets inner scroll while fades sit on top */
-  }
-
-  .card.work-card.is-biography .work-text .bio-media-fade {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 28px;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0;
-    transition: opacity 120ms linear;
-  }
-
-  .card.work-card.is-biography .work-text .bio-media-fade.top {
-    top: 0;
-    background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
-  }
-
-  .card.work-card.is-biography .work-text .bio-media-fade.bottom {
-    bottom: 0;
-    background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
-  }
-
-  .card.work-card.is-biography .work-text .bio-media-fade.show {
-    opacity: 1;
-  }
-}
-
 </style>
 
 <script id="mobile-nav-double-fire-suppression-js">
@@ -6689,65 +6644,50 @@ document.addEventListener("keydown", function(e){
 
 
 <script>
-(function () {
-  function setupBioMediaFades(card) {
-    if (!card.classList.contains("is-biography")) return;
+/* === Universal work-text fade binding (includes bio media view) === */
+(function(){
+  function bind(workText){
+    if(!workText || workText.dataset.fadeBound==="1") return;
+    const inner = workText.querySelector(".work-text-inner");
+    const bottomFade = workText.querySelector(".scroll-fade");
+    if(!inner || !bottomFade) return;
 
-    const workText = card.querySelector(".work-text");
-    if (!workText) return;
-
-    const scroller = workText.querySelector(".work-text-inner");
-    if (!scroller) return;
-
-    let topFade = workText.querySelector(".bio-media-fade.top");
-    let bottomFade = workText.querySelector(".bio-media-fade.bottom");
-
-    if (!topFade) {
-      topFade = document.createElement("div");
-      topFade.className = "bio-media-fade top";
-      workText.appendChild(topFade);
-    }
-    if (!bottomFade) {
-      bottomFade = document.createElement("div");
-      bottomFade.className = "bio-media-fade bottom";
-      workText.appendChild(bottomFade);
-    }
-
-    function update() {
-      const maxScroll = scroller.scrollHeight - scroller.clientHeight;
+    function update(){
+      const maxScroll = inner.scrollHeight - inner.clientHeight;
       const hasOverflow = maxScroll > 1;
-      const atTop = scroller.scrollTop <= 1;
-      const atBottom = scroller.scrollTop >= maxScroll - 1;
+      const atBottom = inner.scrollTop >= maxScroll - 1;
+      const atTop = inner.scrollTop <= 1;
 
-      topFade.classList.toggle("show", hasOverflow && !atTop);
-      bottomFade.classList.toggle("show", hasOverflow && !atBottom);
+      workText.classList.toggle("has-overflow", hasOverflow);
+      workText.classList.toggle("at-bottom", hasOverflow && atBottom);
+      // top fade uses ::before on .work-text
+      workText.classList.toggle("has-top-fade", hasOverflow && !atTop);
     }
 
-    if (!scroller.dataset.bioFadeBound) {
-      scroller.dataset.bioFadeBound = "1";
-      scroller.addEventListener("scroll", update, { passive: true });
-      window.addEventListener("resize", update);
-      setTimeout(update, 0);
-      setTimeout(update, 250);
-      setTimeout(update, 800);
-    }
+    inner.addEventListener("scroll", update, {passive:true});
+    window.addEventListener("resize", update);
+    // layout can change after fonts/images
+    setTimeout(update, 0);
+    setTimeout(update, 200);
+    setTimeout(update, 800);
 
+    workText.dataset.fadeBound="1";
     update();
   }
 
-  function run() {
-    if (window.matchMedia && !window.matchMedia("(max-width: 900px)").matches) return;
-    document.querySelectorAll(".card.work-card").forEach(setupBioMediaFades);
+  function run(){
+    document.querySelectorAll(".work-text").forEach(bind);
   }
 
-  if (document.readyState === "loading") {
+  if(document.readyState==="loading"){
     document.addEventListener("DOMContentLoaded", run);
   } else {
     run();
   }
 
-  const mo = new MutationObserver(() => run());
-  mo.observe(document.documentElement, { childList: true, subtree: true });
+  // catch dynamically injected cards
+  const mo = new MutationObserver(function(){ run(); });
+  mo.observe(document.documentElement, {childList:true, subtree:true});
 })();
 </script>
 

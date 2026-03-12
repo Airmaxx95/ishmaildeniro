@@ -265,13 +265,38 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
   height: 44px;
   pointer-events: none;
   opacity: 0;
   transition: opacity 180ms ease;
+}
+
+/* default bottom fade (legacy) */
+.work-text .scroll-fade,
+.work-text .scroll-fade.scroll-fade-bottom{
+  bottom: 0;
   background: linear-gradient(to bottom, rgba(230,231,232,0), rgba(230,231,232,1));
 }
+
+/* optional top fade */
+.work-text .scroll-fade.scroll-fade-top{
+  top: 0;
+  background: linear-gradient(to bottom, rgba(230,231,232,1), rgba(230,231,232,0));
+}
+
+.work-text.has-overflow .scroll-fade{
+  opacity: 1;
+}
+
+.work-text.at-bottom .scroll-fade.scroll-fade-bottom{
+  opacity: 0;
+}
+
+/* hide top fade when at top */
+.work-text.at-top .scroll-fade.scroll-fade-top{
+  opacity: 0;
+}
+
 
 .work-text.has-overflow .scroll-fade{
   opacity: 1;
@@ -3018,8 +3043,11 @@ html, body{
 }
 
 /* White bottom fade (override default grey) */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .scroll-fade{
+.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .scroll-fade.scroll-fade-bottom{
   background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1)) !important;
+}
+.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .scroll-fade.scroll-fade-top{
+  background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0)) !important;
 }
 
 /* Paragraph spacing with no top gap */
@@ -3516,6 +3544,10 @@ function updateWorkTextFade(workTextEl){
   const hasOverflow = inner.scrollHeight > inner.clientHeight + 1;
   workTextEl.classList.toggle("has-overflow", hasOverflow);
 
+  // Determine if at top
+  const atTop = inner.scrollTop <= 1;
+  workTextEl.classList.toggle("at-top", atTop);
+
   // Determine if at bottom (within 1px)
   const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
   workTextEl.classList.toggle("at-bottom", atBottom);
@@ -3681,7 +3713,8 @@ if(hasText && !isBio){
     '<div class="bio-iso-box">' +
       '<div class="work-text bio-iso-worktext">' +
         '<div class="work-text-inner">'+(w.text || '')+'</div>' +
-        '<div class="scroll-fade" aria-hidden="true"></div>' +
+        '<div class="scroll-fade scroll-fade-top" aria-hidden="true"></div>' +
+        '<div class="scroll-fade scroll-fade-bottom" aria-hidden="true"></div>' +
       '</div>' +
     '</div>' +
   '</div>'

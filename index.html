@@ -270,7 +270,7 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   pointer-events: none;
   opacity: 0;
   transition: opacity 180ms ease;
-  background: linear-gradient(to bottom, rgba(230,231,232,0), rgba(230,231,232,1));
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
 }
 
 .work-text.has-overflow .scroll-fade{
@@ -450,7 +450,7 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   right: 0;
   height: 32px;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgb(229, 231, 232) 0%, rgba(229, 231, 232, 0) 100%);
+  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
   opacity: 0;
   transition: opacity 0.2s ease;
   z-index: 2;
@@ -3518,8 +3518,16 @@ function updateWorkTextFade(workTextEl){
   const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
   workTextEl.classList.toggle("at-bottom", atBottom);
 
+
+  // Determine if at top (within 1px) -> controls top fade
+  const atTop = inner.scrollTop <= 1;
+  workTextEl.classList.toggle("has-top-fade", hasOverflow && !atTop);
+
   // If no overflow, ensure fade hidden
-  if(!hasOverflow) workTextEl.classList.add("at-bottom");
+  if(!hasOverflow){
+    workTextEl.classList.add("at-bottom");
+    workTextEl.classList.remove("has-top-fade");
+  }
 }
 
 function bindWorkTextFade(cardEl){
@@ -6006,38 +6014,6 @@ document.addEventListener("keydown", function(e){
     transition: none !important;
   }
 }
-
-/* === BIO-ISO: move TOP fade to .work-text-inner (matches scroll viewport) === */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext::before{
-  display:none !important;
-  content:none !important;
-}
-
-/* Ensure inner is the fade viewport */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner{
-  position: relative;
-}
-
-/* Top fade overlay on the scroll viewport */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:32px;
-  pointer-events:none;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%) !important;
-  opacity:0;
-  transition: opacity 0.2s ease;
-  z-index: 3;
-}
-
-/* Use the same JS-controlled class as standard work-text */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext.has-top-fade .work-text-inner::before{
-  opacity:1;
-}
-
 </style>
 
 <script id="mobile-nav-double-fire-suppression-js">

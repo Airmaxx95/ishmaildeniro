@@ -3032,6 +3032,17 @@ html, body{
     margin: 0;
 }
 
+
+
+/* === Mobile work-text inner height fix (restored) === */
+@media (max-width: 900px) {
+    .card.work-card .work-text .work-text-inner, .work-text .work-text-inner {
+        max-height: min(59svh, 388px) !important;
+        overflow: auto !important;
+        padding-right: 6px !important;
+    }
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">

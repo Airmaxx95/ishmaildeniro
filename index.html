@@ -270,7 +270,7 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   pointer-events: none;
   opacity: 0;
   transition: opacity 180ms ease;
-  background: linear-gradient(to bottom, rgba(230,231,232,0), rgba(230,231,232,1));
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
 }
 
 .work-text.has-overflow .scroll-fade{
@@ -450,7 +450,7 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   right: 0;
   height: 32px;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgb(229, 231, 232) 0%, rgba(229, 231, 232, 0) 100%);
+  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
   opacity: 0;
   transition: opacity 0.2s ease;
   z-index: 2;
@@ -3010,49 +3010,10 @@ html, body{
   height: 0;
 }
 
-/* === BIO (media-view): fades must sit on the actual scroller (.work-text-inner) === */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner{
-  position: relative;
-}
-
-/* top fade overlay (white) */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner::before{
-  content:"";
-  position:absolute;
-  top:0; left:0; right:0;
-  height:32px;
-  pointer-events:none;
-  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
-  opacity:0;
-  transition: opacity 180ms ease;
-  z-index: 2;
-}
-
-/* bottom fade overlay (white) */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner::after{
-  content:"";
-  position:absolute;
-  bottom:0; left:0; right:0;
-  height:44px;
-  pointer-events:none;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
-  opacity:0;
-  transition: opacity 180ms ease;
-  z-index: 2;
-}
-
-/* show/hide using the mirrored scroller classes from updateWorkTextFade() */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner.has-top-fade::before{
-  opacity:1;
-}
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner.has-overflow::after{
-  opacity:1;
-}
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner.at-bottom::after{
-  opacity:0;
-}
-
 /* White top fade (override default grey) */
+.card.work-card.bio-isolated .bio-iso .bio-iso-worktext::before{
+  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%) !important;
+}
 
 /* White bottom fade (override default grey) */
 .card.work-card.bio-isolated .bio-iso .bio-iso-worktext .scroll-fade{
@@ -3549,21 +3510,27 @@ function updateWorkTextFade(workTextEl){
   const inner = workTextEl.querySelector(".work-text-inner");
   if(!inner) return;
 
+  // Determine overflow
   const hasOverflow = inner.scrollHeight > inner.clientHeight + 1;
-  const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
-  const atTop = inner.scrollTop <= 1;
-
-  // Classes on the frame (.work-text) – used by standard work cards
   workTextEl.classList.toggle("has-overflow", hasOverflow);
-  workTextEl.classList.toggle("at-bottom", atBottom || !hasOverflow);
-  workTextEl.classList.toggle("at-top", atTop || !hasOverflow);
+
+  // Top state (within 1px)
+  const atTop = inner.scrollTop <= 1;
+  workTextEl.classList.toggle("at-top", atTop);
+
+  // Determine if at bottom (within 1px)
+  const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
+  workTextEl.classList.toggle("at-bottom", atBottom);
+
+  // Show the top fade only when overflowing and not at top
   workTextEl.classList.toggle("has-top-fade", hasOverflow && !atTop);
 
-  // Mirror onto the scroller itself – used for bio media-view where overlay must sit on the inner scroller
-  inner.classList.toggle("has-overflow", hasOverflow);
-  inner.classList.toggle("at-bottom", atBottom || !hasOverflow);
-  inner.classList.toggle("at-top", atTop || !hasOverflow);
-  inner.classList.toggle("has-top-fade", hasOverflow && !atTop);
+  // If no overflow, ensure fades hidden
+  if(!hasOverflow){
+    workTextEl.classList.add("at-bottom");
+    workTextEl.classList.remove("has-top-fade");
+    workTextEl.classList.add("at-top");
+  }
 }
 
 function bindWorkTextFade(cardEl){
@@ -3755,8 +3722,8 @@ card.innerHTML =
         : (typeof w.gallery_images === 'string' ? w.gallery_images.trim() : '');
 }
 
-  // Scroll fades only when a scrollable text column exists
-  if(hasText && !isBio){
+  // Scroll fades when a scrollable text column exists (including biography)
+  if(hasText){
     bindWorkTextFade(card);
   }
 

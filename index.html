@@ -1386,7 +1386,7 @@ html, body {
 /* === BIO SCROLL POLISH (stable release) === */
 /* Replace separate fade divs with scroll-attached fades */
 .card.work-card.bio-isolated .bio-iso .bio-fade{
-  display:none !important;
+  display:block !important;
 }
 
 /* Scroll container: tighten top gap, allow text to breathe, hide scrollbar */
@@ -1424,23 +1424,7 @@ html, body {
 }
 
 /* Sticky fades attached to scroll box */
-.card.work-card.bio-isolated .bio-iso .bio-iso-scroll::before,
-.card.work-card.bio-isolated .bio-iso .bio-iso-scroll::after{
-  content: "";
-  position: sticky;
-  left: 0; right: 0;
-  height: 28px;
-  pointer-events: none;
-  display: block;
-  z-index: 5;
-}
-.card.work-card.bio-isolated .bio-iso .bio-iso-scroll::before{
-  top: 0;
-  background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
-}
-.card.work-card.bio-isolated .bio-iso .bio-iso-scroll::after{
-  bottom: 0;
-  background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+.card.work-card.bio-isolated .bio-iso 
 }
 
 

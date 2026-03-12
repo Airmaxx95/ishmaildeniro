@@ -259,7 +259,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 /* === Work-text bottom fade (fixed, non-scrolling) === */
 .work-text{
   position: relative;
-  overflow: hidden;
 }
 
 .work-text .scroll-fade{
@@ -271,7 +270,7 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   pointer-events: none;
   opacity: 0;
   transition: opacity 180ms ease;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+  background: linear-gradient(to bottom, rgba(230,231,232,0), rgba(230,231,232,1));
 }
 
 .work-text.has-overflow .scroll-fade{
@@ -441,7 +440,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 /* === Work Text Top Scroll Fade === */
 .work-text {
   position: relative;
-  overflow: hidden;
 }
 
 .work-text::before {
@@ -452,7 +450,7 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   right: 0;
   height: 32px;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(to bottom, rgb(229, 231, 232) 0%, rgba(229, 231, 232, 0) 100%);
   opacity: 0;
   transition: opacity 0.2s ease;
   z-index: 2;

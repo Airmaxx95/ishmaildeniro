@@ -3043,6 +3043,29 @@ html, body{
     }
 }
 
+
+
+/* === BIO MEDIA VIEW: make fades live INSIDE the scroll box (match work-text behaviour) === */
+/* The mobile biography media-view scrolls on .work-text-inner; attach scroll-fades to that element itself
+   using the background-attachment: local trick (no extra DOM, no JS). */
+@media (max-width: 900px) {
+  /* Disable any outer fade overlays for biography cards in media view (they sit outside the scroll area). */
+  .card.work-card.is-biography .work-text::before,
+  .card.work-card.is-biography .work-text .scroll-fade {
+    display: none !important;
+  }
+
+  /* Create top + bottom fades inside the actual scroller */
+  .card.work-card.is-biography .work-text .work-text-inner {
+    /* ensure the scroller paints its own background */
+    background:
+      linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%) 0 0/100% 28px no-repeat,
+      linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%) 0 100%/100% 28px no-repeat,
+      linear-gradient(#fff, #fff) 0 0/100% 100% no-repeat;
+    background-attachment: local, local, scroll;
+  }
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">

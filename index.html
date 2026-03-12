@@ -5739,6 +5739,16 @@ document.addEventListener("keydown", function(e){
     transition: none !important;
   }
 }
+
+/* MOBILE OVERRIDE (failsafe): ensure all work-text scrollers get the tall height */
+@media (max-width: 900px) {
+  .work-text-inner {
+    max-height: min(59svh, 388px) !important;
+    overflow: auto !important;
+    padding-right: 6px !important;
+  }
+}
+
 </style>
 
 <script id="mobile-nav-double-fire-suppression-js">

@@ -1222,6 +1222,7 @@ html, body {
   align-items:center !important;
 }
 .card.work-card.is-biography .work-text{
+  position: relative;
   width: 96% !important;
   height: 100% !important;
   display:flex !important;
@@ -1263,6 +1264,7 @@ html, body {
   pointer-events:none;
   opacity:0;
   transition: opacity 160ms ease;
+  z-index: 50;
 }
 
 .card.work-card.is-biography .bio-fade-top{
@@ -4408,7 +4410,7 @@ document.addEventListener("keydown", function(e){
 (function(){
   function bindBio(card){
     if(!card.classList.contains("is-biography")) return;
-    const inner = card.querySelector(".bio-text .work-text-inner");
+    const inner = card.querySelector(".bio-text .work-text-inner") || card.querySelector(".work-text .work-text-inner");
     const topFade = card.querySelector(".bio-fade-top");
     const botFade = card.querySelector(".bio-fade-bottom");
     if(!inner || !topFade || !botFade) return;

@@ -1341,8 +1341,8 @@ html, body {
   flex:1 1 auto;
   min-height:0;
   display:flex;
-  justify-content:center;
-  align-items:center;
+  justify-content:stretch; /* let viewport reach bottom */
+  align-items:stretch;     /* remove vertical centering gap */
   padding: 0; /* card padding already set */
 }
 
@@ -1428,6 +1428,12 @@ html, body {
   position:relative;
   width:100%;
 }
+
+.card.work-card.bio-isolated .bio-iso-viewport{
+  flex:1 1 auto;
+  min-height:0;
+}
+
 
 
 /* === Bio isolated fades (white) === */

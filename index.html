@@ -6017,6 +6017,40 @@ document.addEventListener("keydown", function(e){
     transition: none !important;
   }
 }
+
+/* === FORCE BIO MEDIA VIEW FADES (white) === */
+@media (max-width: 900px) {
+  .card.work-card.is-biography .work-text {
+    position: relative;
+    overflow: hidden; /* lets inner scroll while fades sit on top */
+  }
+
+  .card.work-card.is-biography .work-text .bio-media-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 28px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 120ms linear;
+  }
+
+  .card.work-card.is-biography .work-text .bio-media-fade.top {
+    top: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
+  }
+
+  .card.work-card.is-biography .work-text .bio-media-fade.bottom {
+    bottom: 0;
+    background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+  }
+
+  .card.work-card.is-biography .work-text .bio-media-fade.show {
+    opacity: 1;
+  }
+}
+
 </style>
 
 <script id="mobile-nav-double-fire-suppression-js">
@@ -6650,6 +6684,70 @@ document.addEventListener("keydown", function(e){
       return out;
     };
   }
+})();
+</script>
+
+
+<script>
+(function () {
+  function setupBioMediaFades(card) {
+    if (!card.classList.contains("is-biography")) return;
+
+    const workText = card.querySelector(".work-text");
+    if (!workText) return;
+
+    const scroller = workText.querySelector(".work-text-inner");
+    if (!scroller) return;
+
+    let topFade = workText.querySelector(".bio-media-fade.top");
+    let bottomFade = workText.querySelector(".bio-media-fade.bottom");
+
+    if (!topFade) {
+      topFade = document.createElement("div");
+      topFade.className = "bio-media-fade top";
+      workText.appendChild(topFade);
+    }
+    if (!bottomFade) {
+      bottomFade = document.createElement("div");
+      bottomFade.className = "bio-media-fade bottom";
+      workText.appendChild(bottomFade);
+    }
+
+    function update() {
+      const maxScroll = scroller.scrollHeight - scroller.clientHeight;
+      const hasOverflow = maxScroll > 1;
+      const atTop = scroller.scrollTop <= 1;
+      const atBottom = scroller.scrollTop >= maxScroll - 1;
+
+      topFade.classList.toggle("show", hasOverflow && !atTop);
+      bottomFade.classList.toggle("show", hasOverflow && !atBottom);
+    }
+
+    if (!scroller.dataset.bioFadeBound) {
+      scroller.dataset.bioFadeBound = "1";
+      scroller.addEventListener("scroll", update, { passive: true });
+      window.addEventListener("resize", update);
+      setTimeout(update, 0);
+      setTimeout(update, 250);
+      setTimeout(update, 800);
+    }
+
+    update();
+  }
+
+  function run() {
+    if (window.matchMedia && !window.matchMedia("(max-width: 900px)").matches) return;
+    document.querySelectorAll(".card.work-card").forEach(setupBioMediaFades);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+
+  const mo = new MutationObserver(() => run());
+  mo.observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
 

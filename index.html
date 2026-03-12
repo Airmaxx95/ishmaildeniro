@@ -282,6 +282,23 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 }
 
 
+
+/* === Work-text top fade (fixed, non-scrolling) === */
+.work-text .scroll-fade-top{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 34px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  background: linear-gradient(to bottom, rgba(230,231,232,1), rgba(230,231,232,0));
+  z-index: 2;
+}
+.work-text.has-overflow:not(.at-top) .scroll-fade-top{
+  opacity: 1;
+}
 /* no-media => text-only card; center the text block */
 .card.work-card.no-media .work-grid{ grid-template-columns: 1fr; }
 .card.work-card.no-media .work-text{ display:flex; align-items:center; justify-content:center; }
@@ -1222,7 +1239,6 @@ html, body {
   align-items:center !important;
 }
 .card.work-card.is-biography .work-text{
-  position: relative;
   width: 96% !important;
   height: 100% !important;
   display:flex !important;
@@ -1264,7 +1280,6 @@ html, body {
   pointer-events:none;
   opacity:0;
   transition: opacity 160ms ease;
-  z-index: 50;
 }
 
 .card.work-card.is-biography .bio-fade-top{
@@ -3013,34 +3028,23 @@ html, body{
 }
 
 /* White top fade (override default grey) */
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext{
-  position: relative;
-}
-
-/* White top fade overlay (same behavior as work-text: only show when overflow and not at top) */
 .card.work-card.bio-isolated .bio-iso .bio-iso-worktext::before{
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 28px;
-  pointer-events: none;
-  z-index: 50;
-  opacity: 0;
-  transition: opacity 180ms ease;
   background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%) !important;
-}
-.card.work-card.bio-isolated .bio-iso .bio-iso-worktext.has-overflow:not(.at-top)::before{
-  opacity: 1;
 }
 
 /* White bottom fade (override default grey) */
 .card.work-card.bio-isolated .bio-iso .bio-iso-worktext .scroll-fade{
-  z-index: 50;
   background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1)) !important;
 }
 
+
+/* Bio isolated: make top/bottom fades white */
+.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .scroll-fade-top{
+  background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0)) !important;
+}
+.card.work-card.bio-isolated .bio-iso .bio-iso-worktext .scroll-fade{
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1)) !important;
+}
 /* Paragraph spacing with no top gap */
 .card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner p {
     margin: 0 0 -1em 0;
@@ -3535,18 +3539,12 @@ function updateWorkTextFade(workTextEl){
   const hasOverflow = inner.scrollHeight > inner.clientHeight + 1;
   workTextEl.classList.toggle("has-overflow", hasOverflow);
 
-  // Determine if at top / bottom (within 1px)
-  const atTop = inner.scrollTop <= 1;
-  workTextEl.classList.toggle("at-top", atTop);
-
+  // Determine if at bottom (within 1px)
   const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
   workTextEl.classList.toggle("at-bottom", atBottom);
 
-  // If no overflow, ensure fades hidden
-  if(!hasOverflow){
-    workTextEl.classList.add("at-top");
-    workTextEl.classList.add("at-bottom");
-  }
+  // If no overflow, ensure fade hidden
+  if(!hasOverflow) workTextEl.classList.add("at-bottom");
 }
 
 function bindWorkTextFade(cardEl){
@@ -3696,7 +3694,7 @@ if(w.materials) leftMeta.push(w.materials);
 if(hasText && !isBio){
     textColumn =
       '<div class="work-text">' +        '<div class="work-text-inner">'+(w.text || '')+'</div>' +
-        '<div class="scroll-fade" aria-hidden="true"></div>' +
+        '<div class="scroll-fade-top" aria-hidden="true"></div><div class="scroll-fade" aria-hidden="true"></div>' +
       '</div>';
   }
 
@@ -3706,7 +3704,7 @@ if(hasText && !isBio){
     '<div class="bio-iso-box">' +
       '<div class="work-text bio-iso-worktext">' +
         '<div class="work-text-inner">'+(w.text || '')+'</div>' +
-        '<div class="scroll-fade" aria-hidden="true"></div>' +
+        '<div class="scroll-fade-top" aria-hidden="true"></div><div class="scroll-fade" aria-hidden="true"></div>' +
       '</div>' +
     '</div>' +
   '</div>'
@@ -4435,7 +4433,7 @@ document.addEventListener("keydown", function(e){
 (function(){
   function bindBio(card){
     if(!card.classList.contains("is-biography")) return;
-    const inner = card.querySelector(".bio-text .work-text-inner") || card.querySelector(".work-text .work-text-inner");
+    const inner = card.querySelector(".bio-text .work-text-inner");
     const topFade = card.querySelector(".bio-fade-top");
     const botFade = card.querySelector(".bio-fade-bottom");
     if(!inner || !topFade || !botFade) return;

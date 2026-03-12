@@ -1423,17 +1423,36 @@ html, body {
   margin-bottom: 0;
 }
 
-/* Sticky fades attached to scroll box */
-.card.work-card.bio-isolated .bio-iso 
-}
-
-
-
 /* === Bio iso viewport pins fades to scroll area === */
 .card.work-card.bio-isolated .bio-iso-viewport{
   position:relative;
   width:100%;
 }
+
+
+/* === Bio isolated fades (white) === */
+.card.work-card.bio-isolated .bio-iso-viewport{
+  position: relative;
+}
+.card.work-card.bio-isolated .bio-iso-viewport .bio-fade{
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 28px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+  z-index: 6;
+}
+.card.work-card.bio-isolated .bio-iso-viewport .bio-fade-top{
+  top: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
+}
+.card.work-card.bio-isolated .bio-iso-viewport .bio-fade-bottom{
+  bottom: 0;
+  background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+}
+.card.work-card.bio-isolated .bio-iso-viewport .bio-fade.show{ opacity: 1; }
 
 /* Ensure scroll area defines the viewport height */
 .card.work-card.bio-isolated .bio-iso-scroll{

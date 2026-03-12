@@ -3711,8 +3711,8 @@ card.innerHTML =
         : (typeof w.gallery_images === 'string' ? w.gallery_images.trim() : '');
 }
 
-  // Scroll fades only when a scrollable text column exists
-  if(hasText && !isBio){
+  // Scroll fades for any scrollable text column (including biography)
+  if(hasText){
     bindWorkTextFade(card);
   }
 

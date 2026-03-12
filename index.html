@@ -3027,6 +3027,11 @@ html, body{
 .card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner p:last-child{
   margin-bottom: 0;
 }
+/* Work cards (non-biography): remove default paragraph margins in work-text scroll */
+.card.work-card:not(.bio-isolated) .work-text-inner p {
+    margin: 0;
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">

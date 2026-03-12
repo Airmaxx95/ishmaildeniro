@@ -1353,6 +1353,22 @@ html, body {
   position:relative;
 }
 
+/* === BIO-ISO LAYOUT FIX: ensure scroll + fades reach true bottom === */
+.card.work-card.bio-isolated .bio-iso .bio-iso-box{
+  height: 100%;
+  max-height: none;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.card.work-card.bio-isolated .bio-iso .bio-iso-scroll{
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none; /* remove 360px cap */
+}
+
 /* scroll area */
 .card.work-card.bio-isolated .bio-iso .bio-iso-scroll{
   max-height: 360px; /* safe default; JS will fit to available space */

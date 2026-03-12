@@ -1267,12 +1267,12 @@ html, body {
 
 .card.work-card.is-biography .bio-fade-top{
   top:0;
-  background: linear-gradient(to bottom, rgba(229,231,232,1), rgba(229,231,232,0));
+  background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
 }
 
 .card.work-card.is-biography .bio-fade-bottom{
   bottom:0;
-  background: linear-gradient(to top, rgba(229,231,232,1), rgba(229,231,232,0));
+  background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
 }
 
 /* toggled by JS */
@@ -1375,11 +1375,11 @@ html, body {
 }
 .card.work-card.bio-isolated .bio-iso .bio-fade-top{
   top:0;
-  background: linear-gradient(to bottom, rgba(229,231,232,1), rgba(229,231,232,0));
+  background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
 }
 .card.work-card.bio-isolated .bio-iso .bio-fade-bottom{
   bottom:0;
-  background: linear-gradient(to top, rgba(229,231,232,1), rgba(229,231,232,0));
+  background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
 }
 .card.work-card.bio-isolated .bio-iso .bio-fade.show{ opacity:1; }
 
@@ -1392,9 +1392,20 @@ html, body {
 /* Scroll container: tighten top gap, allow text to breathe, hide scrollbar */
 .card.work-card.bio-isolated .bio-iso .bio-iso-scroll{
   position: relative;
-  padding-top: 10px;
-  padding-bottom: 28px; /* keep text clear of bottom fade */
+  overflow: auto;
+  padding-top: 0;
+  padding-bottom: 0;
   scrollbar-width: none; /* Firefox */
+}
+.bio-iso-scroll::-webkit-scrollbar{
+  width: 0;
+  height: 0;
+}
+.bio-iso-scroll p{
+  margin: 0 0 1em 0; /* remove default top gap */
+}
+.bio-iso-scroll p:last-child{
+  margin-bottom: 0;
 }
 .card.work-card.bio-isolated .bio-iso .bio-iso-scroll::-webkit-scrollbar{
   width: 0;
@@ -1425,11 +1436,11 @@ html, body {
 }
 .card.work-card.bio-isolated .bio-iso .bio-iso-scroll::before{
   top: 0;
-  background: linear-gradient(to bottom, rgba(229,231,232,1), rgba(229,231,232,0));
+  background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
 }
 .card.work-card.bio-isolated .bio-iso .bio-iso-scroll::after{
   bottom: 0;
-  background: linear-gradient(to top, rgba(229,231,232,1), rgba(229,231,232,0));
+  background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
 }
 
 

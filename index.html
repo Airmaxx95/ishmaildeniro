@@ -3510,25 +3510,21 @@ function updateWorkTextFade(workTextEl){
   const inner = workTextEl.querySelector(".work-text-inner");
   if(!inner) return;
 
-  // Determine overflow
-  const maxScroll = inner.scrollHeight - inner.clientHeight;
-  const hasOverflow = maxScroll > 1;
+  const hasOverflow = inner.scrollHeight > inner.clientHeight + 1;
   workTextEl.classList.toggle("has-overflow", hasOverflow);
 
-  // Determine top/bottom state (within 1px)
-  const atTop = inner.scrollTop <= 1;
-  const atBottom = inner.scrollTop >= (maxScroll - 1);
-
-  workTextEl.classList.toggle("at-top", atTop);
+  const atBottom = (inner.scrollTop + inner.clientHeight) >= (inner.scrollHeight - 1);
   workTextEl.classList.toggle("at-bottom", atBottom);
 
-  // Top fade uses ::before; only show when overflow + not at top
+  const atTop = inner.scrollTop <= 1;
+  workTextEl.classList.toggle("at-top", atTop);
+
+  // Top fade should appear only when there's overflow and we're not at the top
   workTextEl.classList.toggle("has-top-fade", hasOverflow && !atTop);
 
-  // If no overflow, ensure fades hidden
   if(!hasOverflow){
-    workTextEl.classList.add("at-top");
     workTextEl.classList.add("at-bottom");
+    workTextEl.classList.add("at-top");
     workTextEl.classList.remove("has-top-fade");
   }
 }

@@ -3275,51 +3275,46 @@ html, body{
 <link rel="preload" href="./database/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf" as="font" type="font/ttf" crossorigin>
 
 
-<style id="bio-media-view-fade-inside-scrollbox">
-/* Bio (media view / mobile): keep fades INSIDE the white scroll box by anchoring them to .bio-text (the white frame) */
-@media (max-width: 900px) {
-  .card.work-card.is-biography .bio-text{
-    position: relative !important;
-    background: #fff !important;
-    overflow: hidden !important; /* fades overlay inside the box while inner scrolls */
+<style>
+/* === Bio media-view: force fades INSIDE the actual scroll box (no site-wide impact) === */
+@media (max-width: 900px){
+  .card.work-card.is-biography .bio-iso-worktext .bio-inner-frame{
+    position: relative;
+    overflow: hidden; /* fades overlay while inner scrolls */
+    width: 100%;
+    height: 100%;
+    min-height: 0;
   }
-
-  .card.work-card.is-biography .bio-text::before,
-  .card.work-card.is-biography .bio-text::after{
-    content: "" !important;
-    position: absolute !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 32px !important;
-    pointer-events: none !important;
-    opacity: 0 !important;
-    transition: opacity 180ms ease !important;
-    z-index: 999 !important;
-    display: block !important;
-  }
-
-  .card.work-card.is-biography .bio-text::before{
-    top: 0 !important;
-    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%) !important;
-  }
-
-  .card.work-card.is-biography .bio-text::after{
-    bottom: 0 !important;
-    background: linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%) !important;
-  }
-
-  .card.work-card.is-biography .bio-text.show-top-fade::before{ opacity: 1 !important; }
-  .card.work-card.is-biography .bio-text.show-bottom-fade::after{ opacity: 1 !important; }
-
-  /* Ensure the scroller is the inner column, but fades sit on the frame */
-  .card.work-card.is-biography .bio-text .work-text-inner{
+  .card.work-card.is-biography .bio-iso-worktext .bio-inner-frame > .work-text-inner{
+    height: 100%;
+    min-height: 0;
     overflow: auto !important;
-    max-height: none !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    background: transparent !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
+    padding-right: 6px;
+    box-sizing: border-box;
+  }
+  .card.work-card.is-biography .bio-iso-worktext .bio-inner-frame .scroll-fade,
+  .card.work-card.is-biography .bio-iso-worktext .bio-inner-frame .scroll-fade-top{
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 32px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 160ms ease;
+    z-index: 20;
+  }
+  .card.work-card.is-biography .bio-iso-worktext .bio-inner-frame .scroll-fade-top{
+    top: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
+  }
+  .card.work-card.is-biography .bio-iso-worktext .bio-inner-frame .scroll-fade{
+    bottom: 0;
+    background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+    height: 44px;
+  }
+  .card.work-card.is-biography .bio-iso-worktext .bio-inner-frame .scroll-fade.show,
+  .card.work-card.is-biography .bio-iso-worktext .bio-inner-frame .scroll-fade-top.show{
+    opacity: 1;
   }
 }
 </style>
@@ -6693,51 +6688,90 @@ document.addEventListener("keydown", function(e){
 </script>
 
 
-<script id="bio-media-view-fade-inside-scrollbox-js">
+<script>
+/* === Bio media-view fades: anchor inside .work-text-inner by wrapping in .bio-inner-frame === */
 (function(){
-  function bindBioMediaFades(){
-    // Only needed for mobile media view behaviour
-    if (window.matchMedia && !window.matchMedia("(max-width: 900px)").matches) return;
+  function setupBioInnerFrame(card){
+    if(!card.classList || !card.classList.contains('is-biography')) return;
+    const wt = card.querySelector('.bio-iso-worktext');
+    if(!wt) return;
+    const inner = wt.querySelector('.work-text-inner');
+    if(!inner) return;
 
-    document.querySelectorAll(".card.work-card.is-biography").forEach(function(card){
-      var frame = card.querySelector(".bio-text");
-      if(!frame) return;
+    // Only apply on mobile media view
+    if(window.matchMedia && !window.matchMedia('(max-width: 900px)').matches) return;
 
-      var scroller = frame.querySelector(".work-text-inner");
-      if(!scroller) return;
+    // If already wrapped, just ensure fades are bound
+    let frame = wt.querySelector('.bio-inner-frame');
+    let bottomFade = wt.querySelector('.scroll-fade');
+    if(frame){
+      bindFades(frame, inner, frame.querySelector('.scroll-fade-top'), bottomFade || frame.querySelector('.scroll-fade'));
+      return;
+    }
 
-      if(scroller.dataset.bioFadeBound === "1") return;
-      scroller.dataset.bioFadeBound = "1";
+    frame = document.createElement('div');
+    frame.className = 'bio-inner-frame';
 
-      function update(){
-        var maxScroll = scroller.scrollHeight - scroller.clientHeight;
-        var hasOverflow = maxScroll > 1;
-        var atTop = scroller.scrollTop <= 1;
-        var atBottom = scroller.scrollTop >= (maxScroll - 1);
+    // Create top fade
+    const topFade = document.createElement('div');
+    topFade.className = 'scroll-fade-top';
+    topFade.setAttribute('aria-hidden','true');
 
-        frame.classList.toggle("show-top-fade", hasOverflow && !atTop);
-        frame.classList.toggle("show-bottom-fade", hasOverflow && !atBottom);
-      }
+    // Move existing bottom fade into frame if present, otherwise create it
+    if(bottomFade){
+      bottomFade.parentNode && bottomFade.parentNode.removeChild(bottomFade);
+    } else {
+      bottomFade = document.createElement('div');
+      bottomFade.className = 'scroll-fade';
+      bottomFade.setAttribute('aria-hidden','true');
+    }
 
-      scroller.addEventListener("scroll", update, {passive:true});
-      window.addEventListener("resize", update);
+    // Insert frame and move inner inside it
+    wt.insertBefore(frame, inner);
+    frame.appendChild(inner);
+    frame.appendChild(topFade);
+    frame.appendChild(bottomFade);
 
-      // Run a few times in case layout settles late (fonts/images)
-      update();
-      setTimeout(update, 80);
-      setTimeout(update, 250);
-      setTimeout(update, 900);
-    });
+    bindFades(frame, inner, topFade, bottomFade);
   }
 
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", bindBioMediaFades);
+  function bindFades(frame, inner, topFade, bottomFade){
+    if(!inner || !topFade || !bottomFade) return;
+
+    function update(){
+      const maxScroll = inner.scrollHeight - inner.clientHeight;
+      const hasOverflow = maxScroll > 1;
+      const y = inner.scrollTop;
+
+      topFade.classList.toggle('show', hasOverflow && y > 2);
+      bottomFade.classList.toggle('show', hasOverflow && y < maxScroll - 2);
+    }
+
+    if(!inner.dataset.bioFadeBound){
+      inner.dataset.bioFadeBound = '1';
+      inner.addEventListener('scroll', update, {passive:true});
+      window.addEventListener('resize', update);
+      setTimeout(update, 0);
+      setTimeout(update, 120);
+      setTimeout(update, 400);
+    }
+    update();
+  }
+
+  function run(){
+    document.querySelectorAll('.card.work-card.is-biography').forEach(setupBioInnerFrame);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', run);
   } else {
-    bindBioMediaFades();
+    run();
   }
 
-  // If cards are injected dynamically after load, re-bind.
-  var mo = new MutationObserver(function(){ bindBioMediaFades(); });
+  // In case cards are re-rendered dynamically
+  const mo = new MutationObserver(function(){
+    run();
+  });
   mo.observe(document.documentElement, {childList:true, subtree:true});
 })();
 </script>

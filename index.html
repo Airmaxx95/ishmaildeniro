@@ -3041,6 +3041,28 @@ html, body{
         overflow: auto !important;
         padding-right: 6px !important;
     }
+
+/* === MOBILE: BIOGRAPHY (bio-isolated) — align fades to scroll viewport + make viewport taller === */
+@media (max-width: 900px){
+  /* keep bio area flexible inside the card */
+  .card.work-card.bio-isolated .bio-iso{
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+  }
+
+  /* In mobile media-view, the bio worktext container can be taller than the inner max-height,
+     which makes the fades appear "outside" the text area. Force the inner to fill the box. */
+  .card.work-card.bio-isolated .bio-iso .bio-iso-worktext{
+    height: min(64svh, 520px) !important; /* taller viewport */
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+  }
+
+  .card.work-card.bio-isolated .bio-iso .bio-iso-worktext .work-text-inner{
+    height: 100% !important;
+    max-height: none !important;
+  }
+}
 }
 
 </style>

@@ -42,7 +42,6 @@ html, body, body *{
   font-family: "Atkinson Hyperlegible", "Atkinson", sans-serif;
 }
 
-
 body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 .stage{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;background:#ffffff;overflow:hidden;}
 .card{width:720px;height:480px;background:rgb(230,231,232);border-radius:16px;padding:30px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-sizing:border-box;}
@@ -59,7 +58,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 .work-footer a:hover{ background:#DEFF00; transition:0.18s; }
 .artwork-title { font-style:italic; margin-bottom:10px; }
 .media-box{ background:#ccc; height:220px; border-radius:12px; }
-
 
 /* Footer fixed to bottom of card */
 .card.work-card{
@@ -79,7 +77,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   margin-bottom:12px;
 }
 
-
 /* === No-text layout modes === */
 .card.work-card.no-text .work-text{ display:none; }
 .card.work-card.no-text .work-grid{
@@ -96,9 +93,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   height: calc(100% - 112px);
 }
 
-.card.work-card.no-text 
-
-
 .card.work-card.no-text .media-column{
   width:min(520px, 90%);
 }
@@ -107,11 +101,9 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   width:100%;
 }
 
-
 .card.work-card.no-text .media-box{
   height:300px;
 }
-
 
 /* Refined no-text vertical balance */
 .card.work-card.no-text{
@@ -125,7 +117,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 .card.work-card.no-text .media-column{
   margin-bottom:20px; /* prevents meta collision with footer */
 }
-
 
 /* Vertically center columns when text exists */
 .card.work-card.has-text .work-grid{
@@ -237,7 +228,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 
 /* Footer in flow, pinned to bottom via flex */
 
-
 /* === Footer restored to fixed bottom without shrinking grid === */
 .card.work-card{
   position:relative;
@@ -281,12 +271,10 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   opacity: 0;
 }
 
-
 /* no-media => text-only card; center the text block */
 .card.work-card.no-media .work-grid{ grid-template-columns: 1fr; }
 .card.work-card.no-media .work-text{ display:flex; align-items:center; justify-content:center; }
 .card.work-card.no-media .work-text-inner{ max-width: 520px; }
-
 
 /* === Lightbox === */
 .lightbox-overlay{
@@ -343,7 +331,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   pointer-events: auto;
 }
 
-
 .lightbox-slug{
   position:absolute;
   top:16px;
@@ -351,7 +338,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   font-size: 12px;
   letter-spacing: 0.02em;
 }
-
 
 .lightbox-footer{
   position:absolute;
@@ -365,7 +351,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   text-decoration:none;
   color:inherit;
 }
-
 
 .lightbox-media{
   border-radius:16px;
@@ -436,7 +421,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
   background: #DEFF00;
 }
 
-
 /* === Work Text Top Scroll Fade === */
 .work-text {
   position: relative;
@@ -459,8 +443,6 @@ body { margin:0; font-family: sans-serif; background:#fff; color:#000; }
 .work-text.has-top-fade::before {
   opacity: 1;
 }
-
-
 
 /* =========================
    GLOBAL CLICKABLE LINK STYLE
@@ -525,7 +507,6 @@ button.sidebar-link:focus,
   outline: none;
 }
 
-
 /* Remove any background highlight boxes on work-card links */
 .work-card a,
 .work-card button,
@@ -534,8 +515,6 @@ button.sidebar-link:focus,
   box-shadow: none !important;
   border: none !important;
 }
-
-
 
 /* =========================
    GLOBAL TEXT SELECTION STYLE
@@ -552,7 +531,6 @@ button.sidebar-link:focus,
   color: #ffffff;
 }
 
-
 /* =========================
    Sync work-slug + work-meta typography (Adjusted Size)
 ========================= */
@@ -565,7 +543,6 @@ button.sidebar-link:focus,
   line-height: 1.45;
   letter-spacing: 0;
 }
-
 
 /* === Card visibility for stacking === */
 .card.hidden{display:none;}
@@ -590,8 +567,6 @@ button.sidebar-link:focus,
   font-weight: 400;
 }
 
-
-
 /* === Sync Info topline with work-slug exactly === */
 .info-card .topline .left,
 .info-card .topline .clock {
@@ -600,8 +575,6 @@ button.sidebar-link:focus,
   line-height: 1.45;
   letter-spacing: 0;
 }
-
-
 
 /* === FORCE card centering (final override) === */
 .stage{position:relative !important;}
@@ -612,7 +585,6 @@ button.sidebar-link:focus,
   left:50% !important;
   transform:translate(-50%,-50%) !important;
 }
-
 
 /* === Lock page scroll (cards handle their own internal scrolling) === */
 html, body {
@@ -626,7 +598,6 @@ html, body {
   height: 100vh;
 }
 
-
 /* === Optical vertical centering adjustment === */
 :root{
   --card-optical-y: -62px; /* lift cards slightly */
@@ -636,7 +607,6 @@ html, body {
   transform: translate(-50%, calc(-50% + var(--card-optical-y))) !important;
 }
 
-
 /* === Info card fixed size only === */
 .info-card{
   width:600px !important;
@@ -644,8 +614,6 @@ html, body {
   max-width:none !important;
   max-height:none !important;
 }
-
-
 
 /* =========================
    WORK CARD GRID HEIGHT FIX
@@ -700,7 +668,6 @@ html, body {
   justify-content:flex-start;
 }
 
-
 /* =========================
    SCROLL CONTAINMENT FIX
    Prevent large work-text from expanding card; keep scroll inside work-text-inner
@@ -735,7 +702,6 @@ html, body {
 .work-card .work-grid.no-text .media-column{
   justify-content: flex-start;
 }
-
 
 /* =========================
    WORK CARD LAYOUT GRID (FINAL)
@@ -785,11 +751,9 @@ html, body {
   min-height:0 !important;
 }
 
-
 /* === Strong hide to prevent peeking behind info === */
 .card.hidden{display:none !important; visibility:hidden !important;}
 .card.visible{display:block !important; visibility:visible !important;}
-
 
 /* =========================
    RESTORE ORIGINAL WORK-CARD FLOW + FIX LONG TEXT SCROLL
@@ -837,7 +801,6 @@ html, body {
   overflow:hidden;
 }
 
-
 /* =========================
    WORK-GRID DISPLAY OVERRIDE (fix accidental flex override)
 ========================= */
@@ -866,7 +829,6 @@ html, body {
   display:block !important;
 }
 
-
 /* =========================
    RESTORE SPECIAL LAYOUT RULES
    - Text-only (no media): center content block, meta centered
@@ -891,8 +853,6 @@ html, body {
   text-align:center !important;
 }
 
-.card.work-card .work-grid.no-media 
-
 /* In text-only cards, the scroll box still works; keep fades */
 .card.work-card .work-grid.no-media .work-text .work-text-inner{
   width:100%;
@@ -914,7 +874,6 @@ html, body {
 .card.work-card .work-grid.no-text .artwork-title{
   text-align:center !important;
 }
-
 
 /* =========================
    SPECIAL CARD MODES (PRECISION)
@@ -952,7 +911,6 @@ html, body {
 
 /* In text-only mode, meta should be centered */
 .card.work-card .work-grid.no-media .artwork-title,
-.card.work-card .work-grid.no-media 
 
 /* SINGLE MEDIA (no text) */
 .card.work-card .work-grid.no-text{
@@ -972,7 +930,6 @@ html, body {
 .card.work-card .work-grid.no-text .artwork-title{
   text-align:center !important;
 }
-
 
 /* =========================
    HARD OVERRIDE: CENTER + SCALE SPECIAL MODES
@@ -1033,8 +990,6 @@ html, body {
 .card.work-card .work-grid.no-media .artwork-title,
 .card.work-card .work-grid.no-media .artwork-meta-plain,
 .card.work-card .work-grid.no-text .artwork-title,
-.card.work-card .work-grid.no-text 
-
 
 /* === Single-media (no-text) mode: remove empty text column so media truly centers === */
 .card.work-card .work-grid.no-text{
@@ -1048,7 +1003,6 @@ html, body {
 .card.work-card .work-grid.no-text .media-column{
   margin:0 auto !important;
 }
-
 
 /* =========================
    SPECIAL MODES (FINAL, grid-class based)
@@ -1100,8 +1054,6 @@ html, body {
 .work-grid.no-text .artwork-title,
 .work-grid.no-text .artwork-meta-plain,
 .work-grid.no-media .artwork-title,
-.work-grid.no-media 
-
 
 /* =========================
    WORK-GRID HEIGHT WITHOUT FIXED HEIGHT
@@ -1130,7 +1082,6 @@ html, body {
   bottom:30px;
 }
 
-
 /* === Biography (text-only) centering refinement === */
 .card.work-card .work-grid.no-media{
   justify-content:center !important;
@@ -1149,14 +1100,11 @@ html, body {
   justify-content:flex-start !important;
 }
 
-
 /* === Fix: remove max-width cap on text-only inner === */
 .card.work-card.no-media .work-text-inner{
   max-width: none !important;
   width: 100% !important;
 }
-
-
 
 /* =========================
    TEXT+MEDIA: TRUE VERTICAL CENTERING (NEW APPROACH)
@@ -1212,7 +1160,6 @@ html, body {
   overflow:auto !important;
 }
 
-
 /* =========================
    BIOGRAPHY CARD (TEXT-ONLY) CENTERING
 ========================= */
@@ -1236,7 +1183,6 @@ html, body {
   max-width:none !important;
   overflow: visible !important;
 }
-
 
 /* =========================
    BIOGRAPHY SCROLL + TOP/BOTTOM FADES
@@ -1280,7 +1226,6 @@ html, body {
   opacity:1;
 }
 
-
 /* =========================
    BIO TEXT TRUE CENTER (H + V)
 ========================= */
@@ -1316,7 +1261,6 @@ html, body {
   overflow:auto !important;
 }
 
-
 /* === BIOGRAPHY: keep centered container BUT restore justified text === */
 .card.work-card.is-biography .bio-text .work-text-inner{
   text-align: justify !important;
@@ -1325,7 +1269,6 @@ html, body {
   -webkit-hyphens: auto !important;
   -ms-hyphens: auto !important;
 }
-
 
 /* =========================
    BIOGRAPHY ISOLATED MODE
@@ -1450,8 +1393,6 @@ html, body {
   min-height:0;
 }
 
-
-
 /* === Bio isolated fades (white) === */
 .card.work-card.bio-isolated .bio-iso-viewport{
   position: relative;
@@ -1486,7 +1427,6 @@ html, body {
 .card.work-card.bio-isolated .bio-iso-viewport .bio-fade-top{ top:0; }
 .card.work-card.bio-isolated .bio-iso-viewport .bio-fade-bottom{ bottom:0; }
 
-
 /* === Artwork text-only uses isolated layout but keeps meta/footer === */
 .card.work-card.artwork-text-only .work-meta{
   display:block;
@@ -1498,7 +1438,6 @@ html, body {
   align-items: flex-end !important;
 }
 
-
 /* === Biography card fixed size (matches info card 600x400) === */
 .card.work-card.is-biography{
   width:600px !important;
@@ -1506,7 +1445,6 @@ html, body {
   max-width:600px !important;
   max-height:400px !important;
 }
-
 
 /* === Ensure Biography isolated layout is vertically centered in 600x400 === */
 .card.work-card.is-biography{
@@ -1520,7 +1458,6 @@ html, body {
   align-items:center !important;
   justify-content:center !important;
 }
-
 
 /* === Fine optical vertical centering for Biography (match artwork text-only behaviour) === */
 .card.work-card.is-biography .bio-iso{
@@ -1541,24 +1478,20 @@ html, body {
   max-height:100% !important;
 }
 
-
 /* === Optical nudge: lower Biography content slightly === */
 .card.work-card.is-biography .bio-iso-box{
   transform: translateY(24px); /* subtle downward shift */
 }
-
 
 /* === Raise entire card stack slightly (optical adjustment) === */
 .stage{
   transform: translateY(-20px);
 }
 
-
 /* === Raise SELECTED WORKS block inside info card === */
 .card.info-card .col-right{
   transform: translateY(-12px);
 }
-
 
 /* === Tighten clock under ISHMAIL DE NIRO === */
 .card.info-card .topline{
@@ -1569,12 +1502,10 @@ html, body {
   margin-top: -6px;
 }
 
-
 /* === Lower Biography / Contact / Download CV slightly === */
 .card.info-card .col-left .left-top{
   transform: translateY(10px);
 }
-
 
 /* Preserve Excel paragraph breaks / spacing in work text */
 .work-text-inner{
@@ -1589,9 +1520,6 @@ html, body {
 .card.work-card:not(.bio-isolated):not(.is-biography) .work-text-inner p:last-child{
   margin-bottom: 0;
 }
-
-
-
 
 .press-release-link{
   text-align:center;
@@ -1608,7 +1536,6 @@ html, body {
   outline: none;
   text-decoration:none;
 }
-
 
 /* === Press Release Under Media === */
 .press-release-under-media{
@@ -1627,7 +1554,6 @@ html, body {
   outline:none;
   text-decoration:none;
 }
-
 
 /* === Global Header (appears when leaving Info) === */
 .global-header{
@@ -1654,7 +1580,6 @@ html, body {
   pointer-events:auto;
 }
 
-
 /* === Sidebar positioned beside centered work card === */
 .sidebar-nav{
   position: fixed;
@@ -1672,7 +1597,6 @@ html, body {
   pointer-events: auto;
 }
 
-
 .sidebar-inner{
   max-height: calc(100vh - 36px);
   overflow: auto;
@@ -1684,8 +1608,6 @@ html, body {
     margin: 0;
     background: transparent;
 }
-
-
 
 .sidebar-list{
   list-style: none;
@@ -1710,14 +1632,12 @@ html, body {
   outline:none;
 }
 
-
 /* === Global Header Typography Update (v4.0_STABLE) === */
 #globalHeader{
   font-family: "Atkinson Hyperlegible", "Atkinson", sans-serif !important;
   font-weight: 400 !important;
   letter-spacing: 0;
 }
-
 
 /* === Lightbox Slug Size Sync (v4.0 stable) === */
 .lightbox-close,
@@ -1728,13 +1648,10 @@ html, body {
   line-height: 1;
 }
 
-
 /* === Force entire sidebar right-aligned === */
 .sidebar-inner{
   text-align: right;
 }
-
-
 
 .sidebar-list{
   padding: 0;
@@ -1750,12 +1667,10 @@ html, body {
   text-align: right;
 }
 
-
 .sidebar-list li.active .sidebar-link::after{
   content: " —";
   opacity: 0.6;
 }
-
 
 /* === Active Work Highlight (204 255 0, no bold) === */
 .sidebar-list li.active .sidebar-link{
@@ -1763,7 +1678,6 @@ html, body {
   font-weight: 400;
   color: #DEFF00;
 }
-
 
 /* === Sidebar Subcategory Refinement === */
 .sidebar-subhead{
@@ -1777,13 +1691,10 @@ html, body {
   text-align: right;
 }
 
-
 /* === Sidebar Subhead Colon === */
 .sidebar-subhead::after{
   content: ":";
 }
-
-
 
 /* === Sidebar Works Italic (force) === */
 #sidebarNav .sidebar-link{
@@ -1795,7 +1706,6 @@ html, body {
   font-style: normal !important;
 }
 
-
 /* === Sidebar Info + Biography Regular (not italic) === */
 #sidebarNav .rail-top .rail-link,
 #sidebarNav .sidebar-inner > .sidebar-link[data-nav="info"],
@@ -1803,13 +1713,10 @@ html, body {
   font-style: normal !important;
 }
 
-
 /* === Sidebar Fixed Height 440px === */
 .sidebar-nav{
   height: 440px !important;
 }
-
-
 
 /* === Active highlight for Biography/Info buttons (same as works) === */
 #sidebarNav .sidebar-link.active-link{
@@ -1818,13 +1725,11 @@ html, body {
   font-weight: 400;
 }
 
-
 .sidebar-inner{
   height: 100% !important;
   overflow-y: scroll !important; /* force scrollbar visibility */
   overflow-x: hidden !important;
 }
-
 
 /* === Sidebar Scroll (hidden scrollbar, still scrollable) === */
 .sidebar-nav{
@@ -1850,17 +1755,13 @@ html, body {
   height: 0px;
 }
 
-
-
 :root { --card-optical-y: -62px; }
-
 
 /* === Meta visibility restore === */
 .work-meta, .artwork-meta{
   display: block;
   margin-top: 8px;
 }
-
 
 /* === Artwork meta matches footer size === */
 .work-footer,
@@ -1869,19 +1770,16 @@ html, body {
   line-height: 1.4;
 }
 
-
 /* === Remove bottom padding ONLY for work-cards with no text === */
 .card.work-card.no-text {
   padding-bottom: 0 !important;
 }
-
 
 /* === No-text cards: remove any reserved spacing that shrinks media box === */
 .card.work-card.no-text .artwork-title{
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
 }
-
 
 /* === No-text grids: nuke the inherited 78px padding that shrinks media box === */
 .work-grid.no-text .artwork-title,
@@ -1896,13 +1794,11 @@ html, body {
   padding-bottom: 0 !important;
 }
 
-
 /* === Remove 8px top margin from meta blocks === */
 .work-meta,
 .artwork-meta{
   margin-top: 0 !important;
 }
-
 
 /* =====================================================
    FULLSCREEN LIGHTBOX (v4.4 visual adjustment)
@@ -1948,7 +1844,6 @@ html, body {
   z-index: 10000 !important;
 }
 
-
 /* === Lightbox: maximize media (strong override) === */
 .lightbox-media{
   max-width: 100vw !important;
@@ -1966,19 +1861,16 @@ html, body {
   object-fit: contain !important;
 }
 
-
 /* === Lightbox footer neon color === */
 .lightbox-footer{
   color: #DEFF00 !important;
 }
-
 
 /* === Global header above lightbox === */
 #globalHeader, .global-header, header#globalHeader{
   position: relative;
   z-index: 10050 !important; /* above lightbox (9999) */
 }
-
 
 /* === Center global header === */
 #globalHeader, .global-header, header#globalHeader{
@@ -1987,7 +1879,6 @@ html, body {
   transform: translateX(-50%) !important;
   text-align: center !important;
 }
-
 
 /* === Lightbox: fixed-size media (no shrink on narrow windows) === */
 :root{
@@ -2017,19 +1908,15 @@ html, body {
   object-fit: contain !important;
 }
 
-
 /* === Work-grid no-text media-box height === */
 .work-grid.no-text .media-box{
   height: 260px !important;
 }
 
-
 /* === Press release size matches footer === */
 .press-release-under-media{
   font-size:14px !important;
 }
-
-
 
 /* === Lightbox HEAVY blur + slower fade === */
 .lightbox-overlay{
@@ -2044,15 +1931,12 @@ html, body {
   transform: scale(1);
 }
 
-
 /* Optional: keep the media crisp during transition by blurring the overlay rather than the image itself.
    If you still see the image blurring too much, we can move blur to a background layer instead. */
-
 
 /* === Remove blue focus outline from media-box after lightbox close === */
 .media-box:focus{ outline:none !important; }
 .media-box:focus-visible{ outline:none !important; }
-
 
 /* Info ghost mode (white on white when not active) */
 .info-card.info-ghost{
@@ -2064,7 +1948,6 @@ html, body {
   border-color:#ffffff !important;
 }
 
-
 /* Force remove card background */
 .card,
 .card.work-card,
@@ -2072,7 +1955,6 @@ html, body {
 .card.biography-card{
   background: transparent !important;
 }
-
 
 /* === Info card: slow fade-in on initial load (targets actual .card.info-card) === */
 .card.info-card{
@@ -2084,7 +1966,6 @@ html, body {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-
 
 /* === White scroll fades (override only, keep original geometry) === */
 :root{
@@ -2109,7 +1990,6 @@ html, body {
   ) !important;
 }
 
-
 /* === Card transitions (smooth, no flash) === */
 .card.card-exit{
   opacity: 0 !important;
@@ -2132,13 +2012,11 @@ body.card-transitioning .card.work-card.visible{
   opacity: 0 !important;
 }
 
-
 /* === Artwork meta italic (forced) === */
 .card .artwork-meta,
 .artwork-meta{
   font-style: italic !important;
 }
-
 
 /* === Floating SVG sigil === */
 #float-sigil{
@@ -2159,7 +2037,6 @@ body.card-transitioning .card.work-card.visible{
   height: 100%;
   display: block;
 }
-
 
 /* =====================================================
    MOBILE LAYER (NO OBSERVERS / NO DESKTOP SIDE EFFECTS)
@@ -2438,10 +2315,6 @@ body.card-transitioning .card.work-card.visible{
   }
 }
 
-
-
-
-
 /* === Mobile lightbox: full-screen swipe feel without affecting desktop === */
 @media (max-width: 900px){
   .lightbox-overlay,
@@ -2535,7 +2408,6 @@ body.card-transitioning .card.work-card.visible{
   }
 }
 
-
 /* === Prevent instant-visible card before mobile handoff fade === */
 @media (max-width: 900px){
   body.mobile-nav-transitioning .card.work-card.visible{
@@ -2543,14 +2415,12 @@ body.card-transitioning .card.work-card.visible{
   }
 }
 
-
 /* === Strong mobile nav handoff gate === */
 @media (max-width: 900px){
   body.mobile-nav-transitioning .card.visible{
     opacity: 0 !important;
   }
 }
-
 
 /* === Mobile: show global header whenever the mobile menu is open === */
 @media (max-width: 900px){
@@ -2561,13 +2431,11 @@ body.card-transitioning .card.work-card.visible{
   }
 }
 
-
 /* Hide mobile menu button when lightbox is open */
 .lightbox-overlay.active ~ #mobileNavToggle,
 body.mobile-lightbox-open #mobileNavToggle{
   display:none !important;
 }
-
 
 /* === Force-hide mobileNavToggle when lightbox is open on mobile === */
 @media (max-width: 900px){
@@ -2581,7 +2449,6 @@ body.mobile-lightbox-open #mobileNavToggle{
   }
 }
 
-
 /* === Freeze fix: mobile state classes must not affect desktop === */
 @media (min-width: 901px){
   body.mobile-lightbox-open #mobileNavToggle,
@@ -2592,7 +2459,6 @@ body.mobile-lightbox-open #mobileNavToggle{
   }
 }
 
-
 /* === Mobile card vertical breathing space === */
 @media (max-width: 900px){
   .card{
@@ -2600,7 +2466,6 @@ body.mobile-lightbox-open #mobileNavToggle{
     margin-bottom: 24px;
   }
 }
-
 
 /* === Mobile cards: shorter max-height while staying centred === */
 @media (max-width: 900px){
@@ -2613,7 +2478,6 @@ body.mobile-lightbox-open #mobileNavToggle{
   }
 }
 
-
 /* === Raise SOCIAL section on mobile media view === */
 @media (max-width: 900px){
   .info-card .left-bottom{
@@ -2621,20 +2485,17 @@ body.mobile-lightbox-open #mobileNavToggle{
   }
 }
 
-
 /* === Mobile nav toggle: remove hairline border === */
 #mobileNavToggle{
   border-color: transparent !important;
   border: 1px solid transparent !important;
 }
 
-
 /* === Mobile nav close button: remove hairline border === */
 .mobile-nav-close{
   border-color: transparent !important;
   border: 1px solid transparent !important;
 }
-
 
 /* === Mobile menu button hard restore when not in lightbox === */
 @media (max-width: 900px){
@@ -2645,7 +2506,6 @@ body.mobile-lightbox-open #mobileNavToggle{
     pointer-events: auto !important;
   }
 }
-
 
 /* === Mobile info card: show global header only while mobile menu is open === */
 @media (max-width: 900px){
@@ -2664,7 +2524,6 @@ body.mobile-lightbox-open #mobileNavToggle{
   }
 }
 
-
 /* === Desktop restore: mobile state must not suppress desktop header === */
 @media (min-width: 901px){
   #globalHeader{
@@ -2672,12 +2531,6 @@ body.mobile-lightbox-open #mobileNavToggle{
     pointer-events: auto !important;
   }
 }
-
-
-
-
-
-
 
 /* === Lightbox background behaviour === */
 /* Desktop: 50% transparent */
@@ -2705,7 +2558,6 @@ body.mobile-lightbox-open #mobileNavToggle{
   }
 }
 
-
 /* === Mobile: raise SOCIAL block higher on Info card === */
 @media (max-width: 900px){
   .info-card .left-bottom{
@@ -2714,13 +2566,11 @@ body.mobile-lightbox-open #mobileNavToggle{
   }
 }
 
-
 /* Ensure Research in top sidebar is NOT italic */
 #sidebarResearchTop,
 .sidebar-link[data-open-work="research"]{
   font-style: normal !important;
 }
-
 
 /* === Hard fix: Research top link must stay regular === */
 #sidebarNav #sidebarResearchTop,
@@ -2730,7 +2580,6 @@ body.mobile-lightbox-open #mobileNavToggle{
 #mobileNavContent .sidebar-link[data-open-work="research"]{
   font-style: normal !important;
 }
-
 
 /* === Mobile nav typography: works italic, Info/Biography/Research regular === */
 @media (max-width: 900px){
@@ -2747,12 +2596,10 @@ body.mobile-lightbox-open #mobileNavToggle{
   }
 }
 
-
 /* Sidebar divider margin removed */
 .sidebar-divider{
   margin:0 !important;
 }
-
 
 /* === Sidebar scroll fades (match work-text behaviour) === */
 .sidebar-nav{
@@ -2794,12 +2641,10 @@ body.mobile-lightbox-open #mobileNavToggle{
   opacity: 0;
 }
 
-
 /* Mobile nav accessibility fix */
 #mobileNavOverlay[inert]{
   pointer-events:none !important;
 }
-
 
 /* === Hide scrollbar in work-text (match sidebar behaviour) === */
 .work-text-inner{
@@ -2811,7 +2656,6 @@ body.mobile-lightbox-open #mobileNavToggle{
   display: none;                 /* Chrome / Safari */
 }
 
-
 /* === Mobile footer clipping fix === */
 @media (max-width: 900px){
   .card.work-card .work-footer{
@@ -2819,31 +2663,6 @@ body.mobile-lightbox-open #mobileNavToggle{
     line-height: 1.45 !important;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* === Lightbox native scroll reset === */
 html, body{
@@ -2895,7 +2714,6 @@ html, body{
   -webkit-user-select: auto !important;
 }
 
-
 /* === Lightbox exit click-through fix === */
 .lightbox-overlay{
   pointer-events: none !important;
@@ -2924,7 +2742,6 @@ html, body{
   pointer-events: none !important;
 }
 
-
 /* === Lightbox close behaviour (allow blur-out animation) === */
 .lightbox-overlay[aria-hidden="true"]{
   opacity: 0 !important;
@@ -2934,7 +2751,6 @@ html, body{
   display: flex !important;
 }
 
-
 /* === Mobile lightbox exit/menu/focus fix === */
 .lightbox-overlay[inert]{
   pointer-events: none !important;
@@ -2942,7 +2758,6 @@ html, body{
 .media-box{
   pointer-events: auto !important;
 }
-
 
 /* === Blur animation GPU smoothing (Safari/Chrome) === */
 .lightbox-overlay{
@@ -2965,7 +2780,6 @@ html, body{
     visibility: hidden !important;
   }
 }
-
 
 @media (max-width: 900px){
   .lightbox-track{gap:12px;}
@@ -2991,8 +2805,6 @@ html, body{
   position: relative !important;
   display: block !important;
 }
-
-
 
 /* === BIO-ISO: match work-text standard (using .work-text) === */
 .card.work-card.bio-isolated .bio-iso .bio-iso-box{
@@ -3045,8 +2857,6 @@ html, body{
 .card.work-card:not(.bio-isolated):not(.is-biography) .work-text-inner p:last-child{
   margin-bottom: 0;
 }
-
-
 
 /* === Mobile work-text inner height fix (restored) === */
 @media (max-width: 900px) {
@@ -3102,7 +2912,6 @@ html, body{
 }
 </style>
 
-
 <style id="work-text-atkinson-fix">
 /* work-text scroll box font fix */
 .work-text,
@@ -3114,13 +2923,11 @@ html, body{
 }
 </style>
 
-
 <style id="subhead-margin-update">
 .info-card .subhead {
     margin: 9px 0 0px 0;
 }
 </style>
-
 
 <style id="mobile-nav-button-font-fix">
 #mobileNavToggle,
@@ -3130,7 +2937,6 @@ html, body{
   font-style: normal !important;
 }
 </style>
-
 
 <style id="mobile-nav-global-header-unified-css">
 @media (max-width: 900px){
@@ -3142,7 +2948,6 @@ html, body{
   }
 }
 </style>
-
 
 <style id="mobile-lightbox-menu-hidden-fix">
 @media (max-width: 900px){
@@ -3164,7 +2969,6 @@ html, body{
 }
 </style>
 
-
 <style id="mobile-work-flash-fix">
 @media (max-width: 900px){
   body.mobile-nav-direct-jump .card.mobile-nav-direct-open{
@@ -3185,7 +2989,6 @@ html, body{
 }
 </style>
 
-
 <style id="sidebar-css-ellipsis-stable">
 /* Stable desktop sidebar truncation with CSS only */
 @media (min-width: 901px){
@@ -3201,7 +3004,6 @@ html, body{
   }
 }
 </style>
-
 
 <style id="sidebar-highlight-cleanup">
 /* Remove active dash on viewed sidebar title */
@@ -3219,7 +3021,6 @@ html, body{
 }
 </style>
 
-
 <style id="sidebar-highlight-singlefire-css">
 /* Remove active dash and stop visual fighting on desktop */
 .sidebar-list li.active .sidebar-link::after{
@@ -3235,7 +3036,6 @@ html, body{
 }
 </style>
 
-
 <style id="sidebar-highlight-consolidated-css">
 .sidebar-list li.active .sidebar-link::after{
   content: none !important;
@@ -3249,7 +3049,6 @@ html, body{
   }
 }
 </style>
-
 
 <style id="sidebar-highlight-nuked-clean-css">
 /* No active dash */
@@ -3267,10 +3066,6 @@ html, body{
 }
 </style>
 
-
-
-
-
 <style id="sidebar-20ch-hard-width">
 @media (min-width: 901px) {
   #sidebarNav .sidebar-list .sidebar-link {
@@ -3287,7 +3082,6 @@ html, body{
 }
 </style>
 
-
 <style id="sidebar-14ch-hard-width">
 @media (min-width: 901px) {
   #sidebarNav .sidebar-list .sidebar-link {
@@ -3303,7 +3097,6 @@ html, body{
   }
 }
 </style>
-
 
 <!-- Performance: preconnect + font preload -->
 <link rel="preconnect" href="https://githubusercontent.com">
@@ -3348,7 +3141,6 @@ html, body{
   </div>
 </div>
 
-
 <nav id="sidebarNav" class="sidebar-nav" aria-label="Works navigation">
   <div class="sidebar-inner">
     <button type="button" class="sidebar-link" data-nav="info">Info</button>
@@ -3360,7 +3152,6 @@ html, body{
 </nav>
 <div class="stage" id="stage"></div>
 <script>
-
 
 /* === Robust Year Formatter (TOP) === */
 function formatYear(val){
@@ -3425,7 +3216,6 @@ function renderInfoSelectedWorks(container){
 
   const groupsOrder = ["Artwork","Artist-Curation","Solo Exhibition","Group Exhibition"];
 
-
   const groups = {};
   selected.forEach(w=>{
     const g = (w.subcategory||w.category_group||"").trim() || "Other";
@@ -3489,8 +3279,6 @@ function renderInfoSelectedWorks(container){
 
   container.innerHTML = out;
 }
-
-
 
 function buildMeta(w){
   const parts = [];
@@ -3581,7 +3369,7 @@ function createWorkCard(w){
   const noMedia = (String(w.cover_image || "").trim().toUpperCase() === "NO");
   const layoutMode = String(w.layout_mode||"").toLowerCase();
   const slugLower = String(w.slug||"").toLowerCase();
-  
+
   // --- Footer links builder (mapped to current spreadsheet) ---
   function buildLinksRaw(){
     // Prefer links_optionA (pipe-delimited: Label — URL|Label — URL)
@@ -3657,11 +3445,10 @@ function createWorkCard(w){
   card.classList.add(hasText ? "has-text" : "no-text");
   if(noMedia) card.classList.add("no-media");
 
-  
   if(isBio){ card.classList.add("is-biography"); card.classList.add("bio-isolated"); }
   if(isArtworkTextOnly){ card.classList.add("bio-isolated"); card.classList.add("artwork-text-only"); }
 const leftMeta = [];
-  
+
   const pressReleaseLink =
     (w.press_release_pdf && String(w.press_release_pdf).trim())
       ? '<div class="press-release-under-media"><a href="' + String(w.press_release_pdf).trim() + '" target="_blank" rel="noopener">Download Press Release</a></div>'
@@ -3761,13 +3548,11 @@ const stage = document.getElementById("stage");
 let Z_TOP = 2;
 const CARD_BY_SLUG = new Map();
 
-
 const globalHeader = document.getElementById("globalHeader");
 function setGlobalHeaderVisible(on){
   if(!globalHeader) return;
   globalHeader.classList.toggle("visible", !!on);
 }
-
 
 const sidebarNav = document.getElementById("sidebarNav");
 function setSidebarVisible(on){
@@ -3889,7 +3674,6 @@ if(globalHeader){
     }
   });
 }
-
 
 function showCard(card){
   if(!card) return;
@@ -4027,8 +3811,6 @@ function createInfoCard(){
     showCard(CARD_BY_SLUG.get("biography"));
   });
 
-  
-
   // Research shortcut (controlled by site_visible)
   const researchBtn = card.querySelector("#openResearch");
   const researchMeta = WORKS_DATA.find(w => String(w.slug || "").trim().toLowerCase() === "research");
@@ -4092,11 +3874,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-
-
-
-
-
 /* === Biography Hard Close Patch === */
 (function(){
 
@@ -4123,8 +3900,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 })();
-
-
 
 /* === Ensure no element keeps focus when lightbox closes === */
 document.addEventListener("keydown", function(e){
@@ -4525,7 +4300,7 @@ document.addEventListener("keydown", function(e){
   });
 })();
 
-/* === Sidebar Position (VERTICAL MATCHED + RULES): 
+/* === Sidebar Position (VERTICAL MATCHED + RULES):
    - LEFT: Works use actual rect; Biography uses synthetic work-card rect (so it never follows biography geometry)
    - TOP: Both states use shared synthetic work-frame top (perfect vertical match)
    - Offscreen OK (no clamping) === */
@@ -4769,7 +4544,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
 <!-- === Structural fix: opening any card closes all others (prevents stacking behind transparency) === -->
 <script>
 (function(){
@@ -4801,7 +4575,6 @@ document.addEventListener("keydown", function(e){
   }
 })();
 </script>
-
 
 <!-- === Fade between cards (smooth match to v4.4.22) === -->
 <script>
@@ -4919,8 +4692,6 @@ document.addEventListener("keydown", function(e){
   };
 })();
 </script>
-
-
 
 <script>
 (function(){
@@ -5040,34 +4811,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
 (function(){
   const mq = window.matchMedia("(max-width: 900px)");
@@ -5164,7 +4907,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
 <script>
 (function(){
   const mq = window.matchMedia("(max-width: 900px)");
@@ -5233,7 +4975,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
 <script>
 (function(){
   function updateSidebarFade(){
@@ -5289,22 +5030,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
 (function(){
   if(window.__LIGHTBOX_PRELOAD_HELPER) return;
@@ -5351,7 +5076,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
 <script>
 (function(){
   if(window.__GLOBAL_HEADER_LIGHTBOX_EXIT_FIX) return;
@@ -5389,7 +5113,6 @@ document.addEventListener("keydown", function(e){
   }, true);
 })();
 </script>
-
 
 <script>
 (function(){
@@ -5434,7 +5157,6 @@ document.addEventListener("keydown", function(e){
   window.addEventListener('resize', repairPostCloseState);
 })();
 </script>
-
 
 <script id="mobile-nav-global-header-unified-js">
 (function(){
@@ -5791,7 +5513,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
 <script id="mobile-lightbox-menu-state-fix">
 (function(){
   if (window.__MOBILE_LIGHTBOX_MENU_STATE_FIX__) return;
@@ -5881,7 +5602,6 @@ document.addEventListener("keydown", function(e){
   syncMenuWithLightbox();
 })();
 </script>
-
 
 <script id="mobile-work-flash-fix-js">
 (function(){
@@ -6031,7 +5751,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
 <style id="mobile-nav-double-fire-suppression-css">
 @media (max-width: 900px){
   body.mobile-nav-no-fade .card,
@@ -6137,38 +5856,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script id="sidebar-highlight-nuked-clean-js">
 (function(){
   if (window.__SIDEBAR_HIGHLIGHT_NUKED_CLEAN__) return;
@@ -6263,7 +5950,6 @@ document.addEventListener("keydown", function(e){
   });
 })();
 </script>
-
 
 <script id="sidebar-highlight-persist-fix">
 (function(){
@@ -6380,7 +6066,6 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
-
 <script id="mobile-nav-research-restore-fix">
 (function(){
   if (window.__MOBILE_NAV_RESEARCH_RESTORE_FIX__) return;
@@ -6434,7 +6119,6 @@ document.addEventListener("keydown", function(e){
   window.addEventListener("resize", restoreResearchLink);
 })();
 </script>
-
 
 <script id="fullscreen-selected-work-sidebar-highlight-fix">
 (function(){
@@ -6517,7 +6201,6 @@ document.addEventListener("keydown", function(e){
   }
 })();
 </script>
-
 
 <script id="mobile-bio-research-header-fix">
 (function(){
@@ -6607,7 +6290,6 @@ document.addEventListener("keydown", function(e){
   }, {once:true});
 })();
 </script>
-
 
 <script id="performance-optimizations">
 (function(){

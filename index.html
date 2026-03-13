@@ -2889,6 +2889,22 @@ html, body{
 }
 }
 
+
+/* === FINAL PATCH: work text paragraph spacing + no-text media height === */
+.card.work-card:not(.bio-isolated):not(.is-biography) .work-text-inner p{
+  margin: 0 0 -1.45em 0 !important;
+}
+.card.work-card:not(.bio-isolated):not(.is-biography) .work-text-inner p:last-child{
+  margin-bottom: 0 !important;
+}
+
+@media (min-width: 901px){
+  .card.work-card.no-text .media-box,
+  .work-grid.no-text .media-box{
+    height: 300px !important;
+  }
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">

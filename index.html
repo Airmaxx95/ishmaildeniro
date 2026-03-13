@@ -1063,7 +1063,6 @@ html, body {
 .card.work-card{
   display:flex !important;
   flex-direction:column !important;
-  padding-bottom:78px !important; /* reserve space so footer never overlaps */
 }
 
 /* Ensure grid can grow/shrink and internal scroll stays contained */
@@ -2903,6 +2902,12 @@ html, body{
   .work-grid.no-text .media-box{
     height: 300px !important;
   }
+}
+
+
+/* === FINAL PATCH: remove forced work-card bottom padding === */
+.card.work-card{
+  padding-bottom: 0 !important;
 }
 
 </style>

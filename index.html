@@ -3028,8 +3028,11 @@ html, body{
   margin-bottom: 0;
 }
 /* Work cards (non-biography): remove default paragraph margins in work-text scroll */
-.card.work-card:not(.bio-isolated) .work-text-inner p {
-    margin: 0;
+.card.work-card:not(.bio-isolated):not(.is-biography) .work-text-inner p{
+  margin: 0 0 0.55em 0; /* work-cards only: tighter paragraph gap */
+}
+.card.work-card:not(.bio-isolated):not(.is-biography) .work-text-inner p:last-child{
+  margin-bottom: 0;
 }
 
 

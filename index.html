@@ -2942,6 +2942,17 @@ html, body{
   -webkit-overflow-scrolling: touch;
 }
 
+
+/* === Mobile lightbox loading boost === */
+@media (max-width: 900px){
+  .lightbox-slide{
+    contain: layout paint;
+  }
+  .lightbox-slide img{
+    content-visibility: auto;
+  }
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">
@@ -4169,8 +4180,8 @@ document.addEventListener("keydown", function(e){
     });
   }
 
-  const LIGHTBOX_EAGER_RADIUS = 1;
-  const LIGHTBOX_PRELOAD_AHEAD = 2;
+  const LIGHTBOX_EAGER_RADIUS = window.matchMedia("(max-width: 900px)").matches ? 2 : 1;
+  const LIGHTBOX_PRELOAD_AHEAD = window.matchMedia("(max-width: 900px)").matches ? 4 : 2;
   let lightboxIO = null;
 
   function ensureLightboxObserver(){
@@ -4196,8 +4207,9 @@ document.addEventListener("keydown", function(e){
     const img = document.createElement("img");
     img.alt = "";
     img.decoding = "async";
-    img.loading = index <= 1 ? "eager" : "lazy";
+    img.loading = (window.matchMedia("(max-width: 900px)").matches ? index <= 2 : index <= 1) ? "eager" : "lazy";
     if(index === 0) img.fetchPriority = "high";
+    else if(window.matchMedia("(max-width: 900px)").matches && index <= 2) img.fetchPriority = "auto";
     img.src = src;
     img.onerror = function(){
       const slide = img.closest(".lightbox-slide");
@@ -4274,6 +4286,15 @@ document.addEventListener("keydown", function(e){
     if(firstSlide){
       hydrateLightboxSlide(firstSlide);
       preloadLightboxAround(0);
+
+      if(window.matchMedia("(max-width: 900px)").matches){
+        const slides = track.querySelectorAll(".lightbox-slide");
+        [1, 2].forEach((i)=>{
+          const slide = slides[i];
+          if(slide) hydrateLightboxSlide(slide);
+        });
+      }
+
       requestAnimationFrame(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); });
       setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 40);
       setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 140);

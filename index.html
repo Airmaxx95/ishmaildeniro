@@ -2928,6 +2928,12 @@ html, body{
   height:min(72vh, 700px);
 }
 
+
+/* === Auto-hide footer when no reference link exists === */
+.work-footer:not(:has(a)){
+  display:none !important;
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">

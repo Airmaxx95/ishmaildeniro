@@ -2934,6 +2934,14 @@ html, body{
   display:none !important;
 }
 
+
+/* === Lightbox scroll feel refinement === */
+.lightbox-track{
+  overscroll-behavior-x: contain;
+  scroll-behavior: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">
@@ -6646,30 +6654,6 @@ document.addEventListener("keydown", function(e){
 </script>
 
 
-<script id="lightbox-scroll-preload-patch">
-document.addEventListener("DOMContentLoaded", function(){
-  const t = document.querySelector(".lightbox-track");
-  if(!t) return;
-
-  t.addEventListener("scroll", function(){
-    const slides = Array.from(t.querySelectorAll(".lightbox-slide"));
-    if(!slides.length || typeof preloadLightboxAround !== "function") return;
-
-    let closestIndex = 0;
-    let closestDistance = Infinity;
-
-    slides.forEach((slide, index)=>{
-      const distance = Math.abs(slide.offsetLeft - t.scrollLeft);
-      if(distance < closestDistance){
-        closestDistance = distance;
-        closestIndex = index;
-      }
-    });
-
-    preloadLightboxAround(closestIndex);
-  }, { passive: true });
-});
-</script>
 
 </body>
 </html>

@@ -2943,16 +2943,6 @@ html, body{
 }
 
 
-/* === Mobile lightbox loading boost === */
-@media (max-width: 900px){
-  .lightbox-slide{
-    contain: layout paint;
-  }
-  .lightbox-slide img{
-    content-visibility: auto;
-  }
-}
-
 </style>
 
 <style id="mobile-lightbox-offset-update">
@@ -4268,6 +4258,37 @@ document.addEventListener("keydown", function(e){
       return;
     }
 
+    const isMobileLightbox = window.matchMedia("(max-width: 900px)").matches;
+
+    if(isMobileLightbox){
+      images.forEach((src, index)=>{
+        const slide = document.createElement("div");
+        slide.className = "lightbox-slide";
+
+        const img = document.createElement("img");
+        img.alt = "";
+        img.decoding = "async";
+        img.loading = index <= 2 ? "eager" : "lazy";
+        if(index === 0) img.fetchPriority = "high";
+        img.src = src;
+        img.onerror = function(){
+          slide.style.display = "none";
+        };
+
+        slide.appendChild(img);
+        track.appendChild(slide);
+      });
+
+      track.scrollLeft = 0;
+      const firstSlide = track.querySelector(".lightbox-slide");
+      if(firstSlide){
+        requestAnimationFrame(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); });
+        setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 40);
+        setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 140);
+      }
+      return;
+    }
+
     ensureLightboxObserver();
 
     images.forEach((src, index)=>{
@@ -4286,15 +4307,6 @@ document.addEventListener("keydown", function(e){
     if(firstSlide){
       hydrateLightboxSlide(firstSlide);
       preloadLightboxAround(0);
-
-      if(window.matchMedia("(max-width: 900px)").matches){
-        const slides = track.querySelectorAll(".lightbox-slide");
-        [1, 2].forEach((i)=>{
-          const slide = slides[i];
-          if(slide) hydrateLightboxSlide(slide);
-        });
-      }
-
       requestAnimationFrame(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); });
       setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 40);
       setTimeout(()=>{ firstSlide.scrollIntoView({behavior:"auto", inline:"center", block:"nearest"}); }, 140);

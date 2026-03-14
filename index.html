@@ -2943,6 +2943,21 @@ html, body{
 }
 
 
+
+/* === Safari mobile lightbox scroll normalization === */
+@media (max-width: 900px){
+  html.safari-mobile .lightbox-track{
+    -webkit-overflow-scrolling: auto !important;
+    scroll-snap-type: x proximity !important;
+    scroll-behavior: auto !important;
+    overscroll-behavior-x: contain !important;
+  }
+
+  html.safari-mobile .lightbox-slide{
+    scroll-snap-stop: normal !important;
+  }
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">
@@ -6687,6 +6702,18 @@ document.addEventListener("keydown", function(e){
 </script>
 
 
+
+
+<script id="safari-mobile-lightbox-normalizer">
+(function(){
+  var ua = navigator.userAgent;
+  var isSafari = /Safari/.test(ua) && !/Chrome|CriOS|Chromium|Edg|OPR|FxiOS/.test(ua);
+  var isMobile = /iPhone|iPad|iPod|Mobile/.test(ua);
+  if(isSafari && isMobile){
+    document.documentElement.classList.add("safari-mobile");
+  }
+})();
+</script>
 
 </body>
 </html>

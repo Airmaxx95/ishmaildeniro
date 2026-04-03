@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head>
-  <script src="https://accounts.google.com/gsi/client" async defer></script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>ISHMAIL DE NIRO / Ink Manager</title><meta name="description" content="Store ingredients, build blend recipes by weight, auto-convert to percentages, scale to any total. Works offline (file://) with robust event wiring and error display.">
+  <script src="https://accounts.google.com/gsi/client" async defer></script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Studio Ink Manager</title><meta name="description" content="Store ingredients, build blend recipes by weight, auto-convert to percentages, scale to any total. Works offline (file://) with robust event wiring and error display.">
 <style>
 /* v265: Fix hairline visibility */
 :root{
@@ -1124,10 +1124,10 @@ input[data-role="row-weight"]{
 }
 .tab:hover{ filter:brightness(1.03); }
 .tab.active{
-  background: rgb(223,255,0);
+  background: rgb(203,255,0);
   color: #000;
-  border-color: rgb(223,255,0);
-  box-shadow: 0 0 0 2px rgba(223,255,0,0.35);
+  border-color: rgb(203,255,0);
+  box-shadow: 0 0 0 2px rgba(203,255,0,0.35);
 }
 .tab .x{
   font-weight:800;
@@ -1188,10 +1188,10 @@ input[data-role="row-weight"]{
 
 /* Force active tab fluoro yellow override */
 .tabsBar .tab.active{
-  background: rgb(223,255,0) !important;
+  background: rgb(203,255,0) !important;
   color: #000 !important;
-  border-color: rgb(223,255,0) !important;
-  box-shadow: 0 0 0 2px rgba(223,255,0,0.35) !important;
+  border-color: rgb(203,255,0) !important;
+  box-shadow: 0 0 0 2px rgba(203,255,0,0.35) !important;
 }
 .tabsBar .tab.active .x{
   color:#000 !important;
@@ -1388,7 +1388,7 @@ h2.section-title-text > #recipeTabTitle{
 
 /* v235: Export Excel highlight — Ishmail Yellow */
 :root{
-  --ishmail-yellow: rgb(223,255,0);
+  --ishmail-yellow: rgb(204,255,0);
 }
 #exportExcelBtn{
   background: var(--ishmail-yellow) !important;
@@ -1401,7 +1401,7 @@ h2.section-title-text > #recipeTabTitle{
 
 
 /* v237: Ishmail Yellow — scoped + safe */
-:root{ --ishmail-yellow: rgb(223,255,0); }
+:root{ --ishmail-yellow: rgb(204,255,0); }
 
 /* Explicit Ishmail Yellow button */
 #exportExcelBtn,
@@ -1495,7 +1495,7 @@ h2.section-title-text > #recipeTabTitle{
   max-width: 360px;
   padding: 6px 10px;
   border-radius: 10px;
-  background: var(--ishmail-yellow, rgb(223,255,0));
+  background: var(--ishmail-yellow, rgb(204,255,0));
   color: #1a1a1a;
   font-size: 12px;
   line-height: 1.2;
@@ -2754,7 +2754,7 @@ section, .section, .panel, .card {
 <style id="builtin-select-highlight">
 /* Built-in series dropdown highlight */
 #builtinSetSelect {
-  background: rgb(223,255,0) !important;
+  background: rgb(204,255,0) !important;
   color: #000 !important;
 }
 </style>
@@ -2898,16 +2898,16 @@ section, .section, .panel, .card {
 <style>
 /* v239: FORCE Ishmail Yellow buttons (override dark theme) */
 .btn.ishmail-yellow{
-  background: rgb(223,255,0) !important;
-  border-color: rgb(223,255,0) !important;
+  background: rgb(204,255,0) !important;
+  border-color: rgb(204,255,0) !important;
   color: #111 !important;
 }
 .btn.ishmail-yellow:hover{
-  background: rgb(223,255,0) !important;
+  background: rgb(204,255,0) !important;
   filter: brightness(0.96);
 }
 .btn.ishmail-yellow:active{
-  background: rgb(223,255,0) !important;
+  background: rgb(204,255,0) !important;
   filter: brightness(0.90);
   transform: translateY(1px);
 }
@@ -3089,7 +3089,7 @@ section, .section, .panel, .card {
 #recipeTabsBar .tab.active,
 .tabsWrap .tab.active,
 .tab.active{
-  box-shadow: 0 0 0 2px rgba(223,255,0,0.35) !important;
+  box-shadow: 0 0 0 2px rgba(203,255,0,0.35) !important;
 }
 </style>
 <style>
@@ -3244,86 +3244,12 @@ function quantize01(v){
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="favicon.ico">
-
-<style id="final-exact-accent-2232550-no-hover">
-/* Final exact accent lock */
-:root{
-  --finalAccent: rgb(223,255,0) !important;
-}
-
-/* Lock all highlighted / primary / active controls to exact flat colour */
-.btn.primary,
-.btn.accent,
-.btn.highlight,
-button.primary,
-button.accent,
-button.highlight,
-.tab.active,
-.activeTab,
-.recipeTab.active,
-.savedRecipeTab.active,
-[aria-selected="true"],
-[data-active="true"],
-[aria-pressed="true"]{
-  background: rgb(223,255,0) !important;
-  background-color: rgb(223,255,0) !important;
-  background-image: none !important;
-  border-color: rgb(223,255,0) !important;
-  box-shadow: none !important;
-  filter: none !important;
-  transition: none !important;
-}
-
-/* No hover / active visual change on those exact accent controls */
-.btn.primary:hover,
-.btn.accent:hover,
-.btn.highlight:hover,
-button.primary:hover,
-button.accent:hover,
-button.highlight:hover,
-.tab.active:hover,
-.activeTab:hover,
-.recipeTab.active:hover,
-.savedRecipeTab.active:hover,
-[aria-selected="true"]:hover,
-[data-active="true"]:hover,
-[aria-pressed="true"]:hover,
-.btn.primary:active,
-.btn.accent:active,
-.btn.highlight:active,
-button.primary:active,
-button.accent:active,
-button.highlight:active,
-.tab.active:active,
-.activeTab:active,
-.recipeTab.active:active,
-.savedRecipeTab.active:active,
-[aria-selected="true"]:active,
-[data-active="true"]:active,
-[aria-pressed="true"]:active{
-  background: rgb(223,255,0) !important;
-  background-color: rgb(223,255,0) !important;
-  background-image: none !important;
-  border-color: rgb(223,255,0) !important;
-  box-shadow: none !important;
-  filter: none !important;
-  transition: none !important;
-  transform: none !important;
-}
-
-/* Kill the generic hover filter from earlier theme blocks */
-.btn:hover,
-button:hover{
-  filter: none !important;
-}
-</style>
-
 </head><body>
 
 <div class="container"><div id="errorbar" class="errorbar"></div>
 <header class="topbar">
   <div class="brand">
-    <h1><span style="text-transform:none !important;">ISHMAIL DE NIRO / Ink Manager</span></h1>
+    <h1>STUDIO INK MANAGER</h1>
   </div>
 
   <div class="topActions">
@@ -6257,7 +6183,7 @@ if (document.readyState === 'loading') {
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>ISHMAIL DE NIRO / Ink Manager</title>
+  <title>${esc(data.title)}</title>
   <style>
     ${fontCss}
     @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
@@ -6365,16 +6291,16 @@ if (document.readyState === 'loading') {
 <style>
 /* v239: FORCE Ishmail Yellow buttons (override dark theme) */
 .btn.ishmail-yellow{
-  background: rgb(223,255,0) !important;
-  border-color: rgb(223,255,0) !important;
+  background: rgb(204,255,0) !important;
+  border-color: rgb(204,255,0) !important;
   color: #111 !important;
 }
 .btn.ishmail-yellow:hover{
-  background: rgb(223,255,0) !important;
+  background: rgb(204,255,0) !important;
   filter: brightness(0.96);
 }
 .btn.ishmail-yellow:active{
-  background: rgb(223,255,0) !important;
+  background: rgb(204,255,0) !important;
   filter: brightness(0.90);
   transform: translateY(1px);
 }
@@ -6407,7 +6333,7 @@ if (document.readyState === 'loading') {
     <div class="right"></div>
   </div>
 
-  <h1><span style="text-transform:none !important;">${esc(data.title)}</span></h1>
+  <h1>${esc(data.title)}</h1>
 
   <div class="metaRow">
     <div class="metaBlock">
@@ -6518,9 +6444,9 @@ if (document.readyState === 'loading') {
     if (t) {
       const safeTitle = t.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       if (/<title[\s\S]*?<\/title>/i.test(htmlStr)) {
-        htmlStr = htmlStr.replace(/<title[\s\S]*?<\/title>/i, '<title>ISHMAIL DE NIRO / Ink Manager</title>');
+        htmlStr = htmlStr.replace(/<title[\s\S]*?<\/title>/i, '<title>' + safeTitle + '</title>');
       } else if (/<head[^>]*>/i.test(htmlStr)) {
-        htmlStr = htmlStr.replace(/<head([^>]*)>/i, '<head$1><title>ISHMAIL DE NIRO / Ink Manager</title>');
+        htmlStr = htmlStr.replace(/<head([^>]*)>/i, '<head$1><title>' + safeTitle + '</title>');
       }
     }
 
@@ -7768,10 +7694,10 @@ function updateStealthDot(){
       if (!btn) return;
       if (dir === 'up'){
         btn.style.backgroundImage =
-          'linear-gradient(to bottom, rgb(223,255,0) 0%, rgb(223,255,0) 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%)';
+          'linear-gradient(to bottom, rgb(204,255,0) 0%, rgb(204,255,0) 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%)';
       } else {
         btn.style.backgroundImage =
-          'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgb(223,255,0) 50%, rgb(223,255,0) 100%)';
+          'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgb(204,255,0) 50%, rgb(204,255,0) 100%)';
       }
     }catch(_){}
   }
@@ -8096,10 +8022,10 @@ try{ el.style.setProperty('-moz-appearance','textfield','important'); }catch(_){
     try{
       if (dir === 'up'){
         btn.style.backgroundImage =
-          'linear-gradient(to bottom, rgb(223,255,0) 0%, rgb(223,255,0) 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%)';
+          'linear-gradient(to bottom, rgb(204,255,0) 0%, rgb(204,255,0) 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 100%)';
       } else {
         btn.style.backgroundImage =
-          'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgb(223,255,0) 50%, rgb(223,255,0) 100%)';
+          'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgb(204,255,0) 50%, rgb(204,255,0) 100%)';
       }
     }catch(_){}
   }

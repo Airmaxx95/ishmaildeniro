@@ -3363,7 +3363,6 @@ html, body{
 <nav id="sidebarNav" class="sidebar-nav" aria-label="Works navigation">
   <div class="sidebar-inner">
     <button type="button" class="sidebar-link" data-nav="info">Info</button>
-    <a class="sidebar-link" href="/inkmanager" target="_blank" rel="noopener">Ink Manager</a>
     <button type="button" class="sidebar-link" data-open-work="biography">Biography</button>
     <button type="button" class="sidebar-link research-top-link" id="sidebarResearchTop" data-open-work="research" style="font-style: normal !important;">Research</button>
     <div class="sidebar-divider" aria-hidden="true"></div>
@@ -3933,7 +3932,6 @@ function createInfoCard(){
           <button class="section-title linklike" id="openBiography" type="button">Biography</button>
           <div class="section-title"><a id="infoContactLink"></a></div>
           <div class="section-title"><a id="infoCvLink"></a></div>
-          <div class="section-title"><a id="infoInkManagerLink"></a></div>
           <button class="section-title linklike" id="openResearch" type="button">Research</button>
         </div>
 
@@ -3996,14 +3994,6 @@ function createInfoCard(){
 
   setLink("infoContactLink", "contact_label", "contact_url", false, { hideIfMissing: false });
   setLink("infoCvLink", "cv_label", "cv_url", true, { download: true, hideIfMissing: false });
-
-  const inkManagerLink = card.querySelector("#infoInkManagerLink");
-  if (inkManagerLink) {
-    inkManagerLink.textContent = "Ink Manager";
-    inkManagerLink.href = "/inkmanager";
-    inkManagerLink.target = "_blank";
-    inkManagerLink.rel = "noopener";
-  }
 
   const socialHeading = card.querySelector("#infoSocialHeading");
   if (socialHeading) {
@@ -5643,7 +5633,6 @@ document.addEventListener("keydown", function(e){
     const worksHtml = sidebarWorks ? sidebarWorks.innerHTML : "";
     const topHtml = [
       '<button type="button" class="sidebar-link" data-nav="info">Info</button>',
-      '<a class="sidebar-link" href="/inkmanager" target="_blank" rel="noopener">Ink Manager</a>',
       '<button type="button" class="sidebar-link" data-open-work="biography">Biography</button>',
       researchVisible() ? '<button type="button" class="sidebar-link" data-open-work="research">Research</button>' : '',
       '<div class="sidebar-divider" aria-hidden="true"></div>'

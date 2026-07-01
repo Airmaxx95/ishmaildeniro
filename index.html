@@ -3022,6 +3022,38 @@ html, body{
   border-radius: 16px;
   display: block;
 }
+
+
+/* === Lightbox smooth sequencing patch: GPU opacity only, no heavy blur === */
+.lightbox-overlay{
+  transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  filter: none !important;
+  transform: none !important;
+  will-change: opacity !important;
+  backface-visibility: hidden !important;
+}
+.lightbox-overlay.active{
+  filter: none !important;
+  transform: none !important;
+}
+.lightbox-slide{
+  opacity: 0 !important;
+  transform: translateZ(0) scale(0.998) !important;
+  transition:
+    opacity 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  will-change: opacity, transform !important;
+}
+.lightbox-slide.is-visible{
+  opacity: 1 !important;
+  transform: translateZ(0) scale(1) !important;
+}
+.lightbox-slide img,
+.lightbox-slide video{
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">
@@ -4266,24 +4298,43 @@ document.addEventListener("keydown", function(e){
   overlay.appendChild(inner);
   document.body.appendChild(overlay);
 
-  const preloadCache = new Set();
   let images = [];
   let activeIndex = 0;
   let isOpen = false;
   let isTransitioning = false;
 
+  const preloadCache = new Map();
+
   function preload(src){
     const url = String(src || "").trim();
-    if(!url || preloadCache.has(url)) return;
-    const img = new Image();
-    img.decoding = "async";
-    img.src = url;
-    preloadCache.add(url);
+    if(!url) return Promise.resolve(null);
+    if(preloadCache.has(url)) return preloadCache.get(url);
+
+    const promise = new Promise((resolve)=>{
+      const img = new Image();
+      img.decoding = "async";
+      img.loading = "eager";
+      img.onload = async function(){
+        try{ if(img.decode) await img.decode(); }catch(e){}
+        resolve(url);
+      };
+      img.onerror = function(){ resolve(url); };
+      img.src = url;
+      if(img.complete){
+        Promise.resolve().then(async ()=>{
+          try{ if(img.decode) await img.decode(); }catch(e){}
+          resolve(url);
+        });
+      }
+    });
+
+    preloadCache.set(url, promise);
+    return promise;
   }
 
   function preloadAround(index){
     if(!images.length) return;
-    [index, index + 1, index - 1, index + 2].forEach((i)=>{
+    [index + 1, index - 1, index + 2, index - 2].forEach((i)=>{
       const wrapped = (i + images.length) % images.length;
       preload(images[wrapped]);
     });
@@ -4318,18 +4369,27 @@ document.addEventListener("keydown", function(e){
     preloadAround(activeIndex);
   }
 
-  function swapTo(nextIndex){
+  async function swapTo(nextIndex){
     if(!isOpen || isTransitioning || !images.length) return;
     if(nextIndex === activeIndex && track.querySelector(".lightbox-slide")) return;
 
     isTransitioning = true;
+    const nextSrc = images[nextIndex];
+
+    // Important: decode/preload the next image BEFORE starting the visible fade.
+    // This prevents the crossfade from stalling halfway through on large files.
+    await preload(nextSrc);
+    if(!isOpen){ isTransitioning = false; return; }
+
     const outgoing = track.querySelector(".lightbox-slide.is-visible") || track.querySelector(".lightbox-slide");
-    const incoming = makeSlide(images[nextIndex]);
+    const incoming = makeSlide(nextSrc);
     track.appendChild(incoming);
 
     requestAnimationFrame(()=>{
-      if(outgoing) outgoing.classList.remove("is-visible");
-      incoming.classList.add("is-visible");
+      requestAnimationFrame(()=>{
+        if(outgoing) outgoing.classList.remove("is-visible");
+        incoming.classList.add("is-visible");
+      });
     });
 
     window.setTimeout(()=>{
@@ -4337,7 +4397,7 @@ document.addEventListener("keydown", function(e){
       activeIndex = nextIndex;
       preloadAround(activeIndex);
       isTransitioning = false;
-    }, 340);
+    }, 390);
   }
 
   function next(){

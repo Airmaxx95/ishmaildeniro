@@ -6448,5 +6448,109 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+<script>
+/* === RESTORED FROM WORKING ORIGINAL: Sidebar Position (V1 lightbox preserved) ===
+   - LEFT: Works use actual rect; Biography uses synthetic work-card rect
+   - TOP: Both states use shared synthetic work-frame top
+   - Offscreen OK (no clamping) === */
+(function(){
+  const sidebar = document.getElementById("sidebarNav");
+  if(!sidebar) return;
+
+  const GAP = 20;
+  const Y_OFFSET = 50;
+  const CARD_W = 720;
+  const CARD_H = 480;
+
+  const sidebarWidth = ()=> (sidebar.offsetWidth || 240);
+
+  function topMostVisibleWorkCard(){
+    const cards = Array.from(document.querySelectorAll(".card.work-card.visible"))
+      .filter(c => c.style.display !== "none");
+    if(!cards.length) return null;
+    cards.sort((a,b)=>{
+      const za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      const zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    return cards[0];
+  }
+
+  function isBiography(card){
+    const slug = card?.dataset?.workSlug || "";
+    return slug.toLowerCase() === "biography";
+  }
+
+  function setCardShift(card, px){
+    if(!card) return;
+    card.style.setProperty("--card-x-shift", (px || 0) + "px");
+  }
+
+  function syntheticWorkRect(shiftPx){
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const oy = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--card-optical-y")) || 0;
+
+    const left = ((vw - CARD_W) / 2) + shiftPx;
+    const top  = ((vh - CARD_H) / 2) + oy;
+
+    return { left, top, width: CARD_W, height: CARD_H };
+  }
+
+  function positionSidebarFrom(leftRect, workFrameTop, sbW){
+    const left = leftRect.left - sbW - GAP;
+    const top  = workFrameTop + Y_OFFSET;
+
+    sidebar.style.left = left + "px";
+    sidebar.style.top  = top + "px";
+  }
+
+  function update(){
+    if(!sidebar.classList.contains("visible")) return;
+
+    const card = topMostVisibleWorkCard();
+    if(!card) return;
+
+    const sbW = sidebarWidth();
+    const shift = 0;
+    setCardShift(card, shift);
+
+    requestAnimationFrame(()=>{
+      const workFrame = syntheticWorkRect(shift);
+
+      if(isBiography(card)){
+        positionSidebarFrom(workFrame, workFrame.top, sbW);
+      }else{
+        const actualRect = card.getBoundingClientRect();
+        positionSidebarFrom(actualRect, workFrame.top, sbW);
+      }
+    });
+  }
+
+  const originalShowCard = window.showCard;
+  if(typeof originalShowCard === "function"){
+    window.showCard = function(card){
+      originalShowCard(card);
+      setTimeout(update, 0);
+      setTimeout(update, 60);
+    };
+  }
+
+  const originalSetSidebarVisible = window.setSidebarVisible;
+  if(typeof originalSetSidebarVisible === "function"){
+    window.setSidebarVisible = function(on){
+      originalSetSidebarVisible(on);
+      setTimeout(update, 0);
+      setTimeout(update, 60);
+    };
+  }
+
+  window.addEventListener("resize", ()=>setTimeout(update, 0));
+  window.addEventListener("scroll", ()=>setTimeout(update, 0), {passive:true});
+  window.addEventListener("load", ()=>setTimeout(update, 120));
+})();
+</script>
+
 </body>
 </html>

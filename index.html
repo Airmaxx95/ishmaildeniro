@@ -3054,6 +3054,24 @@ html, body{
   backface-visibility: hidden;
 }
 
+
+/* === Lightbox click target refinement: only real media advances === */
+.lightbox-track{
+  cursor: default !important;
+}
+.lightbox-slide{
+  pointer-events: auto !important;
+}
+.lightbox-slide img,
+.lightbox-slide video{
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+.lightbox-inner,
+.lightbox-media{
+  cursor: default !important;
+}
+
 </style>
 
 <style id="mobile-lightbox-offset-update">
@@ -4504,9 +4522,19 @@ document.addEventListener("keydown", function(e){
   });
 
   track.addEventListener("click", (e)=>{
+    const mediaEl = e.target && e.target.closest ? e.target.closest(".lightbox-slide.is-visible img, .lightbox-slide.is-visible video") : null;
+
     e.preventDefault();
     e.stopPropagation();
-    next();
+
+    // Only the actual rendered image/video advances the gallery.
+    // The surrounding lightbox area closes instead, so changing image dimensions
+    // do not leave a hidden rectangular click zone.
+    if(mediaEl){
+      next();
+    } else {
+      close();
+    }
   });
 
   closeBtn.addEventListener("click", (e)=>{
@@ -4516,7 +4544,10 @@ document.addEventListener("keydown", function(e){
   });
 
   overlay.addEventListener("click", (e)=>{
-    if(e.target === overlay) close();
+    if(e.target === overlay || (e.target.closest && e.target.closest(".lightbox-inner") && !e.target.closest(".lightbox-slide.is-visible img, .lightbox-slide.is-visible video, .lightbox-close, .lightbox-footer a"))){
+      e.preventDefault();
+      close();
+    }
   });
 
   document.addEventListener("keydown", (e)=>{
@@ -6612,5 +6643,60 @@ document.addEventListener("keydown", function(e){
 })();
 </script>
 
+
+
+<script id="lightbox-true-image-hit-target-fix">
+/* === Lightbox click target fix ===
+   Actual image/video click = next image.
+   Any other click inside the lightbox, including empty media div/slide area = close.
+   Close button = close. Footer photography link remains clickable.
+*/
+(function(){
+  if(window.__LIGHTBOX_TRUE_IMAGE_HIT_TARGET_FIX__) return;
+  window.__LIGHTBOX_TRUE_IMAGE_HIT_TARGET_FIX__ = true;
+
+  function getOverlay(){
+    return document.querySelector('.lightbox-overlay.active');
+  }
+
+  function isActualVisibleMediaTarget(target){
+    if(!target || !target.closest) return false;
+    return !!target.closest('.lightbox-slide.is-visible img, .lightbox-slide.is-visible video');
+  }
+
+  document.addEventListener('click', function(e){
+    const overlay = getOverlay();
+    if(!overlay || !overlay.contains(e.target)) return;
+
+    const target = e.target;
+
+    // Preserve the photography/footer link.
+    if(target.closest && target.closest('.lightbox-footer a')) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+    // Close button always closes.
+    if(target.closest && target.closest('.lightbox-close')){
+      if(window.__portfolioLightbox && window.__portfolioLightbox.close){
+        window.__portfolioLightbox.close();
+      }
+      return;
+    }
+
+    // Only the actual rendered media file advances. Empty slide/div space closes.
+    if(isActualVisibleMediaTarget(target)){
+      if(window.__portfolioLightbox && window.__portfolioLightbox.next){
+        window.__portfolioLightbox.next();
+      }
+    } else {
+      if(window.__portfolioLightbox && window.__portfolioLightbox.close){
+        window.__portfolioLightbox.close();
+      }
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>

@@ -6,6 +6,25 @@
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
 <link rel="shortcut icon" href="./favicon.ico">
 <title>Ishmail De Niro</title>
+<!-- === Google Analytics 4 (GA4) ===
+     Replace G-XXXXXXXXXX with your Ishmail De Niro GA4 Measurement ID.
+     GA4 records approximate geography, device, browser, referral and event data.
+     Do not send names, emails, phone numbers or other personally identifiable data. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.ISHMAIL_GA4_ID = "G-XXXXXXXXXX";
+  window.ISHMAIL_ANALYTICS_ENABLED = !/^G-?X{6,}/.test(window.ISHMAIL_GA4_ID);
+  gtag('js', new Date());
+  if(window.ISHMAIL_ANALYTICS_ENABLED){
+    gtag('config', window.ISHMAIL_GA4_ID, {
+      anonymize_ip: true,
+      transport_type: 'beacon'
+    });
+  }
+</script>
+
 <style>
 
 /* === Safari Atkinson font fix === */
@@ -6698,5 +6717,130 @@ document.addEventListener("keydown", function(e){
   }, true);
 })();
 </script>
+
+
+<script id="ishmail-ga4-event-tracking">
+/* === Ishmail De Niro GA4 event tracking ===
+   Behaviour-safe: observes clicks only; does not modify lightbox/sidebar logic.
+   Replace window.ISHMAIL_GA4_ID in <head> with your real GA4 Measurement ID to enable.
+*/
+(function(){
+  if(window.__ISHMAIL_GA4_EVENT_TRACKING__) return;
+  window.__ISHMAIL_GA4_EVENT_TRACKING__ = true;
+
+  function analyticsReady(){
+    return !!(window.ISHMAIL_ANALYTICS_ENABLED && typeof window.gtag === 'function');
+  }
+
+  function clean(value){
+    return String(value == null ? '' : value).trim().slice(0, 100);
+  }
+
+  function visibleWorkCard(){
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.card.work-card.visible'))
+      .filter(function(card){ return card.style.display !== 'none'; });
+    if(!cards.length) return null;
+    cards.sort(function(a,b){
+      var za = Number(a.style.zIndex || getComputedStyle(a).zIndex || 0);
+      var zb = Number(b.style.zIndex || getComputedStyle(b).zIndex || 0);
+      return zb - za;
+    });
+    return cards[0];
+  }
+
+  function workForSlug(slug){
+    slug = clean(slug);
+    if(!slug || !Array.isArray(window.WORKS_DATA)) return null;
+    return window.WORKS_DATA.find(function(w){ return clean(w.slug) === slug; }) || null;
+  }
+
+  function workTitle(work, fallbackSlug){
+    if(!work) return clean(fallbackSlug || '');
+    return clean(work.display_title || work.work_title || work.title || work.display_slug || work.slug || fallbackSlug || '');
+  }
+
+  function currentWorkPayload(extra){
+    var card = visibleWorkCard();
+    var slug = clean(card && card.dataset ? card.dataset.workSlug : '');
+    var work = workForSlug(slug);
+    return Object.assign({
+      work_slug: slug,
+      work_title: workTitle(work, slug),
+      work_category: clean(work && (work.subcategory || work.category_group || work.category)),
+      page_path: location.pathname
+    }, extra || {});
+  }
+
+  function track(name, params){
+    if(!analyticsReady()) return;
+    try{
+      window.gtag('event', name, params || {});
+    }catch(e){}
+  }
+
+  // Track internal portfolio navigation / selected work opens.
+  document.addEventListener('click', function(e){
+    var btn = e.target && e.target.closest ? e.target.closest('[data-open-work]') : null;
+    if(!btn) return;
+    var slug = clean(btn.getAttribute('data-open-work'));
+    var work = workForSlug(slug);
+    track('work_open', {
+      work_slug: slug,
+      work_title: workTitle(work, slug),
+      work_category: clean(work && (work.subcategory || work.category_group || work.category)),
+      navigation_source: btn.closest('#sidebarNav') ? 'desktop_sidebar' : (btn.closest('#mobileNavContent') ? 'mobile_menu' : 'content_link'),
+      page_path: location.pathname
+    });
+  }, true);
+
+  // Track lightbox open from work media.
+  document.addEventListener('click', function(e){
+    var box = e.target && e.target.closest ? e.target.closest('.media-box') : null;
+    if(!box) return;
+    var slug = clean(box.dataset && box.dataset.workSlug);
+    var work = workForSlug(slug);
+    var galleryCount = clean(box.dataset && box.dataset.gallery).split(',').filter(Boolean).length || 1;
+    track('lightbox_open', {
+      work_slug: slug,
+      work_title: workTitle(work, slug),
+      work_category: clean(work && (work.subcategory || work.category_group || work.category)),
+      gallery_count: galleryCount,
+      page_path: location.pathname
+    });
+  }, true);
+
+  // Track image advance / close without changing the click behaviour.
+  document.addEventListener('click', function(e){
+    var overlay = document.querySelector('.lightbox-overlay.active');
+    if(!overlay || !overlay.contains(e.target)) return;
+    if(e.target.closest && e.target.closest('.lightbox-footer a')) return;
+
+    if(e.target.closest && e.target.closest('.lightbox-slide.is-visible img, .lightbox-slide.is-visible video')){
+      track('lightbox_next', currentWorkPayload({ interaction: 'media_click' }));
+    }else if(e.target.closest && e.target.closest('.lightbox-close')){
+      track('lightbox_close', currentWorkPayload({ interaction: 'close_button' }));
+    }else{
+      track('lightbox_close', currentWorkPayload({ interaction: 'outside_image_click' }));
+    }
+  }, true);
+
+  // Track outbound links, downloads and mail/social clicks.
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    var url;
+    try{ url = new URL(href, location.href); }catch(err){ return; }
+    var isOutbound = url.hostname && url.hostname !== location.hostname;
+    var isDownload = /\.(pdf|zip|dxf|jpg|jpeg|png|webp|gif|mp4|mov)$/i.test(url.pathname);
+    if(isDownload){
+      track('file_download', currentWorkPayload({ file_url: url.href, link_text: clean(a.textContent) }));
+    }else if(isOutbound || href.indexOf('mailto:') === 0){
+      track('outbound_link_click', currentWorkPayload({ link_url: url.href, link_text: clean(a.textContent) }));
+    }
+  }, true);
+})();
+</script>
+
 </body>
 </html>
